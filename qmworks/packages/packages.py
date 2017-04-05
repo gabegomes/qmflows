@@ -1,3 +1,6 @@
+__all__ = ['import_parser', 'package_properties',
+           'Package', 'run', 'registry', 'Result',
+           'SerMolecule', 'SerSettings']
 
 # ========>  Standard and third party Python Libraries <======
 from functools import partial
@@ -9,6 +12,7 @@ import base64
 import fnmatch
 import importlib
 import inspect
+import logging
 import os
 import plams
 import pkg_resources as pkg
@@ -30,10 +34,10 @@ from qmworks import molkit
 from qmworks.fileFunctions import json2Settings
 from qmworks.utils import concatMap
 from warnings import warn
+
+# Reference to the logger object
+logger = logging.getLogger(__name__)
 # ==============================================================
-__all__ = ['import_parser', 'package_properties',
-           'Package', 'run', 'registry', 'Result',
-           'SerMolecule', 'SerSettings']
 
 package_properties = {
     'adf': 'data/dictionaries/propertiesADF.json',
@@ -310,7 +314,10 @@ def run(job, runner=None, path=None, folder=None, **kwargs):
     :param runner: Type of runner to use
     :type runner: String
     """
+    # Configure the logger
+    initialize_logger()
 
+    # Configure Plams
     initialize = False
     try:
         builtins.config
@@ -488,3 +495,14 @@ def ignored_unused_kwargs(fun: Callable, args: List, kwargs: Dict) -> Any:
     else:  # extract from kwargs only the used keyword arguments
         d = {k: kwargs[k] for k, _ in defaults}
         return fun(*args, **d)
+
+
+def initialize_logger():
+    """
+    Start the logging service
+    """
+    logging.basicConfig(filename='qmworks.log', level=logging.DEBUG,
+                        format='%(levelname)s:%(message)s  %(asctime)s\n',
+                        datefmt='%m/%d/%Y %I:%M:%S %p')
+
+    logging.captureWarnings(True)
