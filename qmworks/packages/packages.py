@@ -501,7 +501,7 @@ def initialize_logger():
     """
     Start the logging service
     """
-    logging.basicConfig(filename='qmworks.log', level=logging.DEBUG,
+    logging.basicConfig(level=logging.DEBUG,
                         format='%(levelname)s:%(message)s  %(asctime)s\n',
                         datefmt='%m/%d/%Y %I:%M:%S %p')
 
