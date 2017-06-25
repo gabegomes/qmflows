@@ -1,14 +1,12 @@
 # Default imports
-from qmworks import (templates, run, molkit, Settings, plams_init, plams_finish)
+from qmworks import (templates, run, molkit, Settings)
 from qmworks.components import mfcc, adf3fde
+from noodles import gather
 
 # User Defined imports
 from qmworks.packages.SCM import adf
 
 import io
-
-plams_init(folder='ADF3FDE_Cystine')
-
 # ----------------------------------------------------------------
 
 # For the purpose of the example, define the pdb file here.
@@ -50,7 +48,7 @@ ATOM     26  H   CYS A   2      17.213  17.290  25.357  1.00  0.00           H
 supermol = molkit.readpdb(cys_cys_pdb)
 
 # Calculate  normally
-supermol_job = adf(templates.singlepoint, supermol,
+supermol_job = adf.scheduled(templates.singlepoint, supermol,
                     job_name='supermol_singlepoint')
 
 settings = Settings()
@@ -67,16 +65,16 @@ settings.specific.adf.geometry.sp = ""
 
 # Calculate with mfcc approach
 frags, caps = molkit.partition_protein(supermol)
-mfcc_job = mfcc(adf, frags, caps, settings)
+mfcc_job = mfcc.scheduled(adf, frags, caps, settings)
 
 # Calculate with adf3fde
 fde_settings = Settings({'RHO1FITTED':'','CapDensConv':1e-3})
 fragment_settings = Settings({'fdedenstype': 'SCFfitted'})
 
-adf3fde_job = adf3fde(mfcc_job.frags, mfcc_job.caps, settings, fde_settings, fragment_settings, cycles=2)
+adf3fde_job = adf3fde.scheduled(mfcc_job.frags, mfcc_job.caps, settings, fde_settings, fragment_settings, cycles=1)
+wf = gather(supermol_job.dipole, mfcc_job.dipole, adf3fde_job.dipole)
+supermol_dipole, mfcc_dipole, adf3fde_dipole = run(wf)
 
-print('Supermol: ', supermol_job.dipole)
-print('MFCC', mfcc_job.dipole)
-print('ADF3FDE:', adf3fde_job.dipole)
-
-plams_finish(remove_old=True)
+print('Supermol: ', supermol_dipole)
+print('MFCC', mfcc_dipole)
+print('ADF3FDE:', adf3fde_dipole)

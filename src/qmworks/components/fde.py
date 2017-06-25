@@ -1,15 +1,14 @@
-__all__ = ['mfcc', 'MFCC_Result', 'adf3fde', 'ADF3FDE_Result', 'Fragment', 'adf_fragmentsjob']
+__all__ = ['mfcc', 'mfcc_scheduled', 'MFCC_Result', 'adf3fde', 'ADF3FDE_Result', 'Fragment', 'adf_fragmentsjob', 'adf_fragmentsjob_scheduled']
 
 from qmworks import Settings, templates
 from qmworks.packages import Result
 from qmworks.packages.SCM import adf
-from noodles import gather, schedule, Storable
+from noodles import gather, schedule, schedule_hint, Storable
 from scm.plams import Molecule
 
 import numpy as np
 
 
-@schedule
 class MFCC_Result(Result):
     def __init__(self, frags, caps):
         self.frags = [Fragment(f, f.molecule) for f in frags]
@@ -26,29 +25,43 @@ class MFCC_Result(Result):
             dipole -= cap.result.dipole
         return dipole
 
-def mfcc(package, frags, caps, settings=None):
-    mfcc_settings = templates.singlepoint
-    if settings:
-        mfcc_settings = mfcc_settings.overlay(settings)
+class MFCC():
+    def __init__(self):
+        pass
 
-    capped_atoms = {}
-    for i, cap in enumerate(caps):
-        for a in cap:
-            capped_atoms[a.coords] = a
+    def __call__(self,package, frags, caps, settings=None):
+        return MFCC_Result(*self.run(package, frags, caps, settings=settings))
 
-    for i, frag in enumerate(frags):
-        cap_label = 'cap' + str(i + 1)
-        for a in frag:
-            if a.coords in capped_atoms:
-                a.name = cap_label
-                capped_atoms[a.coords].name = cap_label
+    def scheduled(self, package, frags, caps, settings=None):
+        frag_jobs, cap_jobs = self.run(package.scheduled, frags, caps, settings=settings)
+        return schedule(MFCC_Result)(gather(*frag_jobs), gather(*cap_jobs))
+    #    return schedule(mfcc(package.scheduled, frags, caps, settings))
 
-    frag_jobs = [package(mfcc_settings, frag, job_name="mfcc_frag_" + str(i))
-                 for i, frag in enumerate(frags)]
-    cap_jobs = [package(mfcc_settings, cap, job_name="mfcc_cap_" + str(i))
-                for i, cap in enumerate(caps)]
-    return MFCC_Result(gather(*frag_jobs), gather(*cap_jobs))
+    def run(self, package, frags, caps, settings=None):
+        mfcc_settings = templates.singlepoint
+        if settings:
+            mfcc_settings = mfcc_settings.overlay(settings)
 
+        capped_atoms = {}
+        for i, cap in enumerate(caps):
+            for a in cap:
+                capped_atoms[a.coords] = a
+
+        for i, frag in enumerate(frags):
+            cap_label = 'cap' + str(i + 1)
+            for a in frag:
+                if a.coords in capped_atoms:
+                    a.name = cap_label
+                    capped_atoms[a.coords].name = cap_label
+
+        frag_results = [package(mfcc_settings, frag, job_name="mfcc_frag_" + str(i))
+                     for i, frag in enumerate(frags)]
+        cap_results = [package(mfcc_settings, cap, job_name="mfcc_cap_" + str(i))
+                    for i, cap in enumerate(caps)]
+    #    return schedule(MFCC_Result)(gather(*frag_jobs), gather(*cap_jobs))
+        return frag_results, cap_results
+
+mfcc = MFCC()
 
 class Fragment(Storable):
     def __init__(self, result, mol, isfrozen=True, pack_tape=False):
@@ -60,40 +73,56 @@ class Fragment(Storable):
         self.isfrozen = isfrozen
 
 
-@schedule
-def adf_fragmentsjob(settings, frags, caps = None, fragment_settings=None, job_name='fde'):
-    mol_tot = Molecule()
-    frag_settings = Settings()
-    cap_ids = {}
-    if caps:
-        for i, cap in enumerate(caps):
-            cap_id = 'cap' + str(i + 1)
-            for a in cap.mol:
-                cap_ids[a.coords] = cap_id
-            path = cap.result.kf.path
-            key = cap_id + ' ' + path + ' type=FDEsubstract &'
-            frag_settings.specific.adf.fragments[key] = fragment_settings
-    for i, frag in enumerate(frags):
-        frag_id = 'frag' + str(i + 1)
-        if frag.result:
-            for a in frag.mol:
-                a.fragment = frag_id
-                if a.coords in cap_ids:
-                    a.fragment += '  fs=' + cap_ids[a.coords]
-            path = frag.result.kf.path
-            key = frag_id + ' ' + path + ' subfrag=active'
-            if frag.isfrozen:
-                key += ' type=FDE'
-                if fragment_settings:
-                    key += ' &'
-                    frag_settings.specific.adf.fragments[key] = fragment_settings
+class ADF_FragmentsJob():
+    def __init__(self):
+        pass
+
+    @schedule
+    def scheduled(self, settings, frags, caps = None, fragment_settings=None, job_name='fde'):
+        frag_settings, mol_tot = self._get_fragmentjob_input(
+            frags, caps, fragment_settings=fragment_settings)
+        return adf.scheduled(settings.overlay(frag_settings), mol_tot, job_name=job_name)
+
+    def __call__(self, settings, frags, caps = None, fragment_settings=None, job_name='fde'):
+        frag_settings, mol_tot = self._get_fragmentjob_input(
+            frags, caps, fragment_settings=fragment_settings)
+        return adf(settings.overlay(frag_settings), mol_tot, job_name=job_name)
+
+    def _get_fragmentjob_input(self, frags, caps, fragment_settings=None):
+        mol_tot = Molecule()
+        frag_settings = Settings()
+        cap_ids = {}
+        if caps:
+            for i, cap in enumerate(caps):
+                cap_id = 'cap' + str(i + 1)
+                for a in cap.mol:
+                    cap_ids[a.coords] = cap_id
+                path = cap.result.kf.path
+                key = cap_id + ' ' + path + ' type=FDEsubstract &'
+                frag_settings.specific.adf.fragments[key] = fragment_settings
+        for i, frag in enumerate(frags):
+            frag_id = 'frag' + str(i + 1)
+            if frag.result:
+                for a in frag.mol:
+                    a.fragment = frag_id
+                    if a.coords in cap_ids:
+                        a.fragment += '  fs=' + cap_ids[a.coords]
+                path = frag.result.kf.path
+                key = frag_id + ' ' + path + ' subfrag=active'
+                if frag.isfrozen:
+                    key += ' type=FDE'
+                    if fragment_settings:
+                        key += ' &'
+                        frag_settings.specific.adf.fragments[key] = fragment_settings
+                    else:
+                        frag_settings.specific.adf.fragments[key] = ""
                 else:
                     frag_settings.specific.adf.fragments[key] = ""
-            else:
-                frag_settings.specific.adf.fragments[key] = ""
-        mol_tot += frag.mol
-    frag_settings.specific.adf.fde.PW91k = ""
-    return adf(settings.overlay(frag_settings), mol_tot, job_name=job_name)
+            mol_tot += frag.mol
+        frag_settings.specific.adf.fde.PW91k = ""
+        return frag_settings, mol_tot
+
+adf_fragmentsjob = ADF_FragmentsJob()
 
 class ADF3FDE_Result(Result):
     def __init__(self, frags, caps):
@@ -111,28 +140,52 @@ class ADF3FDE_Result(Result):
             dipole -= cap.result.dipole
         return dipole
 
-def adf3fde(frags, caps, settings, fde_settings, fragment_settings, cycles=1):
-    adf3fde_settings = templates.singlepoint
-    adf3fde_settings.specific.adf.allow = "partialsuperfrags"
-    if settings:
-        adf3fde_settings.update(settings)
-    adf3fde_settings.specific.adf.fde = fde_settings
 
-    for i in range(cycles):
-        frags = adf3fde_cycle(frags, caps, adf3fde_settings, fragment_settings, job_name='fde_'+str(i))
-    return schedule(ADF3FDE_Result)(frags, caps)
+class ADF3FDE():
+    def __init__(self):
+        self._scheduled = None
 
-@schedule
-def adf3fde_cycle(frags, caps, adf3fde_settings, fragment_settings, job_name='fde'):
-    new_frags = []
-    for i, frag in enumerate(frags):
-        frag.isfrozen = False
-        new_frags.append(schedule(Fragment)(adf_fragmentsjob(adf3fde_settings, frags, caps,
-                                         fragment_settings, job_name=job_name+'_'+str(i)), frag.mol, pack_tape=True))
-        frag.isfrozen = True
+    def __call__(self, frags, caps, settings, fde_settings, fragment_settings, cycles=1):
+        self._scheduled = False
+        return ADF3FDE_Result(
+            *self._adf3fde(frags, caps, settings, fde_settings, fragment_settings, cycles=cycles))
 
-    return gather(*new_frags)
+    def scheduled(self, frags, caps, settings, fde_settings, fragment_settings, cycles=1):
+        self._scheduled = True
+        return schedule(ADF3FDE_Result)(
+            *self._adf3fde(frags, caps, settings, fde_settings, fragment_settings, cycles=cycles))
 
+    def _adf3fde(self, frags, caps, settings, fde_settings, fragment_settings, cycles=1):
+        adf3fde_settings = templates.singlepoint
+        adf3fde_settings.specific.adf.allow = "partialsuperfrags"
+        if settings:
+            adf3fde_settings.update(settings)
+        adf3fde_settings.specific.adf.fde = fde_settings
+
+        for i in range(cycles):
+            if self._scheduled:
+                frags = schedule(self._adf3fde_cycle)(frags, caps, adf3fde_settings, fragment_settings, job_name='fde_'+str(i))
+            else:
+                frags = self._adf3fde_cycle(frags, caps, adf3fde_settings, fragment_settings, job_name='fde_'+str(i))
+        return frags, caps
+
+    def _adf3fde_cycle(self, frags, caps, adf3fde_settings, fragment_settings, job_name='fde'):
+        new_frags = []
+        for i, frag in enumerate(frags):
+            frag.isfrozen = False
+            if self._scheduled:
+                new_frags.append(schedule(Fragment)(adf_fragmentsjob.scheduled(adf3fde_settings, frags, caps,
+                                      fragment_settings, job_name=job_name+'_'+str(i)), frag.mol, pack_tape=True))
+            else:
+                new_frags.append(Fragment(adf_fragmentsjob(adf3fde_settings, frags, caps,
+                                      fragment_settings, job_name=job_name+'_'+str(i)), frag.mol, pack_tape=True))
+            frag.isfrozen = True
+        if self._scheduled:
+            return gather(*new_frags)
+        else:
+            return new_frags
+
+adf3fde = ADF3FDE()
 
 def pack_t21(fn):
     """

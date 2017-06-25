@@ -13,6 +13,8 @@ import importlib
 import inspect
 import os
 import pkg_resources as pkg
+from shutil import rmtree
+from glob import glob
 
 # ==================> Internal modules <====================
 from noodles import (schedule_hint, has_scheduled_methods, serial)
@@ -33,7 +35,8 @@ from warnings import warn
 # ==============================================================
 __all__ = ['import_parser', 'package_properties',
            'Package', 'run', 'registry', 'Result',
-           'SerMolecule', 'SerSettings']
+           'SerMolecule', 'SerSettings', 'plams_init',
+           'plams_finish']
 
 package_properties = {
     'adf': 'data/dictionaries/propertiesADF.json',
@@ -193,6 +196,9 @@ class Package:
     @schedule_hint(
         display="Running {self.pkg_name} {job_name}...",
         store=True, confirm=True)
+    def scheduled(self, settings, mol, job_name='', **kwargs):
+        return self.__call__(settings, mol, job_name=job_name, **kwargs)
+
     def __call__(self, settings, mol, job_name='', **kwargs):
         """
         This function performs a job with the package specified by
@@ -203,6 +209,11 @@ class Package:
         :parameter mol: Molecule to run the calculation.
         :type mol: plams Molecule
         """
+        try:
+            config = builtins.config
+        except AttributeError:
+            plams.init()
+
         properties = package_properties[self.pkg_name]
 
         # There are not data from previous nodes in the dependecy trees
@@ -439,7 +450,7 @@ class SerMolecule(Serialiser):
         return make_rec(obj.as_dict())
 
     def decode(self, cls, data):
-        return plams.Molecule.from_dict(**data)
+        return plams.Molecule.from_dict(data)
 
 
 class SerMol(Serialiser):
@@ -539,3 +550,24 @@ def parse_output_warnings(job_name, plams_dir, parser, package_warnings):
         return None
     else:
         return parser(output_files[0], package_warnings)
+
+def plams_init(path=None, folder=None):
+    job_folder = os.path.join(path, folder) if path else folder
+    print(job_folder)
+    if folder and os.path.exists(job_folder):
+        i = 1
+        while os.path.exists(job_folder + '.old' + str(i)):
+            i += 1
+        newname = job_folder + '.old' + str(i)
+        os.rename(job_folder, newname)
+        warn('Folder %s already present. Loading jobs and renaming folder to %s'%(job_folder, newname))
+
+    plams.init(path=path, folder=folder)
+    if 'newname' in locals():
+        plams.load_all(newname)
+
+def plams_finish(remove_old = False):
+    if remove_old:
+        oldfolders = glob(builtins.config.jm.workdir + ".old*")
+        for folder in oldfolders:
+            rmtree(folder)

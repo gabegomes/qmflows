@@ -1,8 +1,7 @@
 # Default imports
 
 from scm.plams import Molecule
-from qmworks import (Settings, run, templates, adf, Fragment, adf_fragmentsjob,
-                     plams_init, plams_finish)
+from qmworks import (Settings, run, templates, adf, Fragment, adf_fragmentsjob)
 from noodles import gather
 
 import io
@@ -28,7 +27,7 @@ O         0.00000000000000      0.00000000000000     -0.26192472620000
 H         0.00000000000000      0.77162768440000      0.34261631290000
 H         0.00000000000000     -0.77162768440000      0.34261631290000''')
 
-plams_init(folder="FDE_Fragments")
+
 
 # Read the Molecule from file
 m_h2o_1 = Molecule()
@@ -45,21 +44,20 @@ settings.basis = 'SZ'
 settings.specific.adf.nosymfit = ''
 
 # Prepare first water fragment
-r_h2o_1 = adf(templates.singlepoint.overlay(settings), m_h2o_1, job_name="h2o_1")
+r_h2o_1 = adf.scheduled(templates.singlepoint.overlay(settings), m_h2o_1, job_name="h2o_1")
 
 # Prepare second water fragment
-r_h2o_2 = adf(templates.singlepoint.overlay(settings), m_h2o_2, job_name="h2o_2")
+r_h2o_2 = adf.scheduled(templates.singlepoint.overlay(settings), m_h2o_2, job_name="h2o_2")
 
-frags = [Fragment(r_h2o_1, m_h2o_1, isfrozen=True),
-         Fragment(r_h2o_2, m_h2o_2, isfrozen=True),
-         Fragment(None, m_mol)]
+frags = gather(Fragment(r_h2o_1, m_h2o_1, isfrozen=True),
+               Fragment(r_h2o_2, m_h2o_2, isfrozen=True),
+               Fragment(None, m_mol))
 
-job_fde = adf_fragmentsjob(templates.singlepoint. overlay(settings), frags, job_name="fde")
+job_fde = adf_fragmentsjob.scheduled(templates.singlepoint. overlay(settings), frags, job_name="fde")
 
 # Perform FDE job and get dipole
 # This gets the dipole moment of the active subsystem only
-dipole_fde = job_fde.dipole
+dipole_fde = run(job_fde.dipole, folder="FDE_Fragments_scheduled")
 
 print('FDE dipole:', dipole_fde)
 
-plams_finish(remove_old = True)
