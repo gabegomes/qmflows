@@ -1,0 +1,710 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Basic usage tutorial &mdash; QMWorks Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="QMWorks Documentation" href="index.html"/>
+        <link rel="next" title="&lt;no title&gt;" href="tutorial.html"/>
+        <link rel="prev" title="QMFlows" href="includeme.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> qmworks
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">QMFlows</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Basic usage tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Library Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">qmworks</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Basic usage tutorial</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/interactive_tutorial.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="basic-usage-tutorial">
+<h1>Basic usage tutorial<a class="headerlink" href="#basic-usage-tutorial" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Installation in Unix</li>
+</ol>
+</div></blockquote>
+<hr class="docutils" />
+<ul>
+<li><div class="first line-block">
+<div class="line">conda installation. Type in your console the following command:</div>
+<div class="line"><code class="docutils literal"><span class="pre">bash</span>&#160;&#160;&#160; <span class="pre">wget</span> <span class="pre">https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh</span> <span class="pre">-O</span> <span class="pre">miniconda.sh</span></code></div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line">then add miniconda to your path</div>
+<div class="line"><code class="docutils literal"><span class="pre">bash</span>&#160;&#160;&#160; <span class="pre">bash</span> <span class="pre">miniconda.sh</span> <span class="pre">-b</span> <span class="pre">-p</span> <span class="pre">$HOME/miniconda</span></code></div>
+</div>
+</li>
+<li><p class="first">create new virtual environment
+<code class="docutils literal"><span class="pre">bash</span>&#160;&#160;&#160; <span class="pre">conda</span> <span class="pre">create</span> <span class="pre">-q</span> <span class="pre">-n</span> <span class="pre">qmflows</span> <span class="pre">python=3.5</span></code></p>
+</li>
+<li><p class="first">Install dependecies
+<code class="docutils literal"><span class="pre">bash</span>&#160;&#160;&#160;&#160; <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">--name</span> <span class="pre">qmflows</span> <span class="pre">-c</span> <span class="pre">anaconda</span> <span class="pre">hdf5</span>&#160;&#160;&#160; <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">--name</span> <span class="pre">qmflows</span> <span class="pre">-c</span> <span class="pre">https://conda.anaconda.org/rdkit</span> <span class="pre">rdkit</span></code></p>
+</li>
+<li><p class="first">Start environment <code class="docutils literal"><span class="pre">bash</span>&#160;&#160;&#160; <span class="pre">source</span> <span class="pre">activate</span> <span class="pre">qmflows</span></code></p>
+</li>
+<li><p class="first">install <strong>qmflows</strong> dependencies</p>
+<div class="code bash highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">SCM</span><span class="o">-</span><span class="n">NV</span><span class="o">/</span><span class="n">qmflows</span><span class="o">/</span><span class="n">tarball</span><span class="o">/</span><span class="n">master</span><span class="c1">#egg=qmflows https://github.com/SCM-NV/plams/tarball/master#egg=plams --upgrade</span>
+</pre></div>
+</div>
+<p class="rubric" id="you-are-ready-to-start">You are ready to start!</p>
+</li>
+</ul>
+<blockquote>
+<div>Starting the environment</div></blockquote>
+<hr class="docutils" />
+<p>Once <em>QMWORKS</em> has been installed the user should run the following
+command to initialize the environment:</p>
+<div class="code bash highlight-default"><div class="highlight"><pre><span></span>[user@int1 ~]$ source activate qmflows
+discarding /home/user/anaconda3/bin from PATH
+prepending /home/user/anaconda3/envs/qmflows/bin to PATH
+(qmflows)[user@int1 ~]$ python --version
+Python 3.5.2 :: Anaconda custom (64-bit)
+</pre></div>
+</div>
+<p>To leave the environment the following command is used</p>
+<div class="code bash highlight-default"><div class="highlight"><pre><span></span>(qmflows)[user@int1 ~]$ source deactivate
+discarding /home/user/anaconda3/envs/qmflows/bin from PATH
+</pre></div>
+</div>
+<p>To finalize preparations before running QMworks: if you don’t want the
+results to end up in the current work directory, create a new results
+folder.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span>   mkdir tutorial_results
+
+What is QMworks?
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>QMworks is a python library that enables executing complicated workflows
+of interdependent quantum chemical (QM) calculations in python. It aims
+at providing a common interface to multiple QM packages, enabling easy
+and systematic generation of the calculation inputs, as well as
+facilitating automatic analysis of the results. Furthermore it is build
+on top of the powerful Noodles framework for executing the calculations
+in parallel where possible.</p>
+<blockquote>
+<div>The basics: calling packages</div></blockquote>
+<hr class="docutils" />
+<p>Currently <strong>QMWORKS</strong> offers an interface with the following simulation
+software: * <strong>SCM (ADF and DTFB)</strong> * <strong>CP2K</strong> * <strong>ORCA</strong> *
+<strong>GAMESS-US</strong> * <strong>DIRAC</strong></p>
+<blockquote>
+<div>Please make sure that the packages you want to use in QMworks are</div></blockquote>
+<p>installed and active; in most supercomputer the simulation package are
+available using a command like (consult your system administrator):</p>
+<div class="code bash highlight-default"><div class="highlight"><pre><span></span><span class="n">load</span> <span class="n">module</span> <span class="n">superAwesomeQuantumPackage</span><span class="o">/</span><span class="mf">3.1421</span>
+</pre></div>
+</div>
+<p>Also some simulation packages required that you configure a <code class="docutils literal"><span class="pre">scratch</span></code>
+folder. For instance <em>Orca</em> requires a <strong>SCR</strong> folder to be defnied
+while <em>ADF</em> called it <strong>SCM_TMPDIR</strong>.</p>
+<blockquote>
+<div>With <code class="docutils literal"><span class="pre">qmflows</span></code> you can write a python script that simply calls one of</div></blockquote>
+<p>the package objects <strong>adf, dftb, cp2k, orca, gamess</strong> or <strong>dirac</strong>. As
+arguments to the call, you need to provide a <code class="docutils literal"><span class="pre">settings</span></code> objects
+defining the input of a calculation, a molecular geometry, and,
+optionally, a job name that enables you to find back the “raw” data of
+the calculation later on.</p>
+<p>Let’s see how this works:</p>
+<p>First we define a molecule, for example by reading one from an xyz file:</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">plams</span> <span class="k">import</span> <span class="n">Molecule</span>
+<span class="n">acetonitrile</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">(</span><span class="s2">&quot;files/acetonitrile.xyz&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">acetonitrile</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Atoms</span><span class="p">:</span>
+  <span class="mi">1</span>         <span class="n">C</span>      <span class="mf">2.419290</span>      <span class="mf">0.606560</span>      <span class="mf">0.000000</span>
+  <span class="mi">2</span>         <span class="n">C</span>      <span class="mf">1.671470</span>      <span class="mf">1.829570</span>      <span class="mf">0.000000</span>
+  <span class="mi">3</span>         <span class="n">N</span>      <span class="mf">1.065290</span>      <span class="mf">2.809960</span>      <span class="mf">0.000000</span>
+  <span class="mi">4</span>         <span class="n">H</span>      <span class="mf">2.000000</span>      <span class="mf">0.000000</span>      <span class="mf">1.000000</span>
+  <span class="mi">5</span>         <span class="n">H</span>      <span class="mf">2.000000</span>      <span class="mf">0.000000</span>     <span class="o">-</span><span class="mf">1.000000</span>
+  <span class="mi">6</span>         <span class="n">H</span>      <span class="mf">3.600000</span>      <span class="mf">0.800000</span>      <span class="mf">0.000000</span>
+</pre></div>
+</div>
+<p>Then we can perform geometry optimization on the molecule by a call to
+the dftb package object:</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">dftb</span><span class="p">,</span> <span class="n">templates</span><span class="p">,</span> <span class="n">run</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">dftb</span><span class="p">(</span><span class="n">templates</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">acetonitrile</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="s2">&quot;dftb_geometry_optimization&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">noodles</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">decorator</span><span class="o">.</span><span class="n">PromisedObject</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f6c8e5a6d30</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>As you can see, “job” is a so-called “promised object”. It means it
+first needs to be “run” by the Noodles scheduler to return a normal
+python object.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;tutorial_results&quot;</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;run_one&quot;</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="s2">&quot;tutorial_cache.json&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span>[09:14:04] PLAMS working folder: /home/lars/workspace/qmflows/jupyterNotebooks/tutorial_results/run_one
+╭─(running jobs)
+│ Running dftb dftb_geometry_optimization...
+╰[s[1A[50C([38;2;60;180;100m✔[0m)[u─(success)
+&lt;qmflows.packages.SCM.DFTB_Result object at 0x7f6c8e30bcf8&gt;
+</pre></div>
+</div>
+<p>We can easily retrieve the calculated properties from the DFTB
+calculation such as the dipole or the optimized geometry for use in
+subsequent calculations.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dipole: &quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">dipole</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">molecule</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span>   <span class="n">Dipole</span><span class="p">:</span>  <span class="p">[</span><span class="mf">1.0864213029</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.9278296041</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0</span><span class="p">]</span>
+     <span class="n">Atoms</span><span class="p">:</span>
+       <span class="mi">1</span>         <span class="n">C</span>      <span class="mf">2.366998</span>      <span class="mf">0.579794</span>     <span class="o">-</span><span class="mf">0.000000</span>
+       <span class="mi">2</span>         <span class="n">C</span>      <span class="mf">1.660642</span>      <span class="mf">1.834189</span>      <span class="mf">0.000000</span>
+       <span class="mi">3</span>         <span class="n">N</span>      <span class="mf">1.089031</span>      <span class="mf">2.847969</span>      <span class="mf">0.000000</span>
+       <span class="mi">4</span>         <span class="n">H</span>      <span class="mf">2.100157</span>      <span class="mf">0.010030</span>      <span class="mf">0.887206</span>
+       <span class="mi">5</span>         <span class="n">H</span>      <span class="mf">2.100157</span>      <span class="mf">0.010030</span>     <span class="o">-</span><span class="mf">0.887206</span>
+       <span class="mi">6</span>         <span class="n">H</span>      <span class="mf">3.439065</span>      <span class="mf">0.764079</span>     <span class="o">-</span><span class="mf">0.000000</span>
+
+
+
+<span class="n">Settings</span> <span class="ow">and</span> <span class="n">templates</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>In the above example <code class="docutils literal"><span class="pre">templates.geometry</span></code> was actually a predefined
+Settings object. You can define and manipulate Settings in a completely
+flexible manner as will be explained in this section. To facilitate
+combining different packages in one script, QMworks defines a set of
+commonly used generic keywords, which can be combined with package
+specific keywords, to provide maximum flexibility.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">Settings</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+<span class="n">s</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s2">&quot;DZP&quot;</span>
+<span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">core</span> <span class="o">=</span> <span class="s2">&quot;large&quot;</span>
+<span class="n">s</span><span class="o">.</span><span class="n">freeze</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">basis</span><span class="p">:</span>      <span class="n">DZP</span>
+<span class="n">freeze</span><span class="p">:</span>     <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">specific</span><span class="p">:</span>
+         <span class="n">adf</span><span class="p">:</span>
+             <span class="n">basis</span><span class="p">:</span>
+                   <span class="n">core</span><span class="p">:</span>    <span class="n">large</span>
+</pre></div>
+</div>
+<p>This code snippet illustrates that the <code class="docutils literal"><span class="pre">Settings</span></code> can be specified in
+two ways, using generic or specific keywords. Generic keywords represent
+input properties that are present in most simulation packages like a
+<em>basis set</em> while <em>specific</em> keywords allow the user to apply specific
+keywords for a package that are not in a generic dictionary.</p>
+<blockquote>
+<div>Expert info: <em>Settings</em> are a subclass of python</div></blockquote>
+<p><a class="reference external" href="https://docs.python.org/3.5/tutorial/datastructures.html#dictionaries">dictionaries</a>
+to represent herarchical structures, like</p>
+<p>In QMworks/PLAMS multiple settings objects can be combined using the
+<code class="docutils literal"><span class="pre">overlay</span></code> function.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">merged_settings</span> <span class="o">=</span> <span class="n">templates</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">overlay</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">merged_settings</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">basis</span><span class="p">:</span>      <span class="n">DZP</span>
+<span class="n">freeze</span><span class="p">:</span>     <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">specific</span><span class="p">:</span>
+         <span class="n">adf</span><span class="p">:</span>
+             <span class="n">basis</span><span class="p">:</span>
+                   <span class="n">core</span><span class="p">:</span>    <span class="n">large</span>
+                   <span class="nb">type</span><span class="p">:</span>    <span class="n">SZ</span>
+             <span class="n">geometry</span><span class="p">:</span>
+                      <span class="n">optim</span><span class="p">:</span>        <span class="n">delocal</span>
+             <span class="n">integration</span><span class="p">:</span>
+                         <span class="n">accint</span><span class="p">:</span>    <span class="mf">6.0</span>
+             <span class="n">scf</span><span class="p">:</span>
+                 <span class="n">converge</span><span class="p">:</span>  <span class="mf">1e-06</span>
+                 <span class="n">iterations</span><span class="p">:</span>        <span class="mi">100</span>
+             <span class="n">xc</span><span class="p">:</span>
+                <span class="n">__block_replace</span><span class="p">:</span>    <span class="kc">True</span>
+                <span class="n">lda</span><span class="p">:</span>
+         <span class="n">cp2k</span><span class="p">:</span>
+              <span class="n">force_eval</span><span class="p">:</span>
+                         <span class="n">dft</span><span class="p">:</span>
+                             <span class="n">basis_set_file_name</span><span class="p">:</span>
+                             <span class="n">mgrid</span><span class="p">:</span>
+                                   <span class="n">cutoff</span><span class="p">:</span>  <span class="mi">400</span>
+                                   <span class="n">ngrids</span><span class="p">:</span>  <span class="mi">4</span>
+                             <span class="n">potential_file_name</span><span class="p">:</span>
+                             <span class="n">qs</span><span class="p">:</span>
+                                <span class="n">method</span><span class="p">:</span>     <span class="n">gpw</span>
+                             <span class="n">scf</span><span class="p">:</span>
+                                 <span class="n">OT</span><span class="p">:</span>
+                                    <span class="n">N_DIIS</span><span class="p">:</span>         <span class="mi">7</span>
+                                    <span class="n">minimizer</span><span class="p">:</span>      <span class="n">DIIS</span>
+                                    <span class="n">preconditioner</span><span class="p">:</span>         <span class="n">full_single_inverse</span>
+                                 <span class="n">eps_scf</span><span class="p">:</span>   <span class="mf">1e-06</span>
+                                 <span class="n">max_scf</span><span class="p">:</span>   <span class="mi">200</span>
+                                 <span class="n">scf_guess</span><span class="p">:</span>         <span class="n">atomic</span>
+                             <span class="n">xc</span><span class="p">:</span>
+                                <span class="n">xc_functional</span><span class="p">:</span>      <span class="n">pbe</span>
+                         <span class="n">subsys</span><span class="p">:</span>
+                                <span class="n">cell</span><span class="p">:</span>
+                                     <span class="n">periodic</span><span class="p">:</span>      <span class="n">xyz</span>
+              <span class="k">global</span><span class="p">:</span>
+                     <span class="n">print_level</span><span class="p">:</span>   <span class="n">low</span>
+                     <span class="n">project</span><span class="p">:</span>       <span class="n">qmflows</span><span class="o">-</span><span class="n">cp2k</span>
+                     <span class="n">run_type</span><span class="p">:</span>      <span class="n">geometry_optimization</span>
+              <span class="n">motion</span><span class="p">:</span>
+                     <span class="n">geo_opt</span><span class="p">:</span>
+                             <span class="n">max_iter</span><span class="p">:</span>      <span class="mi">500</span>
+                             <span class="n">optimizer</span><span class="p">:</span>     <span class="n">bfgs</span>
+                             <span class="nb">type</span><span class="p">:</span>  <span class="n">minimization</span>
+         <span class="n">dftb</span><span class="p">:</span>
+              <span class="n">dftb</span><span class="p">:</span>
+                   <span class="n">resourcesdir</span><span class="p">:</span>    <span class="n">DFTB</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="mi">3</span><span class="n">ob</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="mi">1</span>
+              <span class="n">task</span><span class="p">:</span>
+                   <span class="n">runtype</span><span class="p">:</span>         <span class="n">GO</span>
+         <span class="n">dirac</span><span class="p">:</span>
+         <span class="n">gamess</span><span class="p">:</span>
+                <span class="n">basis</span><span class="p">:</span>
+                      <span class="n">gbasis</span><span class="p">:</span>       <span class="n">n21</span>
+                      <span class="n">ngauss</span><span class="p">:</span>       <span class="mi">3</span>
+                <span class="n">contrl</span><span class="p">:</span>
+                       <span class="n">dfttyp</span><span class="p">:</span>      <span class="n">pbe</span>
+                       <span class="n">runtyp</span><span class="p">:</span>      <span class="n">optimize</span>
+                       <span class="n">scftyp</span><span class="p">:</span>      <span class="n">rhf</span>
+         <span class="n">orca</span><span class="p">:</span>
+              <span class="n">basis</span><span class="p">:</span>
+                    <span class="n">basis</span><span class="p">:</span>  <span class="n">sto_sz</span>
+              <span class="n">method</span><span class="p">:</span>
+                     <span class="n">functional</span><span class="p">:</span>    <span class="n">lda</span>
+                     <span class="n">method</span><span class="p">:</span>        <span class="n">dft</span>
+                     <span class="n">runtyp</span><span class="p">:</span>        <span class="n">opt</span>
+</pre></div>
+</div>
+<p>The <em>overlay</em> method merged the template containing default settings for
+geometry optimizations with different packages with the arguments
+provided by the user</p>
+<p>resulting in:</p>
+<p>Note that the generic and specific keywords still exist next to each
+other and may not be consistent (e.g. different basis sets are defined
+in generic and specific keywords). Upon calling a package with a
+Settings object, the generic keywords are first translated into package
+specific keywords and combined with the relevant user defined specific
+keywords. In this step, the settings defined in generic keywords take
+preference. Subsequently, the input file(s) for the given package is/are
+generated, based on the keywords after <strong>specific.[package]</strong> based on
+the <a class="reference external" href="https://www.scm.com/doc/plams/index.html">PLAMS software</a>.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">adf</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">adf</span><span class="o">.</span><span class="n">generic2specific</span><span class="p">(</span><span class="n">merged_settings</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">basis</span><span class="p">:</span>      <span class="n">DZP</span>
+<span class="n">freeze</span><span class="p">:</span>     <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">specific</span><span class="p">:</span>
+         <span class="n">adf</span><span class="p">:</span>
+             <span class="n">basis</span><span class="p">:</span>
+                   <span class="n">core</span><span class="p">:</span>    <span class="n">large</span>
+                   <span class="nb">type</span><span class="p">:</span>    <span class="n">DZP</span>
+             <span class="n">constraints</span><span class="p">:</span>
+                         <span class="n">atom</span> <span class="mi">2</span><span class="p">:</span>
+                         <span class="n">atom</span> <span class="mi">3</span><span class="p">:</span>
+                         <span class="n">atom</span> <span class="mi">4</span><span class="p">:</span>
+             <span class="n">geometry</span><span class="p">:</span>
+                      <span class="n">optim</span><span class="p">:</span>        <span class="n">cartesian</span>
+             <span class="n">integration</span><span class="p">:</span>
+                         <span class="n">accint</span><span class="p">:</span>    <span class="mf">6.0</span>
+             <span class="n">scf</span><span class="p">:</span>
+                 <span class="n">converge</span><span class="p">:</span>  <span class="mf">1e-06</span>
+                 <span class="n">iterations</span><span class="p">:</span>        <span class="mi">100</span>
+             <span class="n">xc</span><span class="p">:</span>
+                <span class="n">__block_replace</span><span class="p">:</span>    <span class="kc">True</span>
+                <span class="n">lda</span><span class="p">:</span>
+         <span class="n">cp2k</span><span class="p">:</span>
+              <span class="n">force_eval</span><span class="p">:</span>
+                         <span class="n">dft</span><span class="p">:</span>
+                             <span class="n">basis_set_file_name</span><span class="p">:</span>
+                             <span class="n">mgrid</span><span class="p">:</span>
+                                   <span class="n">cutoff</span><span class="p">:</span>  <span class="mi">400</span>
+                                   <span class="n">ngrids</span><span class="p">:</span>  <span class="mi">4</span>
+                             <span class="n">potential_file_name</span><span class="p">:</span>
+                             <span class="n">qs</span><span class="p">:</span>
+                                <span class="n">method</span><span class="p">:</span>     <span class="n">gpw</span>
+                             <span class="n">scf</span><span class="p">:</span>
+                                 <span class="n">OT</span><span class="p">:</span>
+                                    <span class="n">N_DIIS</span><span class="p">:</span>         <span class="mi">7</span>
+                                    <span class="n">minimizer</span><span class="p">:</span>      <span class="n">DIIS</span>
+                                    <span class="n">preconditioner</span><span class="p">:</span>         <span class="n">full_single_inverse</span>
+                                 <span class="n">eps_scf</span><span class="p">:</span>   <span class="mf">1e-06</span>
+                                 <span class="n">max_scf</span><span class="p">:</span>   <span class="mi">200</span>
+                                 <span class="n">scf_guess</span><span class="p">:</span>         <span class="n">atomic</span>
+                             <span class="n">xc</span><span class="p">:</span>
+                                <span class="n">xc_functional</span><span class="p">:</span>      <span class="n">pbe</span>
+                         <span class="n">subsys</span><span class="p">:</span>
+                                <span class="n">cell</span><span class="p">:</span>
+                                     <span class="n">periodic</span><span class="p">:</span>      <span class="n">xyz</span>
+              <span class="k">global</span><span class="p">:</span>
+                     <span class="n">print_level</span><span class="p">:</span>   <span class="n">low</span>
+                     <span class="n">project</span><span class="p">:</span>       <span class="n">qmflows</span><span class="o">-</span><span class="n">cp2k</span>
+                     <span class="n">run_type</span><span class="p">:</span>      <span class="n">geometry_optimization</span>
+              <span class="n">motion</span><span class="p">:</span>
+                     <span class="n">geo_opt</span><span class="p">:</span>
+                             <span class="n">max_iter</span><span class="p">:</span>      <span class="mi">500</span>
+                             <span class="n">optimizer</span><span class="p">:</span>     <span class="n">bfgs</span>
+                             <span class="nb">type</span><span class="p">:</span>  <span class="n">minimization</span>
+         <span class="n">dftb</span><span class="p">:</span>
+              <span class="n">dftb</span><span class="p">:</span>
+                   <span class="n">resourcesdir</span><span class="p">:</span>    <span class="n">DFTB</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="mi">3</span><span class="n">ob</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="mi">1</span>
+              <span class="n">task</span><span class="p">:</span>
+                   <span class="n">runtype</span><span class="p">:</span>         <span class="n">GO</span>
+         <span class="n">dirac</span><span class="p">:</span>
+         <span class="n">gamess</span><span class="p">:</span>
+                <span class="n">basis</span><span class="p">:</span>
+                      <span class="n">gbasis</span><span class="p">:</span>       <span class="n">n21</span>
+                      <span class="n">ngauss</span><span class="p">:</span>       <span class="mi">3</span>
+                <span class="n">contrl</span><span class="p">:</span>
+                       <span class="n">dfttyp</span><span class="p">:</span>      <span class="n">pbe</span>
+                       <span class="n">runtyp</span><span class="p">:</span>      <span class="n">optimize</span>
+                       <span class="n">scftyp</span><span class="p">:</span>      <span class="n">rhf</span>
+         <span class="n">orca</span><span class="p">:</span>
+              <span class="n">basis</span><span class="p">:</span>
+                    <span class="n">basis</span><span class="p">:</span>  <span class="n">sto_sz</span>
+              <span class="n">method</span><span class="p">:</span>
+                     <span class="n">functional</span><span class="p">:</span>    <span class="n">lda</span>
+                     <span class="n">method</span><span class="p">:</span>        <span class="n">dft</span>
+                     <span class="n">runtyp</span><span class="p">:</span>        <span class="n">opt</span>
+</pre></div>
+</div>
+<p>In the case of adf the above keywords result in the following input file
+for ADF package:</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">adf_job</span> <span class="o">=</span> <span class="n">adf</span><span class="p">(</span><span class="n">merged_settings</span><span class="p">,</span> <span class="n">acetonitrile</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="s1">&#39;adf_acetonitrile&#39;</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">adf_job</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;tutorial_results&quot;</span><span class="p">,</span>
+             <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;run_two&quot;</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="s2">&quot;tutorial_cache.json&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;tutorial_results/run_two/adf_acetonitrile/adf_acetonitrile.in&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span>   [09:14:04] PLAMS working folder: /home/lars/workspace/qmflows/jupyterNotebooks/tutorial_results/run_two
+   ╭─(running jobs)
+   │ Running adf adf_acetonitrile...
+   [s[1A[50C([38;2;60;180;100m✔[0m)[u╰─(success)
+   atoms
+         1         C      2.419290      0.606560      0.000000
+         2         C      1.671470      1.829570      0.000000
+         3         N      1.065290      2.809960      0.000000
+         4         H      2.000000      0.000000      1.000000
+         5         H      2.000000      0.000000     -1.000000
+         6         H      3.600000      0.800000      0.000000
+   end
+
+   basis
+     core large
+     type DZP
+   end
+
+   constraints
+     atom 2
+     atom 3
+     atom 4
+   end
+
+   geometry
+     optim cartesian
+   end
+
+   integration
+     accint 6.0
+   end
+
+   scf
+     converge 1e-06
+     iterations 100
+   end
+
+   xc
+     lda
+   end
+
+   end input
+
+
+
+Combining multiple jobs
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>Multiple jobs can be combined, while calling the run function only once.
+The script below combines components outlined above:</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">plams</span> <span class="k">import</span> <span class="n">Molecule</span>
+<span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">dftb</span><span class="p">,</span> <span class="n">adf</span><span class="p">,</span> <span class="n">templates</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">Settings</span>
+
+<span class="n">acetonitrile</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">(</span><span class="s2">&quot;files/acetonitrile.xyz&quot;</span><span class="p">)</span>
+
+<span class="n">dftb_opt</span> <span class="o">=</span> <span class="n">dftb</span><span class="p">(</span><span class="n">templates</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">acetonitrile</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="s2">&quot;dftb_opt&quot;</span><span class="p">)</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+<span class="n">s</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s2">&quot;DZP&quot;</span>
+<span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">core</span> <span class="o">=</span> <span class="s2">&quot;large&quot;</span>
+<span class="n">adf_single</span> <span class="o">=</span> <span class="n">adf</span><span class="p">(</span><span class="n">templates</span><span class="o">.</span><span class="n">singlepoint</span><span class="o">.</span><span class="n">overlay</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">dftb_opt</span><span class="o">.</span><span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="s2">&quot;adf_single&quot;</span><span class="p">)</span>
+
+<span class="n">adf_result</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">adf_single</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;tutorial_results&quot;</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;workflow&quot;</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="s2">&quot;tutorial_cache.json&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">adf_result</span><span class="o">.</span><span class="n">molecule</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">adf_result</span><span class="o">.</span><span class="n">energy</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span>[09:15:08] PLAMS working folder: /home/lars/workspace/qmflows/jupyterNotebooks/tutorial_results/workflow
+╭─(running jobs)
+│ Running dftb dftb_opt...
+[s[1A[50C([38;2;60;180;100m✔[0m)[u│ Running adf adf_single...
+[s[1A[50C([38;2;60;180;100m✔[0m)[u╰─(success)
+  Atoms:
+    1         C      0.000000      0.000000      0.656511
+    2         C      0.000000      0.000000     -0.783088
+    3         N      0.000000      0.000000     -1.946913
+    4         H     -0.512221     -0.887193      1.022016
+    5         H      1.024442      0.000000      1.022016
+    6         H     -0.512221      0.887193      1.022016
+
+-1.4094874734528888
+</pre></div>
+</div>
+<p>In this case the second task adf_single reads the molecule optimized in
+the first job dftb_opt. Note that dftb_opt as well as
+dftb_opt.molecule are promised objects. When <strong>run</strong> is applied to the
+adf_single job, noodles builds a graph of dependencies and makes sure
+all the calculations required to obtain <strong>adf_result</strong> are performed.</p>
+<p>All data related to the calculations, i.e. input files generated by
+QMworks and the resulting output files generated by the QM packages are
+stored in folders named after the job_names, residing inside a results
+folder:</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">ls</span> <span class="n">tutorial_results</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span>[0m[01;34mrun_one[0m/  [01;34mrun_two[0m/  [01;34mworkflow[0m/
+</pre></div>
+</div>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">ls</span> <span class="n">tutorial_results</span><span class="o">/</span><span class="n">workflow</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span>[0m[01;34madf_single[0m/  [01;34mdftb_opt[0m/  workflow.log
+</pre></div>
+</div>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">ls</span> <span class="n">tutorial_results</span><span class="o">/</span><span class="n">workflow</span><span class="o">/</span><span class="n">adf_single</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span>adf_single.dill  adf_single.in   [0m[01;32madf_single.run[0m*  logfile  t21.H
+adf_single.err   adf_single.out  adf_single.t21   t21.C    t21.N
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tutorial.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="includeme.html" class="btn btn-neutral" title="QMFlows" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright .
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

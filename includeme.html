@@ -1,0 +1,387 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>QMFlows &mdash; QMWorks Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="QMWorks Documentation" href="index.html"/>
+        <link rel="next" title="Basic usage tutorial" href="interactive_tutorial.html"/>
+        <link rel="prev" title="Welcome to qmworks’s documentation!" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> qmworks
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">QMFlows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#description">Description</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tutorial-and-examples">Tutorial and Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dependencies-installation">Dependencies installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#package-installation">Package installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#latest-stable-version">Latest stable version</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#remote-xenon-setup">Remote/Xenon setup</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="interactive_tutorial.html">Basic usage tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Library Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">qmworks</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>QMFlows</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/includeme.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <a class="reference external image-reference" href="https://github.com/SCM-NV/qmflows/blob/master/LICENSE.md"><img alt="https://img.shields.io/github/license/SCM-NV/qmflows.svg?maxAge=2592000" src="https://img.shields.io/github/license/SCM-NV/qmflows.svg?maxAge=2592000" /></a>
+<a class="reference external image-reference" href="https://travis-ci.org/SCM-NV/qmflows"><img alt="https://travis-ci.org/SCM-NV/qmflows.svg?branch=master" src="https://travis-ci.org/SCM-NV/qmflows.svg?branch=master" /></a>
+<img alt="https://img.shields.io/badge/python-3.5-blue.svg" src="https://img.shields.io/badge/python-3.5-blue.svg" /><a class="reference external image-reference" href="https://www.codacy.com/app/tifonzafel/qmflows?utm_source=github.com&amp;amp;utm_medium=referral&amp;amp;utm_content=SCM-NV/qmflows&amp;amp;utm_campaign=Badge_Grade"><img alt="https://api.codacy.com/project/badge/Grade/7e95b6d4d873458daf0de5e4b3110885" src="https://api.codacy.com/project/badge/Grade/7e95b6d4d873458daf0de5e4b3110885" /></a>
+<a class="reference external image-reference" href="https://www.codacy.com/app/tifonzafel/qmflows?utm_source=github.com&amp;amp;utm_medium=referral&amp;amp;utm_content=SCM-NV/qmflows&amp;amp;utm_campaign=Badge_Coverage"><img alt="https://api.codacy.com/project/badge/Coverage/7e95b6d4d873458daf0de5e4b3110885" src="https://api.codacy.com/project/badge/Coverage/7e95b6d4d873458daf0de5e4b3110885" /></a>
+<div class="section" id="qmflows">
+<h1>QMFlows<a class="headerlink" href="#qmflows" title="Permalink to this headline">¶</a></h1>
+<p>See <a class="reference external" href="http://scm-nv.github.io/qmflows/">http://scm-nv.github.io/qmflows/</a> for tutorials and documentation.</p>
+<div class="section" id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
+<p>Research on modern computational quantum chemistry relies on a set of computational
+tools to carry out calculations. The complexity of the calculations usually requires
+intercommunication between the aforementioned tools, such communication is usually done
+through shell scripts that try to automate input/output actions like: launching
+the computations in a cluster, reading the resulting output and feeding the relevant
+numerical result to another program. Such scripts are difficult to maintain and extend,
+requiring a significant programming expertise to work with them. Being then desirable a
+set of automatic and extensible tools that allows to perform complex simulations in
+heterogeneous hardware platforms.</p>
+<p>This library tackles the construction and efficient execution of computational chemistry workflows.
+This allows computational chemists to use the emerging massively parallel compute environments in
+an easy manner and focus on interpretation of scientific data rather than on tedious job submission
+procedures and manual data processing.</p>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>This library consists of a set of modules written in Python 3.5 to
+automate the following tasks:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Input generation.</li>
+<li>Handle tasks dependencies (<a class="reference external" href="http://nlesc.github.io/noodles/">Noodles</a>).</li>
+<li>Advanced molecular manipulation capabilities with (<a class="reference external" href="http://www.rdkit.org">rdkit</a>).</li>
+<li>Numerical data storage and manipulation (<a class="reference external" href="http://www.h5py.org/">HDF5</a>).</li>
+<li>Jobs failure detection and recovery.</li>
+<li>Distribution in heterogeneous hardware platforms.</li>
+</ol>
+</div></blockquote>
+<div class="section" id="tutorial-and-examples">
+<h3>Tutorial and Examples<a class="headerlink" href="#tutorial-and-examples" title="Permalink to this headline">¶</a></h3>
+<p>A tutorial written as a <a class="reference external" href="http://jupyter.org/">jupyter-notebook</a> is available from: <a class="reference external" href="https://github.com/SCM-NV/qmflows/tree/master/jupyterNotebooks">tutorial-qmflows</a>. You can
+also access direclty more advanced <a class="reference external" href="https://github.com/SCM-NV/qmflows/tree/master/src/qmflows/examples">examples</a>.</p>
+</div>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Download miniconda for python &gt;= 3.5: <a class="reference external" href="http://conda.pydata.org/miniconda.html">miniconda</a> (also you can install the complete <a class="reference external" href="https://www.continuum.io/downloads">anaconda</a> version).</li>
+<li>Install according to: <a class="reference external" href="http://conda.pydata.org/docs/install/quick.html">installConda</a>.</li>
+<li>Reopen terminal (or type <code class="docutils literal"><span class="pre">source</span> <span class="pre">~/.bashrc</span></code>).</li>
+<li>Create a new virtual environment using the following commands:<ul>
+<li><code class="docutils literal"><span class="pre">conda</span> <span class="pre">create</span> <span class="pre">-n</span> <span class="pre">qmflows</span> <span class="pre">python=3.5</span></code></li>
+</ul>
+</li>
+<li>Activate the new virtual environment<ul>
+<li><code class="docutils literal"><span class="pre">source</span> <span class="pre">activate</span> <span class="pre">qmflows</span></code></li>
+</ul>
+</li>
+</ul>
+<p>To exit the virtual environment type  <code class="docutils literal"><span class="pre">source</span> <span class="pre">deactivate</span></code>.</p>
+<div class="section" id="dependencies-installation">
+<span id="dependecies"></span><h3>Dependencies installation<a class="headerlink" href="#dependencies-installation" title="Permalink to this headline">¶</a></h3>
+<p>Using the conda environment the following packages should be installed:</p>
+<ul class="simple">
+<li>install <a class="reference external" href="http://www.rdkit.org">rdkit</a> using the following command:<ul>
+<li><code class="docutils literal"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-y</span> <span class="pre">-q</span> <span class="pre">--name</span> <span class="pre">qmflows</span> <span class="pre">-c</span> <span class="pre">https://conda.anaconda.org/rdkit</span> <span class="pre">rdkit</span></code></li>
+</ul>
+</li>
+<li>install <a class="reference external" href="http://www.h5py.org/">HDF5</a> using conda:<ul>
+<li><code class="docutils literal"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-y</span> <span class="pre">-q</span> <span class="pre">--name</span> <span class="pre">qmflows</span> <span class="pre">-c</span> <span class="pre">anaconda</span> <span class="pre">h5py</span></code></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="package-installation">
+<span id="id1"></span><h3>Package installation<a class="headerlink" href="#package-installation" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">Type in your terminal,</p>
+<p><code class="docutils literal"><span class="pre">source</span> <span class="pre">activate</span> <span class="pre">qmflows</span></code></p>
+</li>
+<li><p class="first">Then</p>
+<p><code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">qmflows</span> <span class="pre">--upgrade</span></code></p>
+</li>
+</ul>
+<p>Now you are ready to use <em>qmflows</em>.</p>
+</div>
+<div class="section" id="latest-stable-version">
+<h3>Latest stable version<a class="headerlink" href="#latest-stable-version" title="Permalink to this headline">¶</a></h3>
+<p>If you want to install the latest stable version directly from github
+you can use the following command:</p>
+<blockquote>
+<div><p><code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">https://github.com/SCM-NV/qmflows/tarball/master#egg=qmflows</span></code></p>
+<blockquote>
+<div><p><strong>Notes:</strong></p>
+<ul class="simple">
+<li>Once the libraries and the virtual environment are installed, you only need to type
+<code class="docutils literal"><span class="pre">source</span> <span class="pre">activate</span> <span class="pre">qmflows</span></code> each time that you want to use the software.</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+</div>
+<div class="section" id="remote-xenon-setup">
+<span id="remote-setup"></span><h3>Remote/Xenon setup<a class="headerlink" href="#remote-xenon-setup" title="Permalink to this headline">¶</a></h3>
+<p>Qmflows supports running jobs over a variety of cluster computing schedulers
+like Slurm and Torque. You program and run your workflows from your laptop, but
+the jobs are run at the remote site. For this to work you need to setup Qmflows
+both locally and remotely. In addition you need to add a Bash script that loads
+the VirtualEnv and starts the Noodles remote worker. This remote worker acts as
+a pilot job, reading job descriptions from input and returning the results. If
+you defined the remote VirtualEnv with the name <cite>qmflows</cite>, the following Bash
+script gives an idea of what you need:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="c1"># comment/uncomment lines that you need</span>
+
+<span class="c1"># If you need ADF, and it is available in a module</span>
+module load adf/2016.102
+<span class="c1"># or if you installed it yourself</span>
+<span class="c1"># ADFHOME=${HOME}/.local/opt/adf</span>
+<span class="c1"># source ${ADFHOME}/bin/adfrc.sh</span>
+
+<span class="c1"># Point PLAMS to its place</span>
+<span class="nb">export</span> <span class="nv">PLAMSDEFAULTS</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">HOME</span><span class="si">}</span><span class="s2">/.local/src/plams/utils/plams_defaults.py&quot;</span>
+
+<span class="c1"># Go to the directory that contains this script</span>
+<span class="nb">cd</span> <span class="s2">&quot;</span><span class="k">$(</span>dirname <span class="s2">&quot;</span><span class="si">${</span><span class="nv">BASH_SOURCE</span><span class="p">[0]</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+
+<span class="c1"># Activate the VirtualEnv</span>
+<span class="nb">source</span> activate qmflows
+
+<span class="c1"># Start the remote worker</span>
+python -m noodles.worker <span class="si">${</span><span class="p">@:</span><span class="nv">2</span><span class="si">}</span>
+
+<span class="c1"># Bye!</span>
+<span class="nb">source</span> deactivate
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="interactive_tutorial.html" class="btn btn-neutral float-right" title="Basic usage tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to qmworks’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright .
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

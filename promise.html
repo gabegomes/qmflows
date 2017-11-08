@@ -1,0 +1,289 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Running a workflow &mdash; QMWorks Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="QMWorks Documentation" href="index.html"/>
+        <link rel="up" title="Library Documentation" href="documentation.html"/>
+        <link rel="next" title="Extracting numerical properties from output files" href="parsers.html"/>
+        <link rel="prev" title="Molkit" href="molkit.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> qmworks
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">QMFlows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interactive_tutorial.html">Basic usage tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="documentation.html">Library Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="settings.html">Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="templates.html">Templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dictionaries.html">Dictionaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packages.html">Packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="molkit.html">Molkit</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Running a workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parsers.html">Extracting numerical properties from output files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parsers.html#parsers">Parsers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hdf5.html">HDF5</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">qmworks</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="documentation.html">Library Documentation</a> &raquo;</li>
+        
+      <li>Running a workflow</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/promise.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="running-a-workflow">
+<h1>Running a workflow<a class="headerlink" href="#running-a-workflow" title="Permalink to this headline">¶</a></h1>
+<p>A workflow in <strong>QMWorks</strong> consist of a set of computations and the dependencies between them,
+explicitly declared by the user in the python script. This dependecies and the relation between
+them form an graph (specifically an acyclic direct graph) that represent these relations.</p>
+<p><strong>QMWorks</strong> Builds the aforemention graph in order to realize the workflow evaluation order. For instance the figure below represent a simulation where firstly a molecular geometry optimization is carried out using the <em>ADF</em> package and some user defined <code class="docutils literal"><span class="pre">Settings</span></code> for the <em>ADF</em> simulation package. Subsequently, using the optimized molecular geometry from the previous step and another <code class="docutils literal"><span class="pre">Settings</span></code> for an orca simulation a job to compute the molecular frequencies is carried out.</p>
+<img alt="_images/simple_graph.png" src="_images/simple_graph.png" />
+<p>A python script corresponding with this graph can be:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">plams</span> <span class="k">import</span> <span class="n">Molecule</span>
+<span class="kn">from</span> <span class="nn">qmworks</span> <span class="k">import</span> <span class="p">(</span><span class="n">adf</span><span class="p">,</span> <span class="n">orca</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">Settings</span><span class="p">)</span>
+
+<span class="c1"># ADF optimization</span>
+<span class="n">optmized_mol_adf</span> <span class="o">=</span> <span class="n">adf</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">acetonitrile</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="s1">&#39;acetonitrile_opt&#39;</span><span class="p">)</span>
+
+<span class="c1"># Orca Settings definition</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+<span class="n">s2</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">orca</span><span class="o">.</span><span class="n">main</span> <span class="o">=</span> <span class="s2">&quot;freq&quot;</span>
+<span class="n">s2</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">orca</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s1">&#39;sto_sz&#39;</span>
+<span class="n">s2</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">orca</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">functional</span> <span class="o">=</span> <span class="s1">&#39;lda&#39;</span>
+<span class="n">s2</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">orca</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;dft&#39;</span>
+
+<span class="c1"># Orca Frequencies</span>
+<span class="n">job_freq</span> <span class="o">=</span> <span class="n">orca</span><span class="p">(</span><span class="n">s2</span><span class="p">,</span> <span class="n">optmized_mol_adf</span><span class="p">)</span>
+
+<span class="c1"># Extract the frequencies from the Orca job</span>
+<span class="n">frequencies</span> <span class="o">=</span> <span class="n">job_freq</span><span class="o">.</span><span class="n">frequencies</span>
+
+<span class="c1"># Run the graph</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">frequencies</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Up to the invocation of the <code class="docutils literal"><span class="pre">run</span></code> function none of the computations have been executed,
+it is the <code class="docutils literal"><span class="pre">run</span></code> function which builds and executes the dependencies. Since <em>QMWorks</em> needs to figure out
+all the dependecies in the script, the <code class="docutils literal"><span class="pre">run</span></code> function takes as argument last dependency (or inner most dependy),
+which in this case are the frequencies. The reason behind this, is that from the last dependency it is possible to
+retrace all the dependecies.</p>
+<p><strong>QWorks</strong> uses  the <a class="reference external" href="http://nlesc.github.io/noodles/">noodles</a> library under the hook to takes care of the construction and
+execution of the dependecy graph.</p>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="parsers.html" class="btn btn-neutral float-right" title="Extracting numerical properties from output files" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="molkit.html" class="btn btn-neutral" title="Molkit" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright .
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

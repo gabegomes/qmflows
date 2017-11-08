@@ -1,0 +1,1222 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>&lt;no title&gt; &mdash; QMWorks Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="QMWorks Documentation" href="index.html"/>
+        <link rel="next" title="Library Documentation" href="documentation.html"/>
+        <link rel="prev" title="Basic usage tutorial" href="interactive_tutorial.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> qmworks
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">QMFlows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interactive_tutorial.html">Basic usage tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Library Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">qmworks</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>&lt;no title&gt;</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/tutorial.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <blockquote>
+<div>Table of content</div></blockquote>
+<hr class="docutils" />
+<ol class="arabic simple">
+<li><strong>Installation</strong></li>
+<li><strong>Packages</strong></li>
+<li><strong>Settings</strong></li>
+<li><strong>Templates</strong></li>
+<li><strong>Molecules</strong></li>
+<li>** Runinng a quantum mechanics simulation**</li>
+<li><strong>How the run function works?</strong></li>
+<li>** Advanced examples**</li>
+<li><strong>Exception handling</strong></li>
+</ol>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Installation in Unix</li>
+</ol>
+</div></blockquote>
+<hr class="docutils" />
+<ul>
+<li><div class="first line-block">
+<div class="line">conda installation. Type in your console the following command:</div>
+<div class="line"><code class="docutils literal"><span class="pre">bash</span>&#160;&#160;&#160; <span class="pre">wget</span> <span class="pre">https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh</span> <span class="pre">-O</span> <span class="pre">miniconda.sh</span></code></div>
+</div>
+</li>
+<li><div class="first line-block">
+<div class="line">then add miniconda to your path</div>
+<div class="line"><code class="docutils literal"><span class="pre">bash</span>&#160;&#160;&#160; <span class="pre">bash</span> <span class="pre">miniconda.sh</span> <span class="pre">-b</span> <span class="pre">-p</span> <span class="pre">$HOME/miniconda</span></code></div>
+</div>
+</li>
+<li><p class="first">create new virtual environment <code class="docutils literal"><span class="pre">bash</span>&#160;&#160;&#160; <span class="pre">conda</span> <span class="pre">create</span> <span class="pre">-q</span> <span class="pre">-n</span> <span class="pre">qmflows</span></code></p>
+</li>
+<li><p class="first">Install dependecies
+<code class="docutils literal"><span class="pre">bash</span>&#160;&#160;&#160;&#160; <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">--name</span> <span class="pre">qmflows</span> <span class="pre">-c</span> <span class="pre">anaconda</span> <span class="pre">hdf5</span>&#160;&#160;&#160; <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">--name</span> <span class="pre">qmflows</span> <span class="pre">-c</span> <span class="pre">https://conda.anaconda.org/rdkit</span> <span class="pre">rdkit</span></code></p>
+</li>
+<li><p class="first">Start environment <code class="docutils literal"><span class="pre">bash</span>&#160;&#160;&#160; <span class="pre">source</span> <span class="pre">activate</span> <span class="pre">qmflows</span></code></p>
+</li>
+<li><p class="first">install <strong>qmflows</strong></p>
+<div class="code bash highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">qmflows</span> <span class="o">--</span><span class="n">upgrade</span>
+</pre></div>
+</div>
+<p>** You are ready to start! **</p>
+</li>
+</ul>
+<blockquote>
+<div>Starting the environment</div></blockquote>
+<hr class="docutils" />
+<p>Once <em>QMWORKS</em> has been installed the user should run the following
+command to initialize the environment:</p>
+<div class="code bash highlight-default"><div class="highlight"><pre><span></span>[user@int1 ~]$ source activate qmflows
+discarding /home/user/anaconda3/bin from PATH
+prepending /home/user/anaconda3/envs/qmflows/bin to PATH
+(qmflows)[user@int1 ~]$ python --version
+Python 3.5.2 :: Anaconda custom (64-bit)
+</pre></div>
+</div>
+<p>To leave the environment the following command is used</p>
+<div class="code bash highlight-default"><div class="highlight"><pre><span></span>   (qmflows)[user@int1 ~]$ source deactivate
+   discarding /home/user/anaconda3/envs/qmflows/bin from PATH
+
+2. What is QMworks?
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>QMworks is a python library that enables executing complex workflows of
+interdependent quantum chemical (QM) calculations in python. It aims at
+providing a common interface to multiple QM packages, enabling easy and
+systematic generation of the calculation inputs, as well as facilitating
+automatic analysis of the results. Furthermore it is build on top of the
+powerful <a class="reference external" href="http://nlesc.github.io/noodles/">Noodles</a> framework for
+executing the calculations in parallel where possible. Together with the
+<a class="reference external" href="https://github.com/SCM-NV/PLAMS">Plams</a> library to interface with
+the different QM simulation packages.</p>
+<blockquote>
+<div>Packages</div></blockquote>
+<hr class="docutils" />
+<p>Currently <code class="docutils literal"><span class="pre">QMWorks</span></code> offers an interface with the following simulation
+softwares: * <a class="reference external" href="https://www.scm.com/">SCM</a> (ADF and DTFB) *
+<a class="reference external" href="https://www.cp2k.org/">CP2K</a> *
+<a class="reference external" href="https://orcaforum.cec.mpg.de/">ORCA</a> *
+<a class="reference external" href="http://www.msg.ameslab.gov/gamess/">GAMESS-US</a> *
+<a class="reference external" href="http://diracprogram.org/doku.php">DIRAC</a></p>
+<p>If you are interested in having support for other packages, request it
+using the <a class="reference external" href="https://github.com/SCM-NV/qmflows/issues">github-issues</a>
+system (Sorry but Gaussian is out of the menu!).</p>
+<p>With <code class="docutils literal"><span class="pre">qmflows</span></code> you can write a python script that simply calls one of
+the package objects <strong>adf, dftb, cp2k, orca, gamess</strong> or <strong>dirac</strong>. As
+arguments to the call, you need to provide a <code class="docutils literal"><span class="pre">Settings</span></code> objects
+defining the input of a calculation, a molecular geometry represented by
+an object called <code class="docutils literal"><span class="pre">Molecule</span></code>, and, optionally, a job name that enables
+you to find back the “raw” data of the calculation later on.</p>
+<blockquote>
+<div>Technical note:</div></blockquote>
+<hr class="docutils" />
+<p><code class="docutils literal"><span class="pre">It</span> <span class="pre">is</span> <span class="pre">the</span> <span class="pre">user</span> <span class="pre">responsability</span> <span class="pre">to</span> <span class="pre">install</span> <span class="pre">or</span> <span class="pre">load</span> <span class="pre">the</span> <span class="pre">simulation</span> <span class="pre">packages</span> <span class="pre">that</span> <span class="pre">he/she</span> <span class="pre">wants</span> <span class="pre">to</span> <span class="pre">use.</span> <span class="pre">In</span> <span class="pre">most</span> <span class="pre">supercomputers</span> <span class="pre">these</span> <span class="pre">simulation</span> <span class="pre">packages</span> <span class="pre">are</span> <span class="pre">available</span> <span class="pre">using</span> <span class="pre">a</span> <span class="pre">command</span> <span class="pre">like</span> <span class="pre">(consult</span> <span class="pre">your</span> <span class="pre">system</span> <span class="pre">administrator):</span></code></p>
+<div class="code bash highlight-default"><div class="highlight"><pre><span></span><span class="n">load</span> <span class="n">module</span> <span class="n">superAwesomeQuantumPackage</span><span class="o">/</span><span class="mf">3.141592</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Also</span> <span class="pre">some</span> <span class="pre">simulation</span> <span class="pre">packages</span> <span class="pre">required</span> <span class="pre">that</span> <span class="pre">you</span> <span class="pre">configure</span> <span class="pre">a</span> <span class="pre">``scratch</span></code> folder. For instance <em>Orca</em> requires a <code class="docutils literal"><span class="pre">SCR</span></code> folder to be defined while <em>ADF</em>  called it <code class="docutils literal"><span class="pre">SCM_TMPDIR</span></code>.``</p>
+<blockquote>
+<div><ol class="arabic simple" start="3">
+<li>QMWorks Settings</li>
+</ol>
+</div></blockquote>
+<hr class="docutils" />
+<p><em>Settings</em> are a subclass of python
+<a class="reference external" href="https://docs.python.org/3.5/tutorial/datastructures.html#dictionaries">dictionaries</a>
+to represent hierarchical structures, like</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">Settings</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+<span class="n">s</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">z</span>
+<span class="n">s</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">f</span>
+<span class="n">s</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">g</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>These hierachical resemble the input structure used in most quantum
+simulation package. For instance the basis set section in ADF is given
+by something like:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Basis</span>
+  <span class="n">Type</span> <span class="n">DZP</span>
+  <span class="n">Core</span> <span class="n">Large</span>
+<span class="n">End</span>
+</pre></div>
+</div>
+<p>We can resemble this structure using <strong>Settings</strong>,</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+<span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s2">&quot;DZP&quot;</span>
+<span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">core</span> <span class="o">=</span> <span class="s2">&quot;Large&quot;</span>
+</pre></div>
+</div>
+<p>We are creating the <em>adf</em> hierarchy under a key called <em>specific</em>, this
+key is used to differentiate keywords that are unique to a certain
+quantum package from those that can be used in several packages as we
+will see in the next section.</p>
+<p>similarly, we can define <code class="docutils literal"><span class="pre">Settings</span></code> for all the sections</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Basis</span>
+  <span class="n">Type</span> <span class="n">DZP</span>
+<span class="n">End</span>
+
+<span class="n">Constraints</span>
+  <span class="n">Dist</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mf">1.0</span>
+<span class="n">End</span>
+
+<span class="n">Geometry</span>
+  <span class="n">Optim</span> <span class="n">delocal</span>
+<span class="n">End</span>
+
+<span class="n">Integration</span>
+  <span class="n">Accint</span> <span class="mf">6.0</span>
+<span class="n">End</span>
+
+<span class="n">Scf</span>
+  <span class="n">Converge</span> <span class="mf">1e-06</span>
+  <span class="n">Iterations</span> <span class="mi">100</span>
+<span class="n">End</span>
+
+<span class="n">Xc</span>
+  <span class="n">Lda</span>
+<span class="n">End</span>
+</pre></div>
+</div>
+<p>Represented by the following code</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+
+<span class="c1"># Basis</span>
+<span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s2">&quot;DZP&quot;</span>
+<span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">core</span> <span class="o">=</span> <span class="s2">&quot;Large&quot;</span>
+
+<span class="c1"># Constrains</span>
+<span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">dist</span>  <span class="o">=</span> <span class="s2">&quot;1 2 1.0&quot;</span>
+
+<span class="c1">#Geometry</span>
+<span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">optim</span> <span class="o">=</span> <span class="s1">&#39;delocal&#39;</span>
+
+<span class="c1">#Integration</span>
+<span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">integration</span><span class="o">.</span><span class="n">accint</span> <span class="o">=</span> <span class="mf">6.0</span>
+
+<span class="c1"># SCF</span>
+<span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">scf</span><span class="o">.</span><span class="n">converge</span> <span class="o">=</span> <span class="mf">1e-6</span>
+<span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">scf</span><span class="o">.</span><span class="n">iterations</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="c1"># Functional</span>
+<span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">xc</span><span class="o">.</span><span class="n">lda</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">specific</span><span class="p">:</span>
+         <span class="n">adf</span><span class="p">:</span>
+             <span class="n">basis</span><span class="p">:</span>
+                   <span class="n">basis</span><span class="p">:</span>   <span class="n">DZP</span>
+                   <span class="n">core</span><span class="p">:</span>    <span class="n">Large</span>
+             <span class="n">constraints</span><span class="p">:</span>
+                         <span class="n">dist</span><span class="p">:</span>      <span class="mi">1</span> <span class="mi">2</span> <span class="mf">1.0</span>
+             <span class="n">geometry</span><span class="p">:</span>
+                      <span class="n">optim</span><span class="p">:</span>        <span class="n">delocal</span>
+             <span class="n">integration</span><span class="p">:</span>
+                         <span class="n">accint</span><span class="p">:</span>    <span class="mf">6.0</span>
+             <span class="n">scf</span><span class="p">:</span>
+                 <span class="n">converge</span><span class="p">:</span>  <span class="mf">1e-06</span>
+                 <span class="n">iterations</span><span class="p">:</span>        <span class="mi">100</span>
+             <span class="n">xc</span><span class="p">:</span>
+                <span class="n">lda</span><span class="p">:</span>
+</pre></div>
+</div>
+<p>You don’t need to explicitly declare the <code class="docutils literal"><span class="pre">end</span></code> keyword, <em>qmflows</em>
+knows how to hande them.</p>
+<blockquote>
+<div>Generic Keywords</div></blockquote>
+<hr class="docutils" />
+<p>Quantum chemistry packages use gaussian type orbitals (GTO) or slater
+type orbitals (STO) to perform the simulation. The packages use the same
+standards for the basis set and it will be really handy if we can
+defined a “generic” keyword for basis sets. Fortunately <code class="docutils literal"><span class="pre">qmflows</span></code>
+already offers such keyword that can be used among the packages that use
+the same basis standard,</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+<span class="n">s</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s2">&quot;DZP&quot;</span>
+</pre></div>
+</div>
+<p>Internally <strong>QMWorks</strong> will create a hierarchical structure representing
+basis <em>DZP</em> for the packages that can handle that basis set. Other
+generic keyowrds like: <code class="docutils literal"><span class="pre">functional</span></code>, <code class="docutils literal"><span class="pre">inithess</span></code>, etc. have been
+implemented.</p>
+<p>The Following table describes some of the available generic keywords and
+the Packages where the funcionality is implemented</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="39%" />
+<col width="39%" />
+<col width="22%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Generic Keyword</th>
+<th class="head">Packages</th>
+<th class="head">Descript
+ion</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>basis</td>
+<td>ADF, CP2K, Orca</td>
+<td>Set the
+Basis
+set</td>
+</tr>
+<tr class="row-odd"><td>cell_angles</td>
+<td>CP2K</td>
+<td>Specifie
+d
+the
+angles
+of the
+unit
+cell</td>
+</tr>
+<tr class="row-even"><td>cell_parameters</td>
+<td>CP2K</td>
+<td>Specifie
+d
+the
+vectors
+of the
+unit
+cell</td>
+</tr>
+<tr class="row-odd"><td>constraint</td>
+<td>ADF, Orca</td>
+<td>Constrai
+n
+the
+distance
+,
+angle or
+dihedral
+angle
+for a
+set of
+molecule
+s</td>
+</tr>
+<tr class="row-even"><td>freeze</td>
+<td>ADF, Gamess,
+Orca</td>
+<td>Freeze a
+set of
+atoms
+indicate
+d
+by their
+indexes
+or
+symbols</td>
+</tr>
+<tr class="row-odd"><td>functional</td>
+<td>ADF, CP2K</td>
+<td>Set the
+DFT
+function
+al</td>
+</tr>
+<tr class="row-even"><td>inithess</td>
+<td>ADF, Orca</td>
+<td>Provide
+an
+initial
+Hessian
+matrix</td>
+</tr>
+<tr class="row-odd"><td>optimize</td>
+<td>ADF, DFTB, Orca</td>
+<td>Perform
+a
+molecula
+r
+optimiza
+tion</td>
+</tr>
+<tr class="row-even"><td>selected_atoms</td>
+<td>ADF, Gamess,
+Orca</td>
+<td>Optimize
+the
+given
+set of
+atoms
+while
+keeping
+the rest
+fixed</td>
+</tr>
+<tr class="row-odd"><td>ts</td>
+<td>ADF, DFTB, Orca</td>
+<td>Carry
+out a
+transiti
+on
+state
+optimiza
+tion</td>
+</tr>
+</tbody>
+</table>
+<p>Note: <strong>QMworks</strong> Does not have chemical intuition and if you provide a
+meaningless keyword, like a wrong basis set it will not warm you.</p>
+<blockquote>
+<div><ol class="arabic simple" start="4">
+<li>Templates</li>
+</ol>
+</div></blockquote>
+<hr class="docutils" />
+<p>As has been shown so far, <strong>Settings</strong> can be specified in two ways:
+generic or specific. Generic keywords represent input properties that
+are present in most simulation packages like a <em>basis set</em> while
+<em>specific</em> keywords resemble the input structure of a given package.</p>
+<p><em>Generic</em> and <em>Specific</em> <strong>Settings</strong> can express both simple and
+complex simulation inputs, but it would be nice if we can pre-defined a
+set of templates for the most common quantum chemistry simulations like:
+single point calculations, geometry optimizations, transition state
+optimization, frequency calculations, etc. <em>qmflows</em> already has a
+pre-defined set of templates containing some defaults that the user can
+modify for her/his own purpose. <code class="docutils literal"><span class="pre">Templates</span></code> are stored inside the
+<code class="docutils literal"><span class="pre">qmflows.templates</span></code> module and are load from <em>JSON</em> files. A JSON file
+is basically a nested dictionary that is translated to a <code class="docutils literal"><span class="pre">Settings</span></code>
+object by <em>qmflows</em>.</p>
+<p>Below it is shown the defaults for single point calculation</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">templates</span>
+<span class="n">templates</span><span class="o">.</span><span class="n">singlepoint</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">_ipython_canary_method_should_not_exist_</span><span class="p">:</span>
+<span class="n">specific</span><span class="p">:</span>
+         <span class="n">adf</span><span class="p">:</span>
+             <span class="n">basis</span><span class="p">:</span>
+                   <span class="nb">type</span><span class="p">:</span>    <span class="n">SZ</span>
+             <span class="n">integration</span><span class="p">:</span>
+                         <span class="n">accint</span><span class="p">:</span>    <span class="mf">4.0</span>
+             <span class="n">scf</span><span class="p">:</span>
+                 <span class="n">converge</span><span class="p">:</span>  <span class="mf">1e-06</span>
+                 <span class="n">iterations</span><span class="p">:</span>        <span class="mi">100</span>
+             <span class="n">xc</span><span class="p">:</span>
+                <span class="n">__block_replace</span><span class="p">:</span>    <span class="kc">True</span>
+                <span class="n">lda</span><span class="p">:</span>
+         <span class="n">cp2k</span><span class="p">:</span>
+              <span class="n">force_eval</span><span class="p">:</span>
+                         <span class="n">dft</span><span class="p">:</span>
+                             <span class="n">basis_set_file_name</span><span class="p">:</span>
+                             <span class="n">mgrid</span><span class="p">:</span>
+                                   <span class="n">cutoff</span><span class="p">:</span>  <span class="mi">400</span>
+                                   <span class="n">ngrids</span><span class="p">:</span>  <span class="mi">4</span>
+                             <span class="n">potential_file_name</span><span class="p">:</span>
+                             <span class="nb">print</span><span class="p">:</span>
+                                   <span class="n">mo</span><span class="p">:</span>
+                                      <span class="n">add_last</span><span class="p">:</span>     <span class="n">numeric</span>
+                                      <span class="n">each</span><span class="p">:</span>
+                                           <span class="n">qs_scf</span><span class="p">:</span>  <span class="mi">0</span>
+                                      <span class="n">eigenvalues</span><span class="p">:</span>
+                                      <span class="n">eigenvectors</span><span class="p">:</span>
+                                      <span class="n">filename</span><span class="p">:</span>     <span class="o">./</span><span class="n">mo</span><span class="o">.</span><span class="n">data</span>
+                                      <span class="n">ndigits</span><span class="p">:</span>      <span class="mi">36</span>
+                                      <span class="n">occupation_numbers</span><span class="p">:</span>
+                             <span class="n">qs</span><span class="p">:</span>
+                                <span class="n">method</span><span class="p">:</span>     <span class="n">gpw</span>
+                             <span class="n">scf</span><span class="p">:</span>
+                                 <span class="n">added_mos</span><span class="p">:</span>
+                                 <span class="n">eps_scf</span><span class="p">:</span>   <span class="mf">1e-06</span>
+                                 <span class="n">max_scf</span><span class="p">:</span>   <span class="mi">200</span>
+                                 <span class="n">scf_guess</span><span class="p">:</span>         <span class="n">restart</span>
+                             <span class="n">xc</span><span class="p">:</span>
+                                <span class="n">xc_functional</span><span class="p">:</span>      <span class="n">pbe</span>
+                         <span class="n">subsys</span><span class="p">:</span>
+                                <span class="n">cell</span><span class="p">:</span>
+                                     <span class="n">periodic</span><span class="p">:</span>      <span class="n">xyz</span>
+              <span class="k">global</span><span class="p">:</span>
+                     <span class="n">print_level</span><span class="p">:</span>   <span class="n">low</span>
+                     <span class="n">project</span><span class="p">:</span>       <span class="n">qmflows</span><span class="o">-</span><span class="n">cp2k</span>
+                     <span class="n">run_type</span><span class="p">:</span>      <span class="n">energy_force</span>
+         <span class="n">dftb</span><span class="p">:</span>
+              <span class="n">dftb</span><span class="p">:</span>
+                   <span class="n">resourcesdir</span><span class="p">:</span>    <span class="n">DFTB</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="mi">3</span><span class="n">ob</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="mi">1</span>
+              <span class="n">task</span><span class="p">:</span>
+                   <span class="n">runtype</span><span class="p">:</span>         <span class="n">SP</span>
+         <span class="n">dirac</span><span class="p">:</span>
+               <span class="n">DIRAC</span><span class="p">:</span>       <span class="n">WAVEFUNCTION</span>
+               <span class="n">HAMILTONIAN</span><span class="p">:</span>         <span class="n">LEVY</span><span class="o">-</span><span class="n">LEBLOND</span>
+               <span class="n">WAVE</span> <span class="n">FUNCTION</span><span class="p">:</span>       <span class="n">SCF</span>
+         <span class="n">gamess</span><span class="p">:</span>
+                <span class="n">basis</span><span class="p">:</span>
+                      <span class="n">gbasis</span><span class="p">:</span>       <span class="n">sto</span>
+                      <span class="n">ngauss</span><span class="p">:</span>       <span class="mi">3</span>
+                <span class="n">contrl</span><span class="p">:</span>
+                       <span class="n">dfttyp</span><span class="p">:</span>      <span class="n">pbe</span>
+                       <span class="n">scftyp</span><span class="p">:</span>      <span class="n">rhf</span>
+         <span class="n">orca</span><span class="p">:</span>
+              <span class="n">basis</span><span class="p">:</span>
+                    <span class="n">basis</span><span class="p">:</span>  <span class="n">sto_sz</span>
+              <span class="n">method</span><span class="p">:</span>
+                     <span class="n">functional</span><span class="p">:</span>    <span class="n">lda</span>
+                     <span class="n">method</span><span class="p">:</span>        <span class="n">dft</span>
+</pre></div>
+</div>
+<p>The question is then, <em>how I can modify a template with my own changes?</em></p>
+<p>Suppose you are perfoming a bunch of constrained <em>DFT</em> optimizations
+using <code class="docutils literal"><span class="pre">ADF</span></code> . You need first to define a basis set and the constrains.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+<span class="c1"># Basis</span>
+<span class="n">s</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s2">&quot;DZP&quot;</span>
+<span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">core</span> <span class="o">=</span> <span class="s2">&quot;Large&quot;</span>
+
+<span class="c1"># Constrain</span>
+<span class="n">s</span><span class="o">.</span><span class="n">freeze</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>We use two <em>generic</em> keywords: <code class="docutils literal"><span class="pre">freeze</span></code> to indicate a constrain and
+<code class="docutils literal"><span class="pre">basis</span></code> to provide the basis set. Also, we introduce an specific
+<code class="docutils literal"><span class="pre">ADF</span></code> keywords <code class="docutils literal"><span class="pre">core</span> <span class="pre">=</span> <span class="pre">Large</span></code>. Now you merge your <strong>Settings</strong> with
+the correspoding template to carry out molecular geometry optimizations,
+using a method called <code class="docutils literal"><span class="pre">overlay</span></code>.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">templates</span>
+<span class="n">inp</span> <span class="o">=</span> <span class="n">templates</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">overlay</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">overlay</span></code> method takes as input a template containing a default
+set for different packages and also takes the arguments provided by the
+user, as shown schematically</p>
+<p>This <code class="docutils literal"><span class="pre">overlay</span></code> method merged the defaults for a given packages (<em>ADF</em>
+in this case) with the input supplied by the user, always given
+preference to the user input</p>
+<p>Below it is shown a combination of templates, generic and specific
+keywords to generate the input for a <code class="docutils literal"><span class="pre">CP2K</span></code> job</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">templates</span>
+
+<span class="c1"># Template</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">templates</span><span class="o">.</span><span class="n">singlepoint</span>
+
+<span class="c1"># Generic keywords</span>
+<span class="n">s</span><span class="o">.</span><span class="n">cell_angles</span> <span class="o">=</span> <span class="p">[</span><span class="mf">90.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">]</span>
+<span class="n">s</span><span class="o">.</span><span class="n">cell_parameters</span><span class="o">=</span>  <span class="mf">38.0</span>
+<span class="n">s</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s1">&#39;DZVP-MOLOPT-SR-GTH&#39;</span>
+<span class="n">s</span><span class="o">.</span><span class="n">potential</span> <span class="o">=</span><span class="s1">&#39;GTH-PBE&#39;</span>
+
+<span class="c1"># Specific Keywords</span>
+<span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">cp2k</span><span class="o">.</span><span class="n">force_eval</span><span class="o">.</span><span class="n">dft</span><span class="o">.</span><span class="n">scf</span><span class="o">.</span><span class="n">max_scf</span>  <span class="o">=</span> <span class="mi">100</span>
+<span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">cp2k</span><span class="o">.</span><span class="n">force_eval</span><span class="o">.</span><span class="n">subsys</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">periodic</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span>   <span class="n">_ipython_canary_method_should_not_exist_</span><span class="p">:</span>
+   <span class="n">basis</span><span class="p">:</span>      <span class="n">DZVP</span><span class="o">-</span><span class="n">MOLOPT</span><span class="o">-</span><span class="n">SR</span><span class="o">-</span><span class="n">GTH</span>
+   <span class="n">cell_angles</span><span class="p">:</span>        <span class="p">[</span><span class="mf">90.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">]</span>
+   <span class="n">cell_parameters</span><span class="p">:</span>    <span class="mf">38.0</span>
+   <span class="n">potential</span><span class="p">:</span>  <span class="n">GTH</span><span class="o">-</span><span class="n">PBE</span>
+   <span class="n">specific</span><span class="p">:</span>
+            <span class="n">adf</span><span class="p">:</span>
+                <span class="n">basis</span><span class="p">:</span>
+                      <span class="nb">type</span><span class="p">:</span>    <span class="n">SZ</span>
+                <span class="n">integration</span><span class="p">:</span>
+                            <span class="n">accint</span><span class="p">:</span>    <span class="mf">4.0</span>
+                <span class="n">scf</span><span class="p">:</span>
+                    <span class="n">converge</span><span class="p">:</span>  <span class="mf">1e-06</span>
+                    <span class="n">iterations</span><span class="p">:</span>        <span class="mi">100</span>
+                <span class="n">xc</span><span class="p">:</span>
+                   <span class="n">__block_replace</span><span class="p">:</span>    <span class="kc">True</span>
+                   <span class="n">lda</span><span class="p">:</span>
+            <span class="n">cp2k</span><span class="p">:</span>
+                 <span class="n">force_eval</span><span class="p">:</span>
+                            <span class="n">dft</span><span class="p">:</span>
+                                <span class="n">basis_set_file_name</span><span class="p">:</span>
+                                <span class="n">mgrid</span><span class="p">:</span>
+                                      <span class="n">cutoff</span><span class="p">:</span>  <span class="mi">400</span>
+                                      <span class="n">ngrids</span><span class="p">:</span>  <span class="mi">4</span>
+                                <span class="n">potential_file_name</span><span class="p">:</span>
+                                <span class="nb">print</span><span class="p">:</span>
+                                      <span class="n">mo</span><span class="p">:</span>
+                                         <span class="n">add_last</span><span class="p">:</span>     <span class="n">numeric</span>
+                                         <span class="n">each</span><span class="p">:</span>
+                                              <span class="n">qs_scf</span><span class="p">:</span>  <span class="mi">0</span>
+                                         <span class="n">eigenvalues</span><span class="p">:</span>
+                                         <span class="n">eigenvectors</span><span class="p">:</span>
+                                         <span class="n">filename</span><span class="p">:</span>     <span class="o">./</span><span class="n">mo</span><span class="o">.</span><span class="n">data</span>
+                                         <span class="n">ndigits</span><span class="p">:</span>      <span class="mi">36</span>
+                                         <span class="n">occupation_numbers</span><span class="p">:</span>
+                                <span class="n">qs</span><span class="p">:</span>
+                                   <span class="n">method</span><span class="p">:</span>     <span class="n">gpw</span>
+                                <span class="n">scf</span><span class="p">:</span>
+                                    <span class="n">added_mos</span><span class="p">:</span>
+                                    <span class="n">eps_scf</span><span class="p">:</span>   <span class="mf">1e-06</span>
+                                    <span class="n">max_scf</span><span class="p">:</span>   <span class="mi">100</span>
+                                    <span class="n">scf_guess</span><span class="p">:</span>         <span class="n">restart</span>
+                                <span class="n">xc</span><span class="p">:</span>
+                                   <span class="n">xc_functional</span><span class="p">:</span>      <span class="n">pbe</span>
+                            <span class="n">subsys</span><span class="p">:</span>
+                                   <span class="n">cell</span><span class="p">:</span>
+                                        <span class="n">periodic</span><span class="p">:</span>      <span class="kc">None</span>
+                 <span class="k">global</span><span class="p">:</span>
+                        <span class="n">print_level</span><span class="p">:</span>   <span class="n">low</span>
+                        <span class="n">project</span><span class="p">:</span>       <span class="n">qmflows</span><span class="o">-</span><span class="n">cp2k</span>
+                        <span class="n">run_type</span><span class="p">:</span>      <span class="n">energy_force</span>
+            <span class="n">dftb</span><span class="p">:</span>
+                 <span class="n">dftb</span><span class="p">:</span>
+                      <span class="n">resourcesdir</span><span class="p">:</span>    <span class="n">DFTB</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="mi">3</span><span class="n">ob</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="mi">1</span>
+                 <span class="n">task</span><span class="p">:</span>
+                      <span class="n">runtype</span><span class="p">:</span>         <span class="n">SP</span>
+            <span class="n">dirac</span><span class="p">:</span>
+                  <span class="n">DIRAC</span><span class="p">:</span>       <span class="n">WAVEFUNCTION</span>
+                  <span class="n">HAMILTONIAN</span><span class="p">:</span>         <span class="n">LEVY</span><span class="o">-</span><span class="n">LEBLOND</span>
+                  <span class="n">WAVE</span> <span class="n">FUNCTION</span><span class="p">:</span>       <span class="n">SCF</span>
+            <span class="n">gamess</span><span class="p">:</span>
+                   <span class="n">basis</span><span class="p">:</span>
+                         <span class="n">gbasis</span><span class="p">:</span>       <span class="n">sto</span>
+                         <span class="n">ngauss</span><span class="p">:</span>       <span class="mi">3</span>
+                   <span class="n">contrl</span><span class="p">:</span>
+                          <span class="n">dfttyp</span><span class="p">:</span>      <span class="n">pbe</span>
+                          <span class="n">scftyp</span><span class="p">:</span>      <span class="n">rhf</span>
+            <span class="n">orca</span><span class="p">:</span>
+                 <span class="n">basis</span><span class="p">:</span>
+                       <span class="n">basis</span><span class="p">:</span>  <span class="n">sto_sz</span>
+                 <span class="n">method</span><span class="p">:</span>
+                        <span class="n">functional</span><span class="p">:</span>    <span class="n">lda</span>
+                        <span class="n">method</span><span class="p">:</span>        <span class="n">dft</span>
+
+
+
+<span class="mf">5.</span> <span class="n">Molecule</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>The next component to carry out a simulation is a molecular geometry.
+<em>qmflows</em> offers a convinient way to read Molecular geometries using the
+<a class="reference external" href="https://www.scm.com/doc/plams/molecule.html">Plams</a> library in
+several formats like: <em>xyz</em> , <em>pdb</em>, <em>mol</em>, etc.</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">plams</span> <span class="k">import</span> <span class="n">Molecule</span>
+<span class="n">acetonitrile</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">(</span><span class="s2">&quot;files/acetonitrile.xyz&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">acetonitrile</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also create the molecule one atom at a time</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">plams</span> <span class="k">import</span> <span class="p">(</span><span class="n">Atom</span><span class="p">,</span> <span class="n">Molecule</span><span class="p">)</span>
+<span class="n">m</span>  <span class="o">=</span> <span class="n">Molecule</span><span class="p">()</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_atom</span><span class="p">(</span><span class="n">Atom</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="p">(</span><span class="mf">2.41929</span><span class="p">,</span> <span class="mf">0.60656</span> <span class="p">,</span> <span class="mf">0.0</span><span class="p">)))</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_atom</span><span class="p">(</span><span class="n">Atom</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="p">(</span><span class="mf">1.67147</span><span class="p">,</span>  <span class="mf">1.82957</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)))</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_atom</span><span class="p">(</span><span class="n">Atom</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="p">(</span><span class="mf">1.06529</span><span class="p">,</span> <span class="mf">2.80996</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)))</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_atom</span><span class="p">(</span><span class="n">Atom</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span>  <span class="n">coords</span><span class="o">=</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)))</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_atom</span><span class="p">(</span><span class="n">Atom</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span>  <span class="n">coords</span><span class="o">=</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)))</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_atom</span><span class="p">(</span><span class="n">Atom</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span>  <span class="n">coords</span><span class="o">=</span><span class="p">(</span><span class="mf">3.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>QMWorks</strong> Can also handle smiles as shown below</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows.molkit</span> <span class="k">import</span> <span class="n">from_smiles</span>
+
+<span class="c1"># String representing the smile</span>
+<span class="n">smile</span> <span class="o">=</span> <span class="s1">&#39;C1CC2(CCCCC2)C=C1&#39;</span>
+<span class="c1">#Molecule creation</span>
+<span class="n">mol</span> <span class="o">=</span> <span class="n">from_smiles</span><span class="p">(</span><span class="n">smile</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Atoms</span><span class="p">:</span>
+  <span class="mi">1</span>         <span class="n">C</span>      <span class="mf">2.798599</span>     <span class="o">-</span><span class="mf">0.150460</span>      <span class="mf">0.089927</span>
+  <span class="mi">2</span>         <span class="n">C</span>      <span class="mf">1.615862</span>     <span class="o">-</span><span class="mf">0.067227</span>     <span class="o">-</span><span class="mf">0.832063</span>
+  <span class="mi">3</span>         <span class="n">C</span>      <span class="mf">0.376333</span>      <span class="mf">0.019368</span>      <span class="mf">0.053118</span>
+  <span class="mi">4</span>         <span class="n">C</span>     <span class="o">-</span><span class="mf">0.347606</span>      <span class="mf">1.253513</span>     <span class="o">-</span><span class="mf">0.326955</span>
+  <span class="mi">5</span>         <span class="n">C</span>     <span class="o">-</span><span class="mf">1.822801</span>      <span class="mf">1.252517</span>     <span class="o">-</span><span class="mf">0.204840</span>
+  <span class="mi">6</span>         <span class="n">C</span>     <span class="o">-</span><span class="mf">2.446980</span>     <span class="o">-</span><span class="mf">0.058315</span>      <span class="mf">0.156076</span>
+  <span class="mi">7</span>         <span class="n">C</span>     <span class="o">-</span><span class="mf">1.752081</span>     <span class="o">-</span><span class="mf">1.139264</span>     <span class="o">-</span><span class="mf">0.623091</span>
+  <span class="mi">8</span>         <span class="n">C</span>     <span class="o">-</span><span class="mf">0.361478</span>     <span class="o">-</span><span class="mf">1.268307</span>     <span class="o">-</span><span class="mf">0.080395</span>
+  <span class="mi">9</span>         <span class="n">C</span>      <span class="mf">0.939434</span>      <span class="mf">0.095296</span>      <span class="mf">1.441284</span>
+ <span class="mi">10</span>         <span class="n">C</span>      <span class="mf">2.254053</span>      <span class="mf">0.292268</span>      <span class="mf">1.391042</span>
+ <span class="mi">11</span>         <span class="n">H</span>      <span class="mf">3.270712</span>     <span class="o">-</span><span class="mf">1.144983</span>      <span class="mf">0.118276</span>
+ <span class="mi">12</span>         <span class="n">H</span>      <span class="mf">3.579260</span>      <span class="mf">0.571882</span>     <span class="o">-</span><span class="mf">0.225622</span>
+ <span class="mi">13</span>         <span class="n">H</span>      <span class="mf">1.583048</span>     <span class="o">-</span><span class="mf">0.956205</span>     <span class="o">-</span><span class="mf">1.489932</span>
+ <span class="mi">14</span>         <span class="n">H</span>      <span class="mf">1.723819</span>      <span class="mf">0.828427</span>     <span class="o">-</span><span class="mf">1.481830</span>
+ <span class="mi">15</span>         <span class="n">H</span>     <span class="o">-</span><span class="mf">0.086390</span>      <span class="mf">1.553756</span>     <span class="o">-</span><span class="mf">1.374861</span>
+ <span class="mi">16</span>         <span class="n">H</span>      <span class="mf">0.059603</span>      <span class="mf">2.087392</span>      <span class="mf">0.301854</span>
+ <span class="mi">17</span>         <span class="n">H</span>     <span class="o">-</span><span class="mf">2.168065</span>      <span class="mf">1.989676</span>      <span class="mf">0.564557</span>
+ <span class="mi">18</span>         <span class="n">H</span>     <span class="o">-</span><span class="mf">2.314662</span>      <span class="mf">1.598505</span>     <span class="o">-</span><span class="mf">1.150678</span>
+ <span class="mi">19</span>         <span class="n">H</span>     <span class="o">-</span><span class="mf">3.508879</span>     <span class="o">-</span><span class="mf">0.050718</span>     <span class="o">-</span><span class="mf">0.200863</span>
+ <span class="mi">20</span>         <span class="n">H</span>     <span class="o">-</span><span class="mf">2.505664</span>     <span class="o">-</span><span class="mf">0.256055</span>      <span class="mf">1.238793</span>
+ <span class="mi">21</span>         <span class="n">H</span>     <span class="o">-</span><span class="mf">2.273284</span>     <span class="o">-</span><span class="mf">2.097029</span>     <span class="o">-</span><span class="mf">0.440451</span>
+ <span class="mi">22</span>         <span class="n">H</span>     <span class="o">-</span><span class="mf">1.722856</span>     <span class="o">-</span><span class="mf">0.837576</span>     <span class="o">-</span><span class="mf">1.680683</span>
+ <span class="mi">23</span>         <span class="n">H</span>      <span class="mf">0.171167</span>     <span class="o">-</span><span class="mf">1.989673</span>     <span class="o">-</span><span class="mf">0.753019</span>
+ <span class="mi">24</span>         <span class="n">H</span>     <span class="o">-</span><span class="mf">0.417079</span>     <span class="o">-</span><span class="mf">1.810866</span>      <span class="mf">0.897936</span>
+ <span class="mi">25</span>         <span class="n">H</span>      <span class="mf">0.453939</span>     <span class="o">-</span><span class="mf">0.226576</span>      <span class="mf">2.367445</span>
+ <span class="mi">26</span>         <span class="n">H</span>      <span class="mf">2.901995</span>      <span class="mf">0.510654</span>      <span class="mf">2.244971</span>
+<span class="n">Bonds</span><span class="p">:</span>
+ <span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">9</span><span class="p">)</span><span class="o">--</span><span class="mf">2.0</span><span class="o">--</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">17</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">19</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">21</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">22</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">23</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">9</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">25</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">--</span><span class="mf">1.0</span><span class="o">--</span><span class="p">(</span><span class="mi">26</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The Molecule class has an extensive functionally to carry out molecular
+manipulations, for a comprenhesive disccusion about it have a look at
+the <a class="reference external" href="https://www.scm.com/doc/plams/molecule.html">molecule
+documentation</a>. Also the
+module <code class="docutils literal"><span class="pre">qmflows.molkit</span></code> contains an extensive functionality to apply
+transformation over a molecule using the
+<a class="reference external" href="http://www.rdkit.org/">RDKit</a> library.</p>
+<blockquote>
+<div><ol class="arabic simple" start="6">
+<li>Runinng a quantum mechanics simulation</li>
+</ol>
+</div></blockquote>
+<hr class="docutils" />
+<p>We now have our components to perform a calculation: <strong>Settings</strong> and
+<strong>Molecule</strong>. We can now invoke a quantum chemistry package to perform
+the computation,</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">adf</span>
+<span class="n">optmized_mol_adf</span> <span class="o">=</span> <span class="n">adf</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">acetonitrile</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="s1">&#39;acetonitrile_opt&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>the previous code snippet <em>does not execute the code immediatly</em>,
+instead the simulation is started when the user invokes the run
+function, as shown below</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">plams</span> <span class="k">import</span> <span class="n">Molecule</span>
+<span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="p">(</span><span class="n">adf</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">Settings</span><span class="p">,</span> <span class="n">templates</span><span class="p">)</span>
+
+<span class="c1"># Settings</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">templates</span><span class="o">.</span><span class="n">geometry</span>
+<span class="n">s</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s2">&quot;DZP&quot;</span>
+<span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">core</span> <span class="o">=</span> <span class="s2">&quot;Large&quot;</span>
+<span class="n">s</span><span class="o">.</span><span class="n">freeze</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+<span class="c1"># molecule</span>
+<span class="kn">from</span> <span class="nn">plams</span> <span class="k">import</span> <span class="n">Molecule</span>
+<span class="n">acetonitrile</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">(</span><span class="s2">&quot;acetonitrile.xyz&quot;</span><span class="p">)</span>
+
+<span class="c1"># Job</span>
+<span class="n">optimized_mol_adf</span> <span class="o">=</span> <span class="n">adf</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">acetonitrile</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="s1">&#39;acetonitrile_opt&#39;</span><span class="p">)</span>
+
+<span class="c1"># run the  job</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">optimized_mol_adf</span><span class="o">.</span><span class="n">molecule</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s1">&#39;acetonitrile&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>you can run the previous script by saving it in a file called
+<code class="docutils literal"><span class="pre">acetonitrile_opt.py</span></code> and typing the following command in your
+console:</p>
+<div class="code bash highlight-default"><div class="highlight"><pre><span></span>(qmflows)[user@int1 ~]$ python acetonitrile_opt.py
+</pre></div>
+</div>
+<p>you will then see in your <code class="docutils literal"><span class="pre">current</span> <span class="pre">work</span> <span class="pre">directory</span></code> something similar
+to the following</p>
+<div class="code bash highlight-default"><div class="highlight"><pre><span></span>   (qmflows)[user@int1 ~]$ ls
+   acetonitrile      acetonitrile_opt.py   cache.json   acetonitrile.xyz
+
+acetonitrile is the folder containing the output from the quantum
+</pre></div>
+</div>
+<p>package call (<code class="docutils literal"><span class="pre">ADF</span></code> in this case). The <code class="docutils literal"><span class="pre">cache.json</span></code> file contains
+all the information required to perform a restart, as we will explore
+below. Inside the acetonitrile you can find the input/output files
+resulting from the simulation</p>
+<p><code class="docutils literal"><span class="pre">bash</span> <span class="pre">(qmflows)[user&#64;int1</span> <span class="pre">~]$</span> <span class="pre">ls</span> <span class="pre">acetonitrile</span>&#160;&#160; <span class="pre">acetonitrile.log</span>&#160; <span class="pre">acetonitrile_opt</span></code></p>
+<p><code class="docutils literal"><span class="pre">bash</span> <span class="pre">(qmflows)[user&#64;int1</span> <span class="pre">~]$</span> <span class="pre">ls</span> <span class="pre">acetonitrile/acetonitrile_opt</span>&#160; <span class="pre">acetonitrile_opt.dill</span>&#160; <span class="pre">acetonitrile_opt.out</span>&#160; <span class="pre">logfile</span>&#160; <span class="pre">t21.N</span>&#160; <span class="pre">acetonitrile_opt.err</span>&#160;&#160; <span class="pre">acetonitrile_opt.run</span>&#160; <span class="pre">t21.C</span>&#160; <span class="pre">acetonitrile_opt.in</span>&#160;&#160;&#160; <span class="pre">acetonitrile_opt.t21</span>&#160; <span class="pre">t21.H</span></code></p>
+<blockquote>
+<div>Extracting Properties</div></blockquote>
+<hr class="docutils" />
+<p>In general, properties are extracted using the standard
+<code class="docutils literal"><span class="pre">Object.attribute</span></code> notation in python, as shown below.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">optmized_mol_adf</span><span class="o">.</span><span class="n">molecule</span>
+</pre></div>
+</div>
+<p>Some of the available properties are shown in the following table,</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="22%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>dipole</td>
+<td>Double</td>
+<td>Molecular dipole mopment</td>
+</tr>
+<tr class="row-odd"><td>energy</td>
+<td>Double</td>
+<td>Total energy</td>
+</tr>
+<tr class="row-even"><td>enthalpy</td>
+<td>Double</td>
+<td>Enthalpy</td>
+</tr>
+<tr class="row-odd"><td>gradient</td>
+<td>Numpy array</td>
+<td>First derivatives of the energy</td>
+</tr>
+<tr class="row-even"><td>hessian</td>
+<td>Numpy array</td>
+<td>Second derivative of the energy</td>
+</tr>
+<tr class="row-odd"><td>molecule</td>
+<td>Molecule</td>
+<td>Object representing a physical entity</td>
+</tr>
+<tr class="row-even"><td>runtime</td>
+<td>Double</td>
+<td>Time spent in the simulation</td>
+</tr>
+</tbody>
+</table>
+<p>On the background <em>QMWorks</em> has a mechanism to read the properties from
+the output files and make them available inside Python.</p>
+<blockquote>
+<div>Communicating different packages</div></blockquote>
+<hr class="docutils" />
+<p>We can use the previous optimized geometry for further calculations
+using for instance another package like <em>Orca</em> to run a frequencies
+calculation,</p>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">orca</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+<span class="n">s2</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">orca</span><span class="o">.</span><span class="n">main</span> <span class="o">=</span> <span class="s2">&quot;freq&quot;</span>
+<span class="n">s2</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">orca</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s1">&#39;sto_sz&#39;</span>
+<span class="n">s2</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">orca</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">functional</span> <span class="o">=</span> <span class="s1">&#39;lda&#39;</span>
+<span class="n">s2</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">orca</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;dft&#39;</span>
+
+<span class="n">job_freq</span> <span class="o">=</span> <span class="n">orca</span><span class="p">(</span><span class="n">s2</span><span class="p">,</span> <span class="n">optmized_mol_adf</span><span class="p">)</span>
+
+<span class="n">frequencies</span> <span class="o">=</span> <span class="n">job_freq</span><span class="o">.</span><span class="n">frequencies</span>
+</pre></div>
+</div>
+<p>The whole script is</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="p">(</span><span class="n">adf</span><span class="p">,</span> <span class="n">orca</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">templates</span><span class="p">,</span> <span class="n">Settings</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">plams</span> <span class="k">import</span> <span class="n">Molecule</span>
+<span class="kn">import</span> <span class="nn">plams</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">templates</span><span class="o">.</span><span class="n">geometry</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s2">&quot;DZP&quot;</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">core</span> <span class="o">=</span> <span class="s2">&quot;large&quot;</span>
+
+    <span class="n">acetonitrile</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">(</span><span class="s2">&quot;files/acetonitrile.xyz&quot;</span><span class="p">)</span>
+    <span class="n">job</span> <span class="o">=</span> <span class="n">adf</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">acetonitrile</span><span class="p">)</span>
+    <span class="n">optmized_mol_adf</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">molecule</span>
+
+    <span class="n">s2</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+    <span class="n">s2</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">orca</span><span class="o">.</span><span class="n">main</span> <span class="o">=</span> <span class="s2">&quot;freq&quot;</span>
+    <span class="n">s2</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">orca</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s1">&#39;sto_sz&#39;</span>
+    <span class="n">s2</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">orca</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">functional</span> <span class="o">=</span> <span class="s1">&#39;lda&#39;</span>
+    <span class="n">s2</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">orca</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;dft&#39;</span>
+
+    <span class="n">job_freq</span> <span class="o">=</span> <span class="n">orca</span><span class="p">(</span><span class="n">s2</span><span class="p">,</span> <span class="n">optmized_mol_adf</span><span class="p">)</span>
+    <span class="n">frequencies</span> <span class="o">=</span> <span class="n">job_freq</span><span class="o">.</span><span class="n">frequencies</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">frequencies</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Once you run the script an input file for the <em>ADF</em> and <em>Orca</em> jobs are
+created. The <em>ADF</em> input looks like</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>   <span class="n">Atoms</span>
+         <span class="mi">1</span>         <span class="n">C</span>      <span class="mf">2.419290</span>      <span class="mf">0.606560</span>      <span class="mf">0.000000</span>
+         <span class="mi">2</span>         <span class="n">C</span>      <span class="mf">1.671470</span>      <span class="mf">1.829570</span>      <span class="mf">0.000000</span>
+         <span class="mi">3</span>         <span class="n">N</span>      <span class="mf">1.065290</span>      <span class="mf">2.809960</span>      <span class="mf">0.000000</span>
+         <span class="mi">4</span>         <span class="n">H</span>      <span class="mf">2.000000</span>      <span class="mf">0.000000</span>      <span class="mf">1.000000</span>
+         <span class="mi">5</span>         <span class="n">H</span>      <span class="mf">2.000000</span>      <span class="mf">0.000000</span>     <span class="o">-</span><span class="mf">1.000000</span>
+         <span class="mi">6</span>         <span class="n">H</span>      <span class="mf">3.600000</span>      <span class="mf">0.800000</span>      <span class="mf">0.000000</span>
+   <span class="n">End</span>
+
+   <span class="n">Basis</span>
+     <span class="n">Type</span> <span class="n">DZP</span>
+   <span class="n">End</span>
+
+   <span class="n">Constraints</span>
+     <span class="n">Atom</span> <span class="mi">1</span>
+     <span class="n">Atom</span> <span class="mi">2</span>
+     <span class="n">Atom</span> <span class="mi">3</span>
+   <span class="n">End</span>
+
+   <span class="n">Geometry</span>
+     <span class="n">Optim</span> <span class="n">cartesian</span>
+   <span class="n">End</span>
+
+   <span class="n">Integration</span>
+     <span class="n">Accint</span> <span class="mf">6.0</span>
+   <span class="n">End</span>
+
+   <span class="n">Scf</span>
+     <span class="n">Converge</span> <span class="mf">1e-06</span>
+     <span class="n">Iterations</span> <span class="mi">100</span>
+   <span class="n">End</span>
+
+<span class="n">Running</span> <span class="ow">in</span> <span class="n">a</span> <span class="n">supercomputer</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>Running in <strong>Cartesius</strong> or <strong>Bazis</strong> through the <em>Slurm</em> resource
+manager can be done using and script like</p>
+<div class="code bash highlight-default"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="c1">#SBATCH -t 00:10:00</span>
+<span class="c1">#SBATCH -N 1</span>
+<span class="c1">#SBATCH -n 8</span>
+
+<span class="n">module</span> <span class="n">load</span> <span class="n">orca</span>
+<span class="n">module</span> <span class="n">load</span> <span class="n">adf</span><span class="o">/</span><span class="mf">2016.102</span>
+
+<span class="n">source</span> <span class="n">activate</span> <span class="n">qmflows</span>
+<span class="n">python</span> <span class="n">optimization_ADF_freq_ORCA</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>The Slurm output looks like:</p>
+<p>``` load orca/3.0.3 (PATH) discarding
+/home/user/anaconda3/envs/qmflows/bin from PATH prepending
+/home/user/anaconda3/envs/qmflows/bin to PATH [11:17:59] PLAMS working
+folder: /nfs/home/user/orca/Opt/example/plams.23412 +-(running jobs) |
+Running adf … [11:17:59] Job ADFjob started [11:18:18] Job ADFjob
+finished with status ‘successful’ [11:18:18] Job ORCAjob started
+[11:18:26] Job ORCAjob finished with status ‘successful’</p>
+<p>[ 0. 0. 0. 0. 0. 0. -360.547382 -360.14986 953.943089 954.3062 1049.2305
+1385.756519 1399.961717 1399.979552 2602.599662 3080.45671 3175.710785
+3177.612274] ```</p>
+<blockquote>
+<div><ol class="arabic simple" start="7">
+<li>How the run function works?</li>
+</ol>
+</div></blockquote>
+<hr class="docutils" />
+<blockquote>
+<div>A little discussion about graphs</div></blockquote>
+<hr class="docutils" />
+<p><em>qmflows</em> is meant to be used for both workflow generation and
+execution. When you write a python script representing a workflow you
+are explicitly declaring set of computations and their dependencies. For
+instance the following workflow represent <em>ADF</em> and <em>Orca</em> computations
+of the aforementioned example. In this
+<a class="reference external" href="https://en.wikipedia.org/wiki/Graph_theory">graph</a> the octagons
+represent quantum simulation using a package, while the ovals represent
+both user input or data extracted from a simulation. Finally, the arrows
+(called edges) represent the dependencies between all these objects.</p>
+<p><strong>QMWorks</strong> automatically identify the dependencies between computations
+and run them in the correct order (if possible in parallel).</p>
+<blockquote>
+<div>Restarting a simulation</div></blockquote>
+<hr class="docutils" />
+<p>If you are running many computationally expensive calculations in a
+supercomputer, it can happen that the computations take more time than
+that allowed by the resource manager in your supercomputer and the
+workflows gets cancel. But do not worry, you do not need to re-run all
+the computations. Fortunately, <em>QMWorks</em> offers a mechanism to restart
+the workflow computations.</p>
+<p>When running a workflow you will see that <em>QMWorks</em> creates a set of
+files called <code class="docutils literal"><span class="pre">cache</span></code>. These files contain the information about the
+workflow and its calculation. <strong>In order to restart a workflow you only
+need to relaunch it</strong>, that’s it!</p>
+<blockquote>
+<div><ol class="arabic simple" start="8">
+<li>Advanced Examples</li>
+</ol>
+</div></blockquote>
+<hr class="docutils" />
+<blockquote>
+<div>Conditional Workflows</div></blockquote>
+<hr class="docutils" />
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">noodles</span> <span class="k">import</span> <span class="n">gather</span>
+<span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">dftb</span><span class="p">,</span> <span class="n">adf</span><span class="p">,</span> <span class="n">orca</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">Settings</span><span class="p">,</span> <span class="n">templates</span><span class="p">,</span> <span class="n">molkit</span><span class="p">,</span> <span class="n">find_first_job</span>
+
+<span class="c1"># This examples illustrates the possibility to use different packages interchangeably.</span>
+<span class="c1"># Analytical frequencies are not available for B3LYP in ADF</span>
+<span class="c1"># This workflow captures the resulting error and submits the same job to ORCA.</span>
+
+<span class="c1"># Define the condition for a successful calculation</span>
+<span class="k">def</span> <span class="nf">is_successful</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">status</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;failed&quot;</span><span class="p">,</span> <span class="s2">&quot;crashed&quot;</span><span class="p">]</span>
+
+<span class="c1"># Generate water molecule</span>
+<span class="n">water</span> <span class="o">=</span> <span class="n">molkit</span><span class="o">.</span><span class="n">from_smiles</span><span class="p">(</span><span class="s1">&#39;[OH2]&#39;</span><span class="p">,</span> <span class="n">forcefield</span><span class="o">=</span><span class="s1">&#39;mmff&#39;</span><span class="p">)</span>
+
+<span class="c1"># Pre-optimize the water molecule</span>
+<span class="n">opt_water</span> <span class="o">=</span> <span class="n">dftb</span><span class="p">(</span>
+     <span class="n">templates</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">water</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="s2">&quot;dftb_geometry&quot;</span><span class="p">)</span>
+
+<span class="n">jobs</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># Generate freq jobs for 3 functionals</span>
+<span class="k">for</span> <span class="n">functional</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pbe&#39;</span><span class="p">,</span> <span class="s1">&#39;b3lyp&#39;</span><span class="p">,</span> <span class="s1">&#39;blyp&#39;</span><span class="p">]:</span>
+    <span class="n">s</span><span class="o">=</span><span class="n">Settings</span><span class="p">()</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s1">&#39;DZ&#39;</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">functional</span> <span class="o">=</span> <span class="n">functional</span>
+    <span class="c1"># Try to perform the jobs with adf or orca</span>
+    <span class="c1"># take result from  first successful calculation</span>
+    <span class="n">freqjob</span> <span class="o">=</span> <span class="n">find_first_job</span><span class="p">(</span>
+          <span class="n">is_successful</span><span class="p">,</span> <span class="p">[</span><span class="n">adf</span><span class="p">,</span> <span class="n">orca</span><span class="p">],</span> <span class="n">templates</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">overlay</span><span class="p">(</span><span class="n">s</span><span class="p">),</span>
+          <span class="n">opt_water</span><span class="o">.</span><span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="n">functional</span><span class="p">)</span>
+    <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">freqjob</span><span class="p">)</span>
+
+<span class="c1"># Run workflow</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">jobs</span><span class="p">),</span> <span class="n">n_processes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>After running the above script you have a table like</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>   <span class="n">pbe</span>     <span class="mf">1533.267</span>   <span class="mf">3676.165</span>   <span class="mf">3817.097</span>
+   <span class="n">b3lyp</span>   <span class="mf">1515.799</span>   <span class="mf">3670.390</span>   <span class="mf">3825.813</span>
+   <span class="n">blyp</span>    <span class="mf">1529.691</span>   <span class="mf">3655.573</span>   <span class="mf">3794.110</span>
+
+<span class="n">Non</span><span class="o">-</span><span class="n">adiabatic</span> <span class="n">couplings</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<p><a class="reference external" href="https://github.com/SCM-NV/qmflows-namd">qmflows-namd</a> is a package
+based on <strong>QMWorks</strong> to compute the Non-adiabatic couplings for large
+system involving thr use of <strong>QMWorks</strong>, <a class="reference external" href="http://cython.org/">Cython</a>
+and <a class="reference external" href="http://www.numpy.org/">Numpy</a>.</p>
+<blockquote>
+<div><ol class="arabic simple" start="9">
+<li>Exception Handling</li>
+</ol>
+</div></blockquote>
+<hr class="docutils" />
+<p>Suppose you have a set of non-dependent calculations, for example single
+point calculations coming from a molecular dynamic trajectory, as shown
+in the figure below</p>
+<p>If one of the single point calculations fails, the rest of the point in
+the workflow will keep on running and the failed job will return a
+<strong>None</strong> value for the requested property.</p>
+<p>If the single point calculation would be the dependency of another
+quantum calculation then the computation will crash.</p>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="documentation.html" class="btn btn-neutral float-right" title="Library Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="interactive_tutorial.html" class="btn btn-neutral" title="Basic usage tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright .
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
