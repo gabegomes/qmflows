@@ -24,7 +24,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="genericSettings.html" />
+    <link rel="next" title="Dictionaries" href="dictionaries.html" />
     <link rel="prev" title="Settings" href="settings.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -49,7 +49,7 @@ that the user can either pick a specific package template or provides only gener
 keywords.</p>
 <div class="section" id="json-format">
 <span id="id1"></span><h2>JSON format<a class="headerlink" href="#json-format" title="Permalink to this headline">¶</a></h2>
-<p>The Java script object notation <strong>JSON</strong> is a widely used data format. This format is used together with the <a class="reference external" href="https://docs.python.org/2/library/json.html#module-json" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">json</span></code></a> module to implement the mechanism to load/unload the templates using the function <code class="xref py py-func docutils literal"><span class="pre">get_template()</span></code>.</p>
+<p>The Java script object notation <strong>JSON</strong> is a widely used data format. This format is used together with the <a class="reference external" href="https://docs.python.org/2/library/json.html#module-json" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">json</span></code></a> module to implement the mechanism to load/unload the templates using the function <a class="reference internal" href="#qmflows.templates.templates.get_template" title="qmflows.templates.templates.get_template"><code class="xref py py-func docutils literal"><span class="pre">get_template()</span></code></a>.</p>
 <p>For Example, the default parameter for a geometry optimization using ADF are given by:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;specific&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -88,10 +88,10 @@ keywords.</p>
      <span class="o">................</span>
 </pre></div>
 </div>
-<p>The templates in <cite>JSON</cite> format are translated to python dictionaries using the <code class="xref py py-func docutils literal"><span class="pre">get_template()</span></code>. This templates can be used by themselves in the calculations
+<p>The templates in <cite>JSON</cite> format are translated to python dictionaries using the <a class="reference internal" href="#qmflows.templates.templates.get_template" title="qmflows.templates.templates.get_template"><code class="xref py py-func docutils literal"><span class="pre">get_template()</span></code></a>. This templates can be used by themselves in the calculations
 or more keywords can be attached to them modifying the default values. For example the default values to carry a single point calculation using the <strong>ORCA</strong> quantum
 package are:</p>
-<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmworks.templates</span> <span class="k">import</span> <span class="n">singlepoint</span>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows.templates</span> <span class="k">import</span> <span class="n">singlepoint</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">singlepoint</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">orca</span><span class="p">)</span>
 
 <span class="n">basis</span><span class="p">:</span>
@@ -101,7 +101,25 @@ package are:</p>
        <span class="n">method</span><span class="p">:</span>       <span class="n">dft</span>
 </pre></div>
 </div>
-<p>We can easily replace the basis set just by updating the value in the <a href="#id2"><span class="problematic" id="id3">|Settings|</span></a> object that represent the single point calculation:</p>
+<p>We can easily replace the basis set just by updating the value in the <code class="xref py py-class docutils literal"><span class="pre">Settings</span></code> object that represent the single point calculation:</p>
+<dl class="function">
+<dt id="qmflows.templates.templates.get_template">
+<code class="descclassname">qmflows.templates.templates.</code><code class="descname">get_template</code><span class="sig-paren">(</span><em>template_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/templates/templates.html#get_template"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.templates.templates.get_template" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function <code class="xref py py-func docutils literal"><span class="pre">pkg_resources.resource_string()</span></code> search for the location
+of the <code class="docutils literal"><span class="pre">template_name</span></code> file inside the installation directory an returns
+a strings with its contain. This string is subsequently converted in a
+python <em>dict</em> object using <a class="reference external" href="https://docs.python.org/2/library/json.html#json.loads" title="(in Python v2.7)"><code class="xref py py-func docutils literal"><span class="pre">json.loads()</span></code></a> and finally recursively
+transform into a <code class="xref py py-class docutils literal"><span class="pre">Settings</span></code> object.
+Using this function there are created the default templates for the
+following common calculations:</p>
+<ul class="simple">
+<li>Singlepoint</li>
+<li>Geometry optimization</li>
+<li>Transition State optimization</li>
+<li>Frequencies</li>
+</ul>
+</dd></dl>
+
 </div>
 </div>
 
@@ -144,7 +162,7 @@ package are:</p>
   <li><a href="index.html">Documentation overview</a><ul>
   <li><a href="documentation.html">Library Documentation</a><ul>
       <li>Previous: <a href="settings.html" title="previous chapter">Settings</a></li>
-      <li>Next: <a href="genericSettings.html" title="next chapter">&lt;no title&gt;</a></li>
+      <li>Next: <a href="dictionaries.html" title="next chapter">Dictionaries</a></li>
   </ul></li>
   </ul></li>
 </ul>

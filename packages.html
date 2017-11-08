@@ -43,18 +43,18 @@
             
   <div class="section" id="packages">
 <h1>Packages<a class="headerlink" href="#packages" title="Permalink to this headline">¶</a></h1>
-<p>The base class <a href="#id1"><span class="problematic" id="id2">|Package|</span></a> is the library core, it provides the general scaffold to call a quantum code. On top of this infrastructure it has been created several subclasses that contain the specific details for each quantum code. The available interfaces to quantum codes are:</p>
+<p>The base class <code class="xref py py-class docutils literal"><span class="pre">Package</span></code> is the library core, it provides the general scaffold to call a quantum code. On top of this infrastructure it has been created several subclasses that contain the specific details for each quantum code. The available interfaces to quantum codes are:</p>
 <ul class="simple">
-<li><code class="xref py py-class docutils literal"><span class="pre">ADF</span></code></li>
-<li><code class="xref py py-class docutils literal"><span class="pre">DFTB</span></code></li>
-<li><code class="xref py py-class docutils literal"><span class="pre">CP2K</span></code></li>
-<li><code class="xref py py-class docutils literal"><span class="pre">DIRAC</span></code></li>
-<li><code class="xref py py-class docutils literal"><span class="pre">GAMESS</span></code></li>
-<li><code class="xref py py-class docutils literal"><span class="pre">ORCA</span></code></li>
+<li><a class="reference internal" href="#qmflows.packages.SCM.ADF" title="qmflows.packages.SCM.ADF"><code class="xref py py-class docutils literal"><span class="pre">ADF</span></code></a></li>
+<li><a class="reference internal" href="#qmflows.packages.SCM.DFTB" title="qmflows.packages.SCM.DFTB"><code class="xref py py-class docutils literal"><span class="pre">DFTB</span></code></a></li>
+<li><a class="reference internal" href="#qmflows.packages.cp2k_package.CP2K" title="qmflows.packages.cp2k_package.CP2K"><code class="xref py py-class docutils literal"><span class="pre">CP2K</span></code></a></li>
+<li><a class="reference internal" href="#qmflows.packages.dirac.DIRAC" title="qmflows.packages.dirac.DIRAC"><code class="xref py py-class docutils literal"><span class="pre">DIRAC</span></code></a></li>
+<li><a class="reference internal" href="#qmflows.packages.gamess.GAMESS" title="qmflows.packages.gamess.GAMESS"><code class="xref py py-class docutils literal"><span class="pre">GAMESS</span></code></a></li>
+<li><a class="reference internal" href="#qmflows.packages.orca.ORCA" title="qmflows.packages.orca.ORCA"><code class="xref py py-class docutils literal"><span class="pre">ORCA</span></code></a></li>
 </ul>
 <p><strong>This class must not be call directly</strong>, instead the correspoding class for the quantum package should be called or in case that there is not an interface to your quantum code, you can make a new subclass that implement the following method:</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">run_job</span></code> – This methods takes a <a href="#id3"><span class="problematic" id="id4">|Settings|</span></a> object a molecule and call a function to create the input automatically and takes cares of the bookkeeping associated with creating new folders, calling the package and retrieving and Object-result.</li>
+<li><code class="docutils literal"><span class="pre">run_job</span></code> – This methods takes a <code class="xref py py-class docutils literal"><span class="pre">Settings</span></code> object a molecule and call a function to create the input automatically and takes cares of the bookkeeping associated with creating new folders, calling the package and retrieving and Object-result.</li>
 </ul>
 <p>Instead of implementing all the runners and the bookkeeping functions ourselves, we use the <a class="reference external" href="https://www.scm.com/doc/Scripting/PLAMS/PLAMS.html">plams</a> library.</p>
 <p>For example to carry out a simulation using ADF we call plams as follows</p>
@@ -64,21 +64,381 @@
 <p>See :ref: running for more details about job execution.</p>
 <div class="section" id="api">
 <h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="qmflows.packages.Package">
+<em class="property">class </em><code class="descclassname">qmflows.packages.</code><code class="descname">Package</code><span class="sig-paren">(</span><em>pkg_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/packages.html#Package"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.Package" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal"><span class="pre">Package</span></code> is the base class to handle the invocation to different
+quantum package.
+The only relevant attribute of this class is <code class="docutils literal"><span class="pre">self.pkg_name</span></code> which is a
+string representing the quantum package name that is going to be used to
+carry out the compuation.</p>
+<p>Only two arguments are required</p>
+<dl class="method">
+<dt id="qmflows.packages.Package.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>settings</em>, <em>mol</em>, <em>job_name=''</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/packages.html#Package.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.Package.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>(scheduled)</em> 
+This function performs a job with the package specified by
+self.pkg_name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>settings</strong> (<code class="xref py py-class docutils literal"><span class="pre">Settings</span></code>) – user settings</li>
+<li><strong>mol</strong> (<em>plams Molecule</em>) – Molecule to run the calculation.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qmflows.packages.Package.generic2specific">
+<code class="descname">generic2specific</code><span class="sig-paren">(</span><em>settings</em>, <em>mol=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/packages.html#Package.generic2specific"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.Package.generic2specific" title="Permalink to this definition">¶</a></dt>
+<dd><p>Traverse all the key, value pairs of the <code class="docutils literal"><span class="pre">settings</span></code>, translating
+the generic keys into package specific keys as defined in the specific
+dictionary. If one key is not in the specific dictionary an error
+is raised. These new specific settings take preference over existing
+specific settings.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>settings</strong> (<em>Settings</em>) – Settings provided by the user.</li>
+<li><strong>mol</strong> (<em>plams Molecule</em>) – Molecule to run the calculation.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qmflows.packages.Package.get_generic_dict">
+<code class="descname">get_generic_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/packages.html#Package.get_generic_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.Package.get_generic_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the JSON file containing the translation from generic to
+the specific keywords of <code class="docutils literal"><span class="pre">self.pkg_name</span></code>.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="qmflows.packages.Package.handle_special_keywords">
+<em class="property">static </em><code class="descname">handle_special_keywords</code><span class="sig-paren">(</span><em>settings</em>, <em>key</em>, <em>value</em>, <em>mol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/packages.html#Package.handle_special_keywords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.Package.handle_special_keywords" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method should be implemented by the child class.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="qmflows.packages.Package.run_job">
+<em class="property">static </em><code class="descname">run_job</code><span class="sig-paren">(</span><em>settings</em>, <em>mol</em>, <em>job_name=None</em>, <em>work_dir=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/packages.html#Package.run_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.Package.run_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method should be implemented by the child class.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="scm">
 <h2>SCM<a class="headerlink" href="#scm" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="qmflows.packages.SCM.ADF">
+<em class="property">class </em><code class="descclassname">qmflows.packages.SCM.</code><code class="descname">ADF</code><a class="reference internal" href="_modules/qmflows/packages/SCM.html#ADF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.SCM.ADF" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class takes care of calling the <em>ADF</em> quantum package.
+it uses both Plams and the Templates module to create the input
+files, while Plams takes care of running the Job.
+It returns a <code class="docutils literal"><span class="pre">ADF_Result</span></code> object containing the output data.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="qmflows.packages.SCM.ADF_Result">
+<em class="property">class </em><code class="descclassname">qmflows.packages.SCM.</code><code class="descname">ADF_Result</code><span class="sig-paren">(</span><em>settings</em>, <em>molecule</em>, <em>job_name</em>, <em>path_t21</em>, <em>plams_dir=None</em>, <em>status='done'</em>, <em>warnings=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/SCM.html#ADF_Result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.SCM.ADF_Result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class providing access to PLAMS ADFJob result results</p>
+<dl class="classmethod">
+<dt id="qmflows.packages.SCM.ADF_Result.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>settings</em>, <em>molecule</em>, <em>job_name</em>, <em>archive</em>, <em>status</em>, <em>warnings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/SCM.html#ADF_Result.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.SCM.ADF_Result.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Methods to deserialize an <cite>ADF_Result</cite> object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qmflows.packages.SCM.ADF_Result.molecule">
+<code class="descname">molecule</code><a class="headerlink" href="#qmflows.packages.SCM.ADF_Result.molecule" title="Permalink to this definition">¶</a></dt>
+<dd><p>WARNING: Cheap copy from PLAMS, do not keep this!!!</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="qmflows.packages.SCM.DFTB">
+<em class="property">class </em><code class="descclassname">qmflows.packages.SCM.</code><code class="descname">DFTB</code><a class="reference internal" href="_modules/qmflows/packages/SCM.html#DFTB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.SCM.DFTB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add some documentation to this class</p>
+<dl class="staticmethod">
+<dt id="qmflows.packages.SCM.DFTB.handle_special_keywords">
+<em class="property">static </em><code class="descname">handle_special_keywords</code><span class="sig-paren">(</span><em>settings</em>, <em>key</em>, <em>value</em>, <em>mol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/SCM.html#DFTB.handle_special_keywords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.SCM.DFTB.handle_special_keywords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translate generic keywords to their corresponding Orca keywords.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="qmflows.packages.SCM.DFTB.run_job">
+<em class="property">static </em><code class="descname">run_job</code><span class="sig-paren">(</span><em>settings</em>, <em>mol</em>, <em>job_name='DFTBjob'</em>, <em>nproc=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/SCM.html#DFTB.run_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.SCM.DFTB.run_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute an DFTB job with the <em>ADF</em> quantum package.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>settings</strong> (<code class="xref py py-class docutils literal"><span class="pre">Settings</span></code>) – user input settings.</li>
+<li><strong>mol</strong> (<em>Plams Molecule</em>) – Molecule to run the simulation</li>
+<li><strong>input_file_name</strong> (<em>String</em>) – The user can provide a name for the
+job input.</li>
+<li><strong>out_file_name</strong> (<em>String</em>) – The user can provide a name for the
+job output.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#qmflows.packages.SCM.DFTB_Result" title="qmflows.packages.SCM.DFTB_Result"><code class="xref py py-class docutils literal"><span class="pre">DFTB_Result</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="qmflows.packages.SCM.DFTB_Result">
+<em class="property">class </em><code class="descclassname">qmflows.packages.SCM.</code><code class="descname">DFTB_Result</code><span class="sig-paren">(</span><em>settings</em>, <em>molecule</em>, <em>job_name</em>, <em>plams_dir=None</em>, <em>status='done'</em>, <em>warnings=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/SCM.html#DFTB_Result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.SCM.DFTB_Result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class providing access to PLAMS DFTBJob result results</p>
+<dl class="attribute">
+<dt id="qmflows.packages.SCM.DFTB_Result.molecule">
+<code class="descname">molecule</code><a class="headerlink" href="#qmflows.packages.SCM.DFTB_Result.molecule" title="Permalink to this definition">¶</a></dt>
+<dd><p>WARNING: Cheap copy from PLAMS, do not keep this!!!</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="cp2k">
 <h2>CP2k<a class="headerlink" href="#cp2k" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="qmflows.packages.cp2k_package.CP2K">
+<em class="property">class </em><code class="descclassname">qmflows.packages.cp2k_package.</code><code class="descname">CP2K</code><a class="reference internal" href="_modules/qmflows/packages/cp2k_package.html#CP2K"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.cp2k_package.CP2K" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class setup the requirement to run a CP2K Job &lt;<a class="reference external" href="https://www.cp2k.org/">https://www.cp2k.org/</a>&gt;.
+It uses plams together with the templates to generate the stucture input
+and also uses Plams to invoke the binary CP2K code.
+This class is not intended to be called directly by the user, instead the
+<strong>cp2k</strong> function should be called.</p>
+<dl class="staticmethod">
+<dt id="qmflows.packages.cp2k_package.CP2K.handle_special_keywords">
+<em class="property">static </em><code class="descname">handle_special_keywords</code><span class="sig-paren">(</span><em>settings</em>, <em>key</em>, <em>value</em>, <em>mol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/cp2k_package.html#CP2K.handle_special_keywords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.cp2k_package.CP2K.handle_special_keywords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the settings input for complex cp2k keys</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>settings</strong> (<code class="xref py py-class docutils literal"><span class="pre">Settings</span></code>) – Job Settings.</li>
+<li><strong>key</strong> – Special key declared in <code class="docutils literal"><span class="pre">settings</span></code>.</li>
+<li><strong>value</strong> – Value store in <code class="docutils literal"><span class="pre">settings</span></code>.</li>
+<li><strong>mol</strong> (<em>plams Molecule</em>) – molecular Geometry</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="qmflows.packages.cp2k_package.CP2K.run_job">
+<em class="property">static </em><code class="descname">run_job</code><span class="sig-paren">(</span><em>settings</em>, <em>mol</em>, <em>job_name='cp2k_job'</em>, <em>work_dir=None</em>, <em>terminate_job_in_case_of_warnings=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/cp2k_package.html#CP2K.run_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.cp2k_package.CP2K.run_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call the Cp2K binary using plams interface.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>settings</strong> (<code class="xref py py-class docutils literal"><span class="pre">Settings</span></code>) – Job Settings.</li>
+<li><strong>mol</strong> (<em>plams Molecule</em>) – molecular Geometry</li>
+<li><strong>hdf5_file</strong> – Path to the HDF5 file that contains the</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>numerical results.
+:type hdf5_file: String
+:param input_file_name: Optional name for the input.
+:type input_file_name: String
+:param out_file_name: Optional name for the output.
+:type out_file_name: String
+:param store_in_hdf5: wether to store the output arrays in HDF5 format.
+:type store_in_hdf5: Bool</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="qmflows.packages.cp2k_package.CP2K_Result">
+<em class="property">class </em><code class="descclassname">qmflows.packages.cp2k_package.</code><code class="descname">CP2K_Result</code><span class="sig-paren">(</span><em>settings</em>, <em>molecule</em>, <em>job_name</em>, <em>plams_dir</em>, <em>work_dir=None</em>, <em>properties='data/dictionaries/propertiesCP2K.json'</em>, <em>status='successful'</em>, <em>warnings=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/cp2k_package.html#CP2K_Result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.cp2k_package.CP2K_Result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class providing access to CP2K result.</p>
+<dl class="classmethod">
+<dt id="qmflows.packages.cp2k_package.CP2K_Result.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>settings</em>, <em>molecule</em>, <em>job_name</em>, <em>archive</em>, <em>status</em>, <em>warnings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/cp2k_package.html#CP2K_Result.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.cp2k_package.CP2K_Result.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a <code class="xref py py-class docutils literal"><span class="pre">CP2K_Result</span></code> instance using the data serialized in
+a dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>cls</strong> – </li>
+<li><strong>settings</strong> – Job Settings.</li>
+<li><strong>molecule</strong> – molecular Geometry.</li>
+<li><strong>job_name</strong> – Name of the job.</li>
+<li><strong>plams_dir</strong> – Absolute path to plams output folder</li>
+<li><strong>archive</strong> – dictionary containing the paths to the input/output</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>folders.
+:param path_hdf5: Path to the HDF5 file that contains the numerical
+results.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="dirac">
 <h2>DIRAC<a class="headerlink" href="#dirac" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="qmflows.packages.dirac.DIRAC">
+<em class="property">class </em><code class="descclassname">qmflows.packages.dirac.</code><code class="descname">DIRAC</code><a class="reference internal" href="_modules/qmflows/packages/dirac.html#DIRAC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.dirac.DIRAC" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="staticmethod">
+<dt id="qmflows.packages.dirac.DIRAC.handle_special_keywords">
+<em class="property">static </em><code class="descname">handle_special_keywords</code><span class="sig-paren">(</span><em>settings</em>, <em>key</em>, <em>value</em>, <em>mol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/dirac.html#DIRAC.handle_special_keywords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.dirac.DIRAC.handle_special_keywords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the settings input for complex Dirac keywords</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="qmflows.packages.dirac.DIRAC_Result">
+<em class="property">class </em><code class="descclassname">qmflows.packages.dirac.</code><code class="descname">DIRAC_Result</code><span class="sig-paren">(</span><em>settings</em>, <em>molecule</em>, <em>job_name</em>, <em>plams_dir</em>, <em>status='done'</em>, <em>warnings=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/dirac.html#DIRAC_Result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.dirac.DIRAC_Result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to access <strong>DIRAC</strong> Results.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="gamess-us">
 <h2>GAMESS-US<a class="headerlink" href="#gamess-us" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="qmflows.packages.gamess.GAMESS">
+<em class="property">class </em><code class="descclassname">qmflows.packages.gamess.</code><code class="descname">GAMESS</code><a class="reference internal" href="_modules/qmflows/packages/gamess.html#GAMESS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.gamess.GAMESS" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class setup the requirement to run a Gamess-US Job
+&lt;<a class="reference external" href="http://www.msg.ameslab.gov/gamess/">http://www.msg.ameslab.gov/gamess/</a>&gt;.
+It uses plams together with the templates to generate the stucture input
+and also uses Plams to invoke the <code class="docutils literal"><span class="pre">rungms</span></code> script.
+This class is not intended to be called directly by the user, instead the
+<strong>gamess</strong> function should be called.</p>
+<dl class="staticmethod">
+<dt id="qmflows.packages.gamess.GAMESS.handle_special_keywords">
+<em class="property">static </em><code class="descname">handle_special_keywords</code><span class="sig-paren">(</span><em>settings</em>, <em>key</em>, <em>value</em>, <em>mol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/gamess.html#GAMESS.handle_special_keywords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.gamess.GAMESS.handle_special_keywords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the settings input for complex gamess-us keys.
+some keywords provided by the user do not have a straightforward
+translation to <em>GAMESS</em> input and require some hooks that handle the
+special behaviour of the following keywords:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">freeze</span></code></li>
+<li><code class="docutils literal"><span class="pre">selected_atoms</span></code></li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>settings</strong> (<code class="xref py py-class docutils literal"><span class="pre">Settings</span></code>) – Job Settings.</li>
+<li><strong>key</strong> – Special key declared in <code class="docutils literal"><span class="pre">settings</span></code>.</li>
+<li><strong>value</strong> – Value store in <code class="docutils literal"><span class="pre">settings</span></code>.</li>
+<li><strong>mol</strong> (<em>plams Molecule</em>) – molecular Geometry</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="qmflows.packages.gamess.GAMESS.run_job">
+<em class="property">static </em><code class="descname">run_job</code><span class="sig-paren">(</span><em>settings</em>, <em>mol</em>, <em>job_name='gamess_job'</em>, <em>work_dir=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/gamess.html#GAMESS.run_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.gamess.GAMESS.run_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call the Cp2K binary using plams interface.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>settings</strong> (<code class="xref py py-class docutils literal"><span class="pre">Settings</span></code>) – Job Settings.</li>
+<li><strong>mol</strong> (<em>plams Molecule</em>) – molecular Geometry</li>
+<li><strong>input_file_name</strong> (<em>String</em>) – Optional name for the input.</li>
+<li><strong>out_file_name</strong> (<em>String</em>) – Optional name for the output.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Package.Result</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="qmflows.packages.gamess.Gamess_Result">
+<em class="property">class </em><code class="descclassname">qmflows.packages.gamess.</code><code class="descname">Gamess_Result</code><span class="sig-paren">(</span><em>settings</em>, <em>molecule</em>, <em>job_name</em>, <em>plams_dir=None</em>, <em>work_dir=None</em>, <em>status='done'</em>, <em>warnings=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/gamess.html#Gamess_Result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.gamess.Gamess_Result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class providing access to CP2K result.</p>
+<dl class="classmethod">
+<dt id="qmflows.packages.gamess.Gamess_Result.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>settings</em>, <em>molecule</em>, <em>job_name</em>, <em>archive</em>, <em>status</em>, <em>warnings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/gamess.html#Gamess_Result.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.gamess.Gamess_Result.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a <code class="xref py py-class docutils literal"><span class="pre">CP2K_Result</span></code> instance using the data serialized in
+a dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>cls</strong> – </li>
+<li><strong>settings</strong> – Job Settings.</li>
+<li><strong>molecule</strong> – molecular Geometry.</li>
+<li><strong>job_name</strong> – Name of the job.</li>
+<li><strong>plams_dir</strong> – Absolute path to plams output folder</li>
+<li><strong>archive</strong> – dictionary containing the paths to the input/output</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>folders.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="orca">
 <h2>ORCA<a class="headerlink" href="#orca" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="qmflows.packages.orca.ORCA">
+<em class="property">class </em><code class="descclassname">qmflows.packages.orca.</code><code class="descname">ORCA</code><a class="reference internal" href="_modules/qmflows/packages/orca.html#ORCA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.orca.ORCA" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class prepare the input to run a Orca job using both Plams and
+templates. It also does the manangement of the input/output files resulting
+from running Orca and returns a Results object that containing the methods
+and data required to retrieve the output.</p>
+<dl class="staticmethod">
+<dt id="qmflows.packages.orca.ORCA.handle_special_keywords">
+<em class="property">static </em><code class="descname">handle_special_keywords</code><span class="sig-paren">(</span><em>settings</em>, <em>key</em>, <em>value</em>, <em>mol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/orca.html#ORCA.handle_special_keywords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.orca.ORCA.handle_special_keywords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translate generic keywords to their corresponding Orca keywords.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 

@@ -1,0 +1,256 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>qmflows.hdf5.quantumHDF5 &#8212; qmflows 1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for qmflows.hdf5.quantumHDF5</h1><div class="highlight"><pre>
+<span></span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;StoreasHDF5&#39;</span><span class="p">,</span> <span class="s1">&#39;cp2k2hdf5&#39;</span><span class="p">,</span> <span class="s1">&#39;read_from_hdf5&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;turbomole2hdf5&#39;</span><span class="p">]</span>
+
+<span class="c1"># ==========&gt; Standard libraries and third-party &lt;===============</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span>
+
+<span class="kn">import</span> <span class="nn">h5py</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="c1"># ==================&gt; Internal modules &lt;==========</span>
+<span class="kn">from</span> <span class="nn">qmflows.parsers.cp2KParser</span> <span class="k">import</span> <span class="n">readCp2KBasis</span>
+<span class="kn">from</span> <span class="nn">qmflows.parsers.turbomoleParser</span> <span class="k">import</span> <span class="n">readTurbomoleBasis</span>
+
+<span class="c1"># ====================&gt;&lt;==============================</span>
+
+
+<span class="k">def</span> <span class="nf">read_from_hdf5</span><span class="p">(</span><span class="n">path_hdf5</span><span class="p">,</span> <span class="n">path_to_properties</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">path_hdf5</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f5</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path_to_properties</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">[</span><span class="n">f5</span><span class="p">[</span><span class="n">path</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">path_to_properties</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">f5</span><span class="p">[</span><span class="n">path_to_properties</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;There is not </span><span class="si">{}</span><span class="s2"> stored in the HDF5</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path_to_properties</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;there is not HDF5 file containing the numerical results&quot;</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="StoreasHDF5"><a class="viewcode-back" href="../../../hdf5.html#qmflows.hdf5.quantumHDF5.StoreasHDF5">[docs]</a><span class="k">class</span> <span class="nc">StoreasHDF5</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to store inside a HDF5 file numerical array with optional attributes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_h5</span><span class="p">,</span> <span class="n">packageName</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_h5</span> <span class="o">=</span> <span class="n">file_h5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">packageName</span>
+
+<div class="viewcode-block" id="StoreasHDF5.funHDF5"><a class="viewcode-back" href="../../../hdf5.html#qmflows.hdf5.quantumHDF5.StoreasHDF5.funHDF5">[docs]</a>    <span class="k">def</span> <span class="nf">funHDF5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pathProperty</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        creates a data set using ``data`` and saves the data using</span>
+<span class="sd">        ``pathProperty`` in the HDF5 file.</span>
+
+<span class="sd">        :param pathProperty: path to store the property in HDF5.</span>
+<span class="sd">        :type pathProperty: String</span>
+<span class="sd">        :param data: Numeric array containing the property.</span>
+<span class="sd">        :type data: Numpy array</span>
+<span class="sd">        :returns: **None**</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_h5</span><span class="o">.</span><span class="n">require_dataset</span><span class="p">(</span><span class="n">pathProperty</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
+                                     <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StoreasHDF5.funHDF5_attrs"><a class="viewcode-back" href="../../../hdf5.html#qmflows.hdf5.quantumHDF5.StoreasHDF5.funHDF5_attrs">[docs]</a>    <span class="k">def</span> <span class="nf">funHDF5_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nameAttr</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">pathProperty</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        creates a data set using ``data`` and some attributes.</span>
+
+<span class="sd">        :param nameAttr: Name of the attribute assoaciated with the data.</span>
+<span class="sd">        :type nameAttr: String</span>
+<span class="sd">        :param attr: Actual atttribute.</span>
+<span class="sd">        :type attr: String | Numpy array</span>
+<span class="sd">        :param pathProperty: path to store the property in HDF5.</span>
+<span class="sd">        :type pathProperty: String</span>
+<span class="sd">        :param data: Numeric array containing the property.</span>
+<span class="sd">        :type data: Numpy array</span>
+<span class="sd">        :returns: **None**</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">dset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_h5</span><span class="o">.</span><span class="n">require_dataset</span><span class="p">(</span><span class="n">pathProperty</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
+                                            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">dset</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">nameAttr</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span></div>
+
+<div class="viewcode-block" id="StoreasHDF5.saveBasis"><a class="viewcode-back" href="../../../hdf5.html#qmflows.hdf5.quantumHDF5.StoreasHDF5.saveBasis">[docs]</a>    <span class="k">def</span> <span class="nf">saveBasis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parserFun</span><span class="p">,</span> <span class="n">pathBasis</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store the basis set.</span>
+
+<span class="sd">        :param parserFun: Function to parse the file containing the</span>
+<span class="sd">                          information about the primitive contracted Gauss</span>
+<span class="sd">                          functions.</span>
+<span class="sd">        :param pathBasis: Absolute path to the file containing the basis</span>
+<span class="sd">                          sets information.</span>
+<span class="sd">        :type pathBasis: String.</span>
+<span class="sd">        :returns: **None**</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">keys</span><span class="p">,</span> <span class="n">vals</span> <span class="o">=</span> <span class="n">parserFun</span><span class="p">(</span><span class="n">pathBasis</span><span class="p">)</span>
+        <span class="n">pathsExpo</span> <span class="o">=</span> <span class="p">[</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;basis&quot;</span><span class="p">,</span> <span class="n">xs</span><span class="o">.</span><span class="n">atom</span><span class="p">,</span> <span class="n">xs</span><span class="o">.</span><span class="n">basis</span><span class="p">,</span> <span class="s2">&quot;exponents&quot;</span><span class="p">)</span>
+                     <span class="k">for</span> <span class="n">xs</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
+        <span class="n">pathsCoeff</span> <span class="o">=</span> <span class="p">[</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;basis&quot;</span><span class="p">,</span> <span class="n">xs</span><span class="o">.</span><span class="n">atom</span><span class="p">,</span> <span class="n">xs</span><span class="o">.</span><span class="n">basis</span><span class="p">,</span>
+                           <span class="s2">&quot;coefficients&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">xs</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">ps</span><span class="p">,</span> <span class="n">es</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pathsExpo</span><span class="p">,</span> <span class="p">[</span><span class="n">xs</span><span class="o">.</span><span class="n">exponents</span> <span class="k">for</span> <span class="n">xs</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">funHDF5</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span> <span class="n">es</span><span class="p">)</span>
+
+        <span class="n">fss</span> <span class="o">=</span> <span class="p">[</span><span class="n">xs</span><span class="o">.</span><span class="n">basisFormat</span> <span class="k">for</span> <span class="n">xs</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
+        <span class="n">css</span> <span class="o">=</span> <span class="p">[</span><span class="n">xs</span><span class="o">.</span><span class="n">coefficients</span> <span class="k">for</span> <span class="n">xs</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">]</span>
+
+        <span class="c1"># save basis set coefficients and their correspoding format</span>
+        <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">css</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pathsCoeff</span><span class="p">,</span> <span class="n">fss</span><span class="p">,</span> <span class="n">css</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">funHDF5_attrs</span><span class="p">(</span><span class="s2">&quot;basisFormat&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">fs</span><span class="p">),</span> <span class="n">path</span><span class="p">,</span> <span class="n">css</span><span class="p">)</span></div></div>
+
+
+<span class="c1"># =======================================================</span>
+<span class="c1"># CP2K Interface</span>
+
+<span class="k">def</span> <span class="nf">cp2k2hdf5</span><span class="p">(</span><span class="n">file_h5</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Use a list of namedtuple ``keys`` to retrieve information</span>
+<span class="sd">    from text otuput files and store it in HDF5 format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="n">cp2kOpts</span><span class="p">(</span><span class="n">file_h5</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">cp2kOpts</span><span class="p">(</span><span class="n">file_h5</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read from a text file some numerical information and store it in HDF5</span>
+<span class="sd">    Format. The available options to read and store are:</span>
+<span class="sd">    - basis set</span>
+<span class="sd">    - Molecular orbitals</span>
+<span class="sd">    -Overlap Mtrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">storeCp2k</span> <span class="o">=</span> <span class="n">StoreasHDF5</span><span class="p">(</span><span class="n">file_h5</span><span class="p">,</span> <span class="s2">&quot;cp2k&quot;</span><span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">args</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;basis&quot;</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">storeCp2k</span><span class="o">.</span><span class="n">saveBasis</span><span class="p">,</span> <span class="n">readCp2KBasis</span><span class="p">)}</span>
+
+    <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="n">name</span><span class="p">](</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+
+<span class="c1"># ==================================================</span>
+<span class="c1"># TurboMol Interface</span>
+
+
+<span class="k">def</span> <span class="nf">turbomole2hdf5</span><span class="p">(</span><span class="n">file_h5</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="n">turbomoleOpts</span><span class="p">(</span><span class="n">file_h5</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">turbomoleOpts</span><span class="p">(</span><span class="n">file_h5</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read from text files numerical properties and store them in HDF5 format.</span>
+<span class="sd">    Available options:</span>
+<span class="sd">    - Basis set</span>
+<span class="sd">    - Molecular Orbitals</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">storeTurbo</span> <span class="o">=</span> <span class="n">StoreasHDF5</span><span class="p">(</span><span class="n">file_h5</span><span class="p">,</span> <span class="s2">&quot;turbomole&quot;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">args</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;basis&quot;</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">storeTurbo</span><span class="o">.</span><span class="n">saveBasis</span><span class="p">,</span> <span class="n">readTurbomoleBasis</span><span class="p">)}</span>
+
+    <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="n">name</span><span class="p">](</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">qmflows</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../includeme.html">QMFlows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interactive_tutorial.html">Basic usage tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation.html">Library Documentation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, F. Zapata, L. Ridder.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

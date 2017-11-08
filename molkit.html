@@ -50,8 +50,319 @@ suggested that the MMFF forcefield is better for small molecules with no or a si
 For larger molecules UFF appears better.</p>
 <p>Molkit enables modifying existing molecules using reaction smarts.</p>
 <p>There is also a function to partition a protein into capped fragments for <a class="reference external" href="http://dx.doi.org/10.1063/1.2906128">MFCC</a> calculations.</p>
-<div class="section" id="api">
-<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-qmflows.molkit">
+<span id="api"></span><h2>API<a class="headerlink" href="#module-qmflows.molkit" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="qmflows.molkit.add_Hs">
+<code class="descclassname">qmflows.molkit.</code><code class="descname">add_Hs</code><span class="sig-paren">(</span><em>mol</em>, <em>forcefield=None</em>, <em>return_rdmol=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/molkit.html#add_Hs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.molkit.add_Hs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add hydrogens to protein molecules read from PDB.
+Makes sure that the hydrogens get the correct PDBResidue info.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mol</strong> (<em>plams.Molecule</em><em> or </em><em>rdkit.Chem.Mol</em>) – Molecule to be protonated</li>
+<li><strong>forcefield</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Specify ‘uff’ or ‘mmff’ to apply forcefield based</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>geometry optimization on new atoms.
+:param bool return_rdmol: return a RDKit molecule if true, otherwise a PLAMS molecule
+:return: A molecule with explicit hydrogens added
+:rtype: plams.Molecule or rdkit.Chem.Mol</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="qmflows.molkit.apply_reaction_smarts">
+<code class="descclassname">qmflows.molkit.</code><code class="descname">apply_reaction_smarts</code><span class="sig-paren">(</span><em>mol</em>, <em>reaction_smarts</em>, <em>complete=False</em>, <em>forcefield=None</em>, <em>return_rdmol=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/molkit.html#apply_reaction_smarts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.molkit.apply_reaction_smarts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies reaction smirks and returns product.
+If returned as a plams molecule, plams.Molecule.properties.orig_atoms
+is a list of indices of atoms that have not been changed
+(which can for example be used partially optimize new atoms only with the freeze keyword)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mol</strong> (<em>plams.Molecule</em><em> or </em><em>rdkit.Chem.Mol</em>) – molecule to be modified</li>
+<li><strong>reactions_smarts</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Reactions smarts to be applied to molecule</li>
+<li><strong>complete</strong> – Apply reaction until no further changes occur or given</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>fraction of reaction centers have been modified
+:type complete: bool or float (value between 0 and 1)
+:parameter forcefield: Specify ‘uff’ or ‘mmff’ to apply forcefield based
+geometry optimization of product structures.
+:type forcefield: str
+:param bool return_rdmol: return a RDKit molecule if true, otherwise a PLAMS molecule
+:return: (product molecule, list of unchanged atoms)
+:rtype: (plams.Molecule, list of int)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="qmflows.molkit.apply_template">
+<code class="descclassname">qmflows.molkit.</code><code class="descname">apply_template</code><span class="sig-paren">(</span><em>mol</em>, <em>template</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/molkit.html#apply_template"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.molkit.apply_template" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modifies bond orders in plams molecule according template smiles structure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mol</strong> (<em>plams.Molecule</em><em> or </em><em>rdkit.Chem.Mol</em>) – molecule to be modified</li>
+<li><strong>template</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – smiles string defining the correct chemical structure</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Molecule with correct chemical structure and provided 3D coordinates</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">plams.Molecule</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qmflows.molkit.get_backbone_atoms">
+<code class="descclassname">qmflows.molkit.</code><code class="descname">get_backbone_atoms</code><span class="sig-paren">(</span><em>mol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/molkit.html#get_backbone_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.molkit.get_backbone_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of atom indices corresponding to the backbone atoms in a peptide molecule.
+This function assumes PDB information in properties.pdb_info of each atom, which is the case
+if the molecule is generated with the “readpdb” or “from_sequence” functions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mol</strong> (<em>plams.Molecule</em><em> or </em><em>rdkit.Chem.Mol</em>) – a peptide molecule</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a list of atom indices</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qmflows.molkit.modify_atom">
+<code class="descclassname">qmflows.molkit.</code><code class="descname">modify_atom</code><span class="sig-paren">(</span><em>mol</em>, <em>idx</em>, <em>element</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/molkit.html#modify_atom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.molkit.modify_atom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change atom “idx” in molecule “mol” to “element” and add or remove hydrogens accordingly</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mol</strong> (<em>plams.Molecule</em><em> or </em><em>rdkit.Chem.Mol</em>) – molecule to be modified</li>
+<li><strong>idx</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – index of the atom to be modified</li>
+<li><strong>element</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Molecule with new element and possibly added or removed hydrogens</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">plams.Molecule</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qmflows.molkit.to_rdmol">
+<code class="descclassname">qmflows.molkit.</code><code class="descname">to_rdmol</code><span class="sig-paren">(</span><em>plams_mol</em>, <em>sanitize=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/molkit.html#to_rdmol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.molkit.to_rdmol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translate a PLAMS molecule into an RDKit molecule type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plams_mol</strong> (<em>plams.Molecule</em>) – PLAMS molecule</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">an RDKit molecule</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">rdkit.Chem.Mol</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qmflows.molkit.from_rdmol">
+<code class="descclassname">qmflows.molkit.</code><code class="descname">from_rdmol</code><span class="sig-paren">(</span><em>rdkit_mol</em>, <em>confid=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/molkit.html#from_rdmol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.molkit.from_rdmol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translate an RDKit molecule into a PLAMS molecule type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>rdkit_mol</strong> (<em>rdkit.Chem.Mol</em>) – RDKit molecule</li>
+<li><strong>confid</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – conformer identifier from which to take coordinates</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a PLAMS molecule</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">plams.Molecule</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qmflows.molkit.from_sequence">
+<code class="descclassname">qmflows.molkit.</code><code class="descname">from_sequence</code><span class="sig-paren">(</span><em>sequence</em>, <em>nconfs=1</em>, <em>name=None</em>, <em>forcefield=None</em>, <em>rms=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/molkit.html#from_sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.molkit.from_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates plams molecule from a peptide sequence.
+Includes explicit hydrogens and 3D coordinates.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sequence</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – A peptide sequence, e.g. ‘HAG’</li>
+<li><strong>nconfs</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – Number of conformers to be generated</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – A name for the molecule</li>
+<li><strong>forcefield</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Choose ‘uff’ or ‘mmff’ forcefield for geometry</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>optimization and ranking of comformations. The default value None results
+in skipping of the geometry optimization step.
+:parameter float rms: Root Mean Square deviation threshold for removing
+similar/equivalent conformations.
+:return: A peptide molecule with hydrogens and 3D coordinates
+or a list of molecules if nconfs &gt; 1
+:rtype: plams.Molecule or list of plams Molecules</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="qmflows.molkit.from_smiles">
+<code class="descclassname">qmflows.molkit.</code><code class="descname">from_smiles</code><span class="sig-paren">(</span><em>smiles</em>, <em>nconfs=1</em>, <em>name=None</em>, <em>forcefield=None</em>, <em>rms=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/molkit.html#from_smiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.molkit.from_smiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates plams molecule(s) from a smiles strings.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>smiles</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – A smiles string</li>
+<li><strong>nconfs</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – Number of conformers to be generated</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – A name for the molecule</li>
+<li><strong>forcefield</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Choose ‘uff’ or ‘mmff’ forcefield for geometry optimization</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>and ranking of comformations. The default value None results in skipping of the
+geometry optimization step.
+:parameter float rms: Root Mean Square deviation threshold for
+removing similar/equivalent conformations
+:return: A molecule with hydrogens and 3D coordinates or a list of molecules if nconfs &gt; 1
+:rtype: plams.Molecule or list of plams Molecules</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="qmflows.molkit.from_smarts">
+<code class="descclassname">qmflows.molkit.</code><code class="descname">from_smarts</code><span class="sig-paren">(</span><em>smarts</em>, <em>nconfs=1</em>, <em>name=None</em>, <em>forcefield=None</em>, <em>rms=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/molkit.html#from_smarts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.molkit.from_smarts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates plams molecule(s) from a smarts strings.
+This allows for example to define hydrogens explicitly.
+However it is less suitable for aromatic molecules (use from_smiles in that case).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>smarts</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – A smarts string</li>
+<li><strong>nconfs</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – Number of conformers to be generated</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – A name for the molecule</li>
+<li><strong>forcefield</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Choose ‘uff’ or ‘mmff’ forcefield for geometry</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>optimization and ranking of comformations. The default value None results
+in skipping of the geometry optimization step.
+:parameter float rms: Root Mean Square deviation threshold for removing
+similar/equivalent conformations.
+:return: A molecule with hydrogens and 3D coordinates or a list of molecules if nconfs &gt; 1
+:rtype: plams.Molecule or list of plams Molecules</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="qmflows.molkit.partition_protein">
+<code class="descclassname">qmflows.molkit.</code><code class="descname">partition_protein</code><span class="sig-paren">(</span><em>mol</em>, <em>residue_bonds=None</em>, <em>split_heteroatoms=True</em>, <em>return_rdmol=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/molkit.html#partition_protein"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.molkit.partition_protein" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits a protein molecule into capped amino acid fragments and caps.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mol</strong> (<em>plams.Molecule</em><em> or </em><em>rdkit.Chem.Mol</em>) – A protein molecule</li>
+<li><strong>residue_bonds</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) – a tuple of pairs of residue number indicating which</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>peptide bonds to split. If none, split all peptide bonds.
+:param bool split_heteroatoms: if True, all bonds between a heteroatom and
+a non-heteroatom across residues are removed
+:return: list of fragments, list of caps</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="qmflows.molkit.readpdb">
+<code class="descclassname">qmflows.molkit.</code><code class="descname">readpdb</code><span class="sig-paren">(</span><em>pdb_file</em>, <em>removeHs=False</em>, <em>return_rdmol=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/molkit.html#readpdb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.molkit.readpdb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a molecule from a PDB file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pdb_file</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#file" title="(in Python v2.7)"><em>file</em></a>) – The PDB file to read</li>
+<li><strong>removeHs</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – Hydrogens are removed if Trur</li>
+<li><strong>return_rdmol</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – return a RDKit molecule if true, otherwise a PLAMS molecule</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The molecule</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">plams.Molecule or rdkit.Chem.Mol</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qmflows.molkit.writepdb">
+<code class="descclassname">qmflows.molkit.</code><code class="descname">writepdb</code><span class="sig-paren">(</span><em>mol</em>, <em>pdb_file=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/molkit.html#writepdb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.molkit.writepdb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a PDB file from a molecule</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mol</strong> (<em>plams.Molecule</em><em> or </em><em>rdkit.Chem.Mol</em>) – molecule to be exported to PDB</li>
+<li><strong>pdb_file</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#file" title="(in Python v2.7)"><em>file</em></a>) – The PDB file to write to, or a filename</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 </div>
 

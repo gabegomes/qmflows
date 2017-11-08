@@ -1,0 +1,786 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>qmflows.molkit &#8212; qmflows 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for qmflows.molkit</h1><div class="highlight"><pre>
+<span></span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;add_Hs&#39;</span><span class="p">,</span> <span class="s1">&#39;apply_reaction_smarts&#39;</span><span class="p">,</span> <span class="s1">&#39;apply_template&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;gen_coords_rdmol&#39;</span><span class="p">,</span> <span class="s1">&#39;get_backbone_atoms&#39;</span><span class="p">,</span> <span class="s1">&#39;modify_atom&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;to_rdmol&#39;</span><span class="p">,</span> <span class="s1">&#39;from_rdmol&#39;</span><span class="p">,</span> <span class="s1">&#39;from_sequence&#39;</span><span class="p">,</span> <span class="s1">&#39;from_smiles&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;from_smarts&#39;</span><span class="p">,</span> <span class="s1">&#39;partition_protein&#39;</span><span class="p">,</span> <span class="s1">&#39;readpdb&#39;</span><span class="p">,</span> <span class="s1">&#39;writepdb&#39;</span><span class="p">]</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@author: Lars Ridder</span>
+<span class="sd">@description: A set of functions to manipulate molecules based on RDKit</span>
+
+<span class="sd">This is a series of functions that apply RDKit functionality on PLAMS molecules</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">rdkit</span> <span class="k">import</span> <span class="n">Chem</span><span class="p">,</span> <span class="n">Geometry</span>
+<span class="kn">from</span> <span class="nn">rdkit.Chem</span> <span class="k">import</span> <span class="n">AllChem</span>
+<span class="kn">from</span> <span class="nn">scm.plams</span> <span class="k">import</span> <span class="p">(</span><span class="n">Molecule</span><span class="p">,</span> <span class="n">Bond</span><span class="p">,</span> <span class="n">Atom</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
+
+
+<div class="viewcode-block" id="from_rdmol"><a class="viewcode-back" href="../../molkit.html#qmflows.molkit.from_rdmol">[docs]</a><span class="k">def</span> <span class="nf">from_rdmol</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">,</span> <span class="n">confid</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Translate an RDKit molecule into a PLAMS molecule type.</span>
+
+<span class="sd">    :parameter rdkit_mol: RDKit molecule</span>
+<span class="sd">    :parameter int confid: conformer identifier from which to take coordinates</span>
+<span class="sd">    :type rdkit_mol: rdkit.Chem.Mol</span>
+<span class="sd">    :return: a PLAMS molecule</span>
+<span class="sd">    :rtype: plams.Molecule</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">,</span> <span class="n">Molecule</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">rdkit_mol</span>
+    <span class="c1"># Create plams molecule</span>
+    <span class="n">plams_mol</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">()</span>
+    <span class="n">total_charge</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Chem</span><span class="o">.</span><span class="n">Kekulize</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="n">conf</span> <span class="o">=</span> <span class="n">rdkit_mol</span><span class="o">.</span><span class="n">GetConformer</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">confid</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">rd_atom</span> <span class="ow">in</span> <span class="n">rdkit_mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">GetAtomPosition</span><span class="p">(</span><span class="n">rd_atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">())</span>
+        <span class="n">ch</span> <span class="o">=</span> <span class="n">rd_atom</span><span class="o">.</span><span class="n">GetFormalCharge</span><span class="p">()</span>
+        <span class="n">pl_atom</span> <span class="o">=</span> <span class="n">Atom</span><span class="p">(</span><span class="n">rd_atom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">(),</span> <span class="n">coords</span><span class="o">=</span><span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">z</span><span class="p">),</span> <span class="n">charge</span><span class="o">=</span><span class="n">ch</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rd_atom</span><span class="o">.</span><span class="n">GetPDBResidueInfo</span><span class="p">():</span>
+            <span class="n">pl_atom</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">pdb_info</span> <span class="o">=</span> <span class="n">get_PDBResidueInfo</span><span class="p">(</span><span class="n">rd_atom</span><span class="p">)</span>
+        <span class="n">plams_mol</span><span class="o">.</span><span class="n">add_atom</span><span class="p">(</span><span class="n">pl_atom</span><span class="p">)</span>
+        <span class="n">total_charge</span> <span class="o">+=</span> <span class="n">ch</span>
+    <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">rdkit_mol</span><span class="o">.</span><span class="n">GetBonds</span><span class="p">():</span>
+        <span class="n">at1</span> <span class="o">=</span> <span class="n">plams_mol</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">()]</span>
+        <span class="n">at2</span> <span class="o">=</span> <span class="n">plams_mol</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">()]</span>
+        <span class="n">plams_mol</span><span class="o">.</span><span class="n">add_bond</span><span class="p">(</span><span class="n">Bond</span><span class="p">(</span><span class="n">at1</span><span class="p">,</span> <span class="n">at2</span><span class="p">,</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetBondTypeAsDouble</span><span class="p">()))</span>
+    <span class="n">plams_mol</span><span class="o">.</span><span class="n">charge</span> <span class="o">=</span> <span class="n">total_charge</span>
+    <span class="k">for</span> <span class="n">propname</span> <span class="ow">in</span> <span class="n">rdkit_mol</span><span class="o">.</span><span class="n">GetPropNames</span><span class="p">():</span>
+        <span class="n">plams_mol</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="n">propname</span><span class="p">]</span> <span class="o">=</span> <span class="n">rdkit_mol</span><span class="o">.</span><span class="n">GetProp</span><span class="p">(</span><span class="n">propname</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">plams_mol</span></div>
+
+
+<div class="viewcode-block" id="to_rdmol"><a class="viewcode-back" href="../../molkit.html#qmflows.molkit.to_rdmol">[docs]</a><span class="k">def</span> <span class="nf">to_rdmol</span><span class="p">(</span><span class="n">plams_mol</span><span class="p">,</span> <span class="n">sanitize</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Translate a PLAMS molecule into an RDKit molecule type.</span>
+
+<span class="sd">    :parameter plams_mol: PLAMS molecule</span>
+<span class="sd">    :type plams_mol: plams.Molecule</span>
+<span class="sd">    :return: an RDKit molecule</span>
+<span class="sd">    :rtype: rdkit.Chem.Mol</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plams_mol</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">plams_mol</span>
+    <span class="c1"># Create rdkit molecule</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">EditableMol</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">plams_mol</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Atom</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">atnum</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;charge&#39;</span> <span class="ow">in</span> <span class="n">atom</span><span class="o">.</span><span class="n">properties</span><span class="p">:</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">SetFormalCharge</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">charge</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;pdb_info&#39;</span> <span class="ow">in</span> <span class="n">atom</span><span class="o">.</span><span class="n">properties</span><span class="p">:</span>
+            <span class="n">set_PDBresidueInfo</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">pdb_info</span><span class="p">)</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">AddAtom</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">plams_mol</span><span class="o">.</span><span class="n">bonds</span><span class="p">:</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="n">plams_mol</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">atom1</span><span class="p">)</span>
+        <span class="n">a2</span> <span class="o">=</span> <span class="n">plams_mol</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">atom2</span><span class="p">)</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">AddBond</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">order</span><span class="p">))</span>
+    <span class="n">rdmol</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">GetMol</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">sanitize</span><span class="p">:</span>
+        <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
+    <span class="n">conf</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Conformer</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">plams_mol</span><span class="o">.</span><span class="n">atoms</span><span class="p">)):</span>
+        <span class="n">atom</span> <span class="o">=</span> <span class="n">plams_mol</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">Geometry</span><span class="o">.</span><span class="n">Point3D</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">_getx</span><span class="p">(),</span> <span class="n">atom</span><span class="o">.</span><span class="n">_gety</span><span class="p">(),</span> <span class="n">atom</span><span class="o">.</span><span class="n">_getz</span><span class="p">())</span>
+        <span class="n">conf</span><span class="o">.</span><span class="n">SetAtomPosition</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+    <span class="n">rdmol</span><span class="o">.</span><span class="n">AddConformer</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rdmol</span></div>
+
+<span class="n">pdb_residue_info_items</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;AltLoc&#39;</span><span class="p">,</span> <span class="s1">&#39;ChainId&#39;</span><span class="p">,</span> <span class="s1">&#39;InsertionCode&#39;</span><span class="p">,</span> <span class="s1">&#39;IsHeteroAtom&#39;</span><span class="p">,</span> <span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Occupancy&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ResidueName&#39;</span><span class="p">,</span> <span class="s1">&#39;ResidueNumber&#39;</span><span class="p">,</span> <span class="s1">&#39;SecondaryStructure&#39;</span><span class="p">,</span> <span class="s1">&#39;SegmentNumber&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SerialNumber&#39;</span><span class="p">,</span> <span class="s1">&#39;TempFactor&#39;</span><span class="p">]</span>
+<span class="c1"># &#39;MonomerType&#39; was excluded because it is an rdkit type that cannot easilty be serialized</span>
+
+
+<span class="k">def</span> <span class="nf">get_PDBResidueInfo</span><span class="p">(</span><span class="n">rdkit_atom</span><span class="p">):</span>
+    <span class="n">pdb_info</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pdb_residue_info_items</span><span class="p">:</span>
+        <span class="n">get_function</span> <span class="o">=</span> <span class="s1">&#39;Get&#39;</span> <span class="o">+</span> <span class="n">item</span>
+        <span class="n">pdb_info</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="n">rdkit_atom</span><span class="o">.</span><span class="n">GetPDBResidueInfo</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">get_function</span><span class="p">)()</span>
+    <span class="k">return</span> <span class="n">pdb_info</span>
+
+
+<span class="k">def</span> <span class="nf">set_PDBresidueInfo</span><span class="p">(</span><span class="n">rdkit_atom</span><span class="p">,</span> <span class="n">pdb_info</span><span class="p">):</span>
+    <span class="n">atom_pdb_residue_info</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">AtomPDBResidueInfo</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">pdb_info</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">set_function</span> <span class="o">=</span> <span class="s1">&#39;Set&#39;</span> <span class="o">+</span> <span class="n">item</span>
+        <span class="n">atom_pdb_residue_info</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">set_function</span><span class="p">)(</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">rdkit_atom</span><span class="o">.</span><span class="n">SetMonomerInfo</span><span class="p">(</span><span class="n">atom_pdb_residue_info</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="from_smiles"><a class="viewcode-back" href="../../molkit.html#qmflows.molkit.from_smiles">[docs]</a><span class="k">def</span> <span class="nf">from_smiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">,</span> <span class="n">nconfs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">forcefield</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rms</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates plams molecule(s) from a smiles strings.</span>
+
+<span class="sd">    :parameter str smiles: A smiles string</span>
+<span class="sd">    :parameter int nconfs: Number of conformers to be generated</span>
+<span class="sd">    :parameter str name: A name for the molecule</span>
+<span class="sd">    :parameter str forcefield: Choose &#39;uff&#39; or &#39;mmff&#39; forcefield for geometry optimization</span>
+<span class="sd">    and ranking of comformations. The default value None results in skipping of the</span>
+<span class="sd">    geometry optimization step.</span>
+<span class="sd">    :parameter float rms: Root Mean Square deviation threshold for</span>
+<span class="sd">    removing similar/equivalent conformations</span>
+<span class="sd">    :return: A molecule with hydrogens and 3D coordinates or a list of molecules if nconfs &gt; 1</span>
+<span class="sd">    :rtype: plams.Molecule or list of plams Molecules</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">smiles</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">smiles</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">rdkit_mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">AddHs</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">))</span>
+    <span class="n">rdkit_mol</span><span class="o">.</span><span class="n">SetProp</span><span class="p">(</span><span class="s1">&#39;smiles&#39;</span><span class="p">,</span> <span class="n">smiles</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">get_conformations</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">,</span> <span class="n">nconfs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">forcefield</span><span class="p">,</span> <span class="n">rms</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="from_smarts"><a class="viewcode-back" href="../../molkit.html#qmflows.molkit.from_smarts">[docs]</a><span class="k">def</span> <span class="nf">from_smarts</span><span class="p">(</span><span class="n">smarts</span><span class="p">,</span> <span class="n">nconfs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">forcefield</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rms</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates plams molecule(s) from a smarts strings.</span>
+<span class="sd">    This allows for example to define hydrogens explicitly.</span>
+<span class="sd">    However it is less suitable for aromatic molecules (use from_smiles in that case).</span>
+
+<span class="sd">    :parameter str smarts: A smarts string</span>
+<span class="sd">    :parameter int nconfs: Number of conformers to be generated</span>
+<span class="sd">    :parameter str name: A name for the molecule</span>
+<span class="sd">    :parameter str forcefield: Choose &#39;uff&#39; or &#39;mmff&#39; forcefield for geometry</span>
+<span class="sd">    optimization and ranking of comformations. The default value None results</span>
+<span class="sd">    in skipping of the geometry optimization step.</span>
+<span class="sd">    :parameter float rms: Root Mean Square deviation threshold for removing</span>
+<span class="sd">    similar/equivalent conformations.</span>
+<span class="sd">    :return: A molecule with hydrogens and 3D coordinates or a list of molecules if nconfs &gt; 1</span>
+<span class="sd">    :rtype: plams.Molecule or list of plams Molecules</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">smiles</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">smarts</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+    <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="n">molecule</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">AddHs</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="n">molecule</span><span class="o">.</span><span class="n">SetProp</span><span class="p">(</span><span class="s1">&#39;smiles&#39;</span><span class="p">,</span> <span class="n">smiles</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">get_conformations</span><span class="p">(</span><span class="n">molecule</span><span class="p">,</span> <span class="n">nconfs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">forcefield</span><span class="p">,</span> <span class="n">rms</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">get_conformations</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">,</span> <span class="n">nconfs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">forcefield</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rms</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates 3D conformation(s) for an rdkit_mol</span>
+
+<span class="sd">    :parameter rdkit_mol: RDKit molecule</span>
+<span class="sd">    :type rdkit_mol: rdkit.Chem.Mol</span>
+<span class="sd">    :parameter int nconfs: Number of conformers to be generated</span>
+<span class="sd">    :parameter str name: A name for the molecule</span>
+<span class="sd">    :parameter str forcefield: Choose &#39;uff&#39; or &#39;mmff&#39; forcefield for geometry</span>
+<span class="sd">    optimization and ranking of comformations. The default value None results</span>
+<span class="sd">    in skipping of the geometry optimization step</span>
+<span class="sd">    :parameter float rms: Root Mean Square deviation threshold for removing</span>
+<span class="sd">    similar/equivalent conformations.</span>
+<span class="sd">    :return: A molecule with hydrogens and 3D coordinates or a list of molecules if nconfs &gt; 1</span>
+<span class="sd">    :rtype: plams.Molecule or list of plams Molecules</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">MMFFenergy</span><span class="p">(</span><span class="n">cid</span><span class="p">):</span>
+        <span class="n">ff</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">MMFFGetMoleculeForceField</span><span class="p">(</span>
+            <span class="n">rdkit_mol</span><span class="p">,</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">MMFFGetMoleculeProperties</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">),</span> <span class="n">confId</span><span class="o">=</span><span class="n">cid</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">energy</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">CalcEnergy</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;MMFF energy calculation failed for molecule: &quot;</span> <span class="o">+</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">)</span> <span class="o">+</span> \
+                  <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">No geometry optimization was performed.&quot;</span>
+            <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">energy</span> <span class="o">=</span> <span class="mf">1e9</span>
+        <span class="k">return</span> <span class="n">energy</span>
+
+    <span class="k">def</span> <span class="nf">UFFenergy</span><span class="p">(</span><span class="n">cid</span><span class="p">):</span>
+        <span class="n">ff</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">UFFGetMoleculeForceField</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">,</span> <span class="n">confId</span><span class="o">=</span><span class="n">cid</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">energy</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">CalcEnergy</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;MMFF energy calculation failed for molecule: &quot;</span> <span class="o">+</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">)</span> <span class="o">+</span> \
+                  <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">No geometry optimization was performed.&quot;</span>
+            <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">energy</span> <span class="o">=</span> <span class="mf">1e9</span>
+        <span class="k">return</span> <span class="n">energy</span>
+
+    <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+        <span class="n">rdkit_mol</span><span class="o">.</span><span class="n">SetProp</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">cids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">AllChem</span><span class="o">.</span><span class="n">EmbedMultipleConfs</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">,</span> <span class="n">nconfs</span><span class="p">,</span> <span class="n">pruneRmsThresh</span><span class="o">=</span><span class="n">rms</span><span class="p">,</span> <span class="n">randomSeed</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">forcefield</span><span class="p">:</span>
+        <span class="n">optimize_molecule</span><span class="p">,</span> <span class="n">energy</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;uff&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">AllChem</span><span class="o">.</span><span class="n">UFFOptimizeMolecule</span><span class="p">,</span> <span class="n">UFFenergy</span><span class="p">],</span>
+            <span class="s1">&#39;mmff&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">AllChem</span><span class="o">.</span><span class="n">MMFFOptimizeMolecule</span><span class="p">,</span> <span class="n">MMFFenergy</span><span class="p">],</span>
+        <span class="p">}[</span><span class="n">forcefield</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">cid</span> <span class="ow">in</span> <span class="n">cids</span><span class="p">:</span>
+            <span class="n">optimize_molecule</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">,</span> <span class="n">confId</span><span class="o">=</span><span class="n">cid</span><span class="p">)</span>
+        <span class="n">cids</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">energy</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rms</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">keep</span> <span class="o">=</span> <span class="p">[</span><span class="n">cids</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="k">for</span> <span class="n">cid</span> <span class="ow">in</span> <span class="n">cids</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">keep</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">r</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">AlignMol</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">,</span> <span class="n">rdkit_mol</span><span class="p">,</span> <span class="n">cid</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">r</span> <span class="o">=</span> <span class="n">rms</span> <span class="o">+</span> <span class="mi">1</span>
+                        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Alignment failed in multiple conformation generation: &quot;</span>
+                        <span class="n">message</span> <span class="o">+=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">)</span>
+                        <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Assuming different conformations.&quot;</span>
+                        <span class="n">warn</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">rms</span><span class="p">:</span>
+                        <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">keep</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cid</span><span class="p">)</span>
+            <span class="n">cids</span> <span class="o">=</span> <span class="n">keep</span>
+    <span class="k">if</span> <span class="n">nconfs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">from_rdmol</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">from_rdmol</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">,</span> <span class="n">cid</span><span class="p">)</span> <span class="k">for</span> <span class="n">cid</span> <span class="ow">in</span> <span class="n">cids</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="from_sequence"><a class="viewcode-back" href="../../molkit.html#qmflows.molkit.from_sequence">[docs]</a><span class="k">def</span> <span class="nf">from_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span> <span class="n">nconfs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">forcefield</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rms</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates plams molecule from a peptide sequence.</span>
+<span class="sd">    Includes explicit hydrogens and 3D coordinates.</span>
+
+<span class="sd">    :parameter str sequence: A peptide sequence, e.g. &#39;HAG&#39;</span>
+<span class="sd">    :parameter int nconfs: Number of conformers to be generated</span>
+<span class="sd">    :parameter str name: A name for the molecule</span>
+<span class="sd">    :parameter str forcefield: Choose &#39;uff&#39; or &#39;mmff&#39; forcefield for geometry</span>
+<span class="sd">    optimization and ranking of comformations. The default value None results</span>
+<span class="sd">    in skipping of the geometry optimization step.</span>
+<span class="sd">    :parameter float rms: Root Mean Square deviation threshold for removing</span>
+<span class="sd">    similar/equivalent conformations.</span>
+<span class="sd">    :return: A peptide molecule with hydrogens and 3D coordinates</span>
+<span class="sd">    or a list of molecules if nconfs &gt; 1</span>
+<span class="sd">    :rtype: plams.Molecule or list of plams Molecules</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rdkit_mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">AddHs</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">))</span>
+    <span class="n">rdkit_mol</span><span class="o">.</span><span class="n">SetProp</span><span class="p">(</span><span class="s1">&#39;sequence&#39;</span><span class="p">,</span> <span class="n">sequence</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">get_conformations</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">,</span> <span class="n">nconfs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">forcefield</span><span class="p">,</span> <span class="n">rms</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">calc_rmsd</span><span class="p">(</span><span class="n">mol1</span><span class="p">,</span> <span class="n">mol2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Superimpose two molecules and calculate the root-mean-squared deviations of</span>
+<span class="sd">    the atomic positions.</span>
+<span class="sd">    The molecules should be identical, but the ordering of the atoms may differ.</span>
+
+<span class="sd">    :param mol1: Molecule 1</span>
+<span class="sd">    :param mol2: Molecule 2</span>
+<span class="sd">    :return: The rmsd after superposition</span>
+<span class="sd">    :rtype: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rdkit_mol1</span> <span class="o">=</span> <span class="n">to_rdmol</span><span class="p">(</span><span class="n">mol1</span><span class="p">)</span>
+    <span class="n">rdkit_mol2</span> <span class="o">=</span> <span class="n">to_rdmol</span><span class="p">(</span><span class="n">mol2</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">GetBestRMS</span><span class="p">(</span><span class="n">rdkit_mol1</span><span class="p">,</span> <span class="n">rdkit_mol2</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">999</span>
+
+
+<div class="viewcode-block" id="modify_atom"><a class="viewcode-back" href="../../molkit.html#qmflows.molkit.modify_atom">[docs]</a><span class="k">def</span> <span class="nf">modify_atom</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Change atom &quot;idx&quot; in molecule &quot;mol&quot; to &quot;element&quot; and add or remove hydrogens accordingly</span>
+
+<span class="sd">    :parameter mol: molecule to be modified</span>
+<span class="sd">    :type mol: plams.Molecule or rdkit.Chem.Mol</span>
+<span class="sd">    :parameter int idx: index of the atom to be modified</span>
+<span class="sd">    :parameter str element:</span>
+<span class="sd">    :return: Molecule with new element and possibly added or removed hydrogens</span>
+<span class="sd">    :rtype: plams.Molecule</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rdmol</span> <span class="o">=</span> <span class="n">to_rdmol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span> <span class="o">==</span> <span class="n">element</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mol</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">EditableMol</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">rdmol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">GetNeighbors</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">neighbor</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span>
+                <span class="n">e</span><span class="o">.</span><span class="n">RemoveAtom</span><span class="p">(</span><span class="n">neighbor</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">())</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">ReplaceAtom</span><span class="p">(</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Atom</span><span class="p">(</span><span class="n">element</span><span class="p">))</span>
+        <span class="n">newmol</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">GetMol</span><span class="p">()</span>
+        <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">newmol</span><span class="p">)</span>
+        <span class="n">newmol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">AddHs</span><span class="p">(</span><span class="n">newmol</span><span class="p">,</span> <span class="n">addCoords</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">from_rdmol</span><span class="p">(</span><span class="n">newmol</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="apply_template"><a class="viewcode-back" href="../../molkit.html#qmflows.molkit.apply_template">[docs]</a><span class="k">def</span> <span class="nf">apply_template</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">template</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modifies bond orders in plams molecule according template smiles structure.</span>
+
+<span class="sd">    :parameter mol: molecule to be modified</span>
+<span class="sd">    :type mol: plams.Molecule or rdkit.Chem.Mol</span>
+<span class="sd">    :parameter str template: smiles string defining the correct chemical structure</span>
+<span class="sd">    :return: Molecule with correct chemical structure and provided 3D coordinates</span>
+<span class="sd">    :rtype: plams.Molecule</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rdmol</span> <span class="o">=</span> <span class="n">to_rdmol</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">sanitize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">template_mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">AddHs</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">template</span><span class="p">))</span>
+    <span class="n">newmol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">AllChem</span><span class="o">.</span><span class="n">AssignBondOrdersFromTemplate</span><span class="p">(</span><span class="n">template_mol</span><span class="p">,</span> <span class="n">rdmol</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">from_rdmol</span><span class="p">(</span><span class="n">newmol</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="apply_reaction_smarts"><a class="viewcode-back" href="../../molkit.html#qmflows.molkit.apply_reaction_smarts">[docs]</a><span class="k">def</span> <span class="nf">apply_reaction_smarts</span><span class="p">(</span>
+        <span class="n">mol</span><span class="p">,</span> <span class="n">reaction_smarts</span><span class="p">,</span> <span class="n">complete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">forcefield</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_rdmol</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applies reaction smirks and returns product.</span>
+<span class="sd">    If returned as a plams molecule, plams.Molecule.properties.orig_atoms</span>
+<span class="sd">    is a list of indices of atoms that have not been changed</span>
+<span class="sd">    (which can for example be used partially optimize new atoms only with the freeze keyword)</span>
+
+<span class="sd">    :parameter mol: molecule to be modified</span>
+<span class="sd">    :type mol: plams.Molecule or rdkit.Chem.Mol</span>
+<span class="sd">    :parameter str reactions_smarts: Reactions smarts to be applied to molecule</span>
+<span class="sd">    :parameter complete: Apply reaction until no further changes occur or given</span>
+<span class="sd">    fraction of reaction centers have been modified</span>
+<span class="sd">    :type complete: bool or float (value between 0 and 1)</span>
+<span class="sd">    :parameter forcefield: Specify &#39;uff&#39; or &#39;mmff&#39; to apply forcefield based</span>
+<span class="sd">    geometry optimization of product structures.</span>
+<span class="sd">    :type forcefield: str</span>
+<span class="sd">    :param bool return_rdmol: return a RDKit molecule if true, otherwise a PLAMS molecule</span>
+<span class="sd">    :return: (product molecule, list of unchanged atoms)</span>
+<span class="sd">    :rtype: (plams.Molecule, list of int)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">react</span><span class="p">(</span><span class="n">reactant</span><span class="p">,</span> <span class="n">reaction</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Apply reaction to reactant and return products &quot;&quot;&quot;</span>
+        <span class="n">ps</span> <span class="o">=</span> <span class="n">reaction</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">([</span><span class="n">reactant</span><span class="p">])</span>
+        <span class="c1"># if reaction doesn&#39;t apply, return the reactant</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ps</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[(</span><span class="n">reactant</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">reactant</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()))]</span>
+        <span class="n">full</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ps</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">complete</span><span class="p">:</span>  <span class="c1"># when complete is True</span>
+            <span class="c1"># apply reaction until no further changes</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ps</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">reactant</span> <span class="o">=</span> <span class="n">ps</span><span class="p">[</span><span class="n">r</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">ps</span> <span class="o">=</span> <span class="n">reaction</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">([</span><span class="n">reactant</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ps</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">ps</span><span class="p">)</span> <span class="o">/</span> <span class="n">full</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">complete</span><span class="p">):</span>
+                <span class="n">ps</span> <span class="o">=</span> <span class="p">[[</span><span class="n">reactant</span><span class="p">]]</span>
+                <span class="k">break</span>
+        <span class="c1"># add hydrogens and generate coordinates for new atoms</span>
+        <span class="n">products</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">ps</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">AddHs</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="n">gen_coords_rdmol</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>  <span class="c1"># These are the atoms that have not changed</span>
+            <span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">q</span><span class="p">,</span> <span class="n">u</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">products</span>
+
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">to_rdmol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="n">reaction</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="n">reaction_smarts</span><span class="p">)</span>
+    <span class="c1"># RDKit removes fragments that are disconnected from the reaction center</span>
+    <span class="c1"># In order to keep these, the molecule is first split in separate fragments</span>
+    <span class="c1"># and the results, including non-reacting parts, are re-combined afterwards</span>
+    <span class="n">frags</span> <span class="o">=</span> <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">GetMolFrags</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">asMols</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="n">product</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">()</span>
+    <span class="n">unchanged</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># List of atoms that have not changed</span>
+    <span class="k">for</span> <span class="n">frag</span> <span class="ow">in</span> <span class="n">frags</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">react</span><span class="p">(</span><span class="n">frag</span><span class="p">,</span> <span class="n">reaction</span><span class="p">):</span>
+            <span class="n">unchanged</span> <span class="o">+=</span> <span class="p">[</span><span class="n">product</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">u</span><span class="p">]</span>
+            <span class="n">product</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">CombineMols</span><span class="p">(</span><span class="n">product</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">forcefield</span><span class="p">:</span>
+        <span class="n">optimize_coordinates</span><span class="p">(</span><span class="n">product</span><span class="p">,</span> <span class="n">forcefield</span><span class="p">,</span> <span class="n">fixed</span><span class="o">=</span><span class="n">unchanged</span><span class="p">)</span>
+    <span class="c1"># The molecule is returned together with a list of atom indices of the atoms</span>
+    <span class="c1"># that are identical to those</span>
+    <span class="c1"># in the reactants. This list can be used in subsequent partial optimization of the molecule</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">return_rdmol</span><span class="p">:</span>
+        <span class="n">product</span> <span class="o">=</span> <span class="n">from_rdmol</span><span class="p">(</span><span class="n">product</span><span class="p">)</span>
+        <span class="n">product</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">orig_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">unchanged</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">product</span></div>
+
+
+<span class="k">def</span> <span class="nf">gen_coords</span><span class="p">(</span><span class="n">plamsmol</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Calculate 3D positions only for atoms without coordinates &quot;&quot;&quot;</span>
+    <span class="n">rdmol</span> <span class="o">=</span> <span class="n">to_rdmol</span><span class="p">(</span><span class="n">plamsmol</span><span class="p">)</span>
+    <span class="n">unchanged</span> <span class="o">=</span> <span class="n">gen_coords_rdmol</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
+    <span class="n">conf</span> <span class="o">=</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetConformer</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">plamsmol</span><span class="o">.</span><span class="n">atoms</span><span class="p">)):</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">GetAtomPosition</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="n">atom</span> <span class="o">=</span> <span class="n">plamsmol</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+        <span class="n">atom</span><span class="o">.</span><span class="n">_setx</span><span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">atom</span><span class="o">.</span><span class="n">_sety</span><span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">atom</span><span class="o">.</span><span class="n">_setz</span><span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">unchanged</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">gen_coords_rdmol</span><span class="p">(</span><span class="n">rdmol</span><span class="p">):</span>
+    <span class="n">ref</span> <span class="o">=</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">__copy__</span><span class="p">()</span>
+    <span class="n">conf</span> <span class="o">=</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetConformer</span><span class="p">()</span>
+    <span class="n">coordDict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">unchanged</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">maps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Put known coordinates in coordDict</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rdmol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()):</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">GetAtomPosition</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.0001</span> <span class="o">&lt;</span> <span class="n">pos</span><span class="o">.</span><span class="n">x</span> <span class="o">&lt;</span> <span class="mf">0.0001</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.0001</span> <span class="o">&lt;</span> <span class="n">pos</span><span class="o">.</span><span class="n">y</span> <span class="o">&lt;</span> <span class="mf">0.0001</span><span class="p">)</span> <span class="ow">and</span> \
+           <span class="p">(</span><span class="o">-</span><span class="mf">0.0001</span> <span class="o">&lt;</span> <span class="n">pos</span><span class="o">.</span><span class="n">z</span> <span class="o">&lt;</span> <span class="mf">0.0001</span><span class="p">):</span>
+            <span class="k">continue</span>  <span class="c1"># atom without coordinates</span>
+        <span class="n">coordDict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos</span>
+        <span class="n">unchanged</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">maps</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+    <span class="c1"># compute coordinates for new atoms, keeping known coordinates</span>
+    <span class="n">rms</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">rs</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="c1"># repeat embedding and alignment until the rms of mapped atoms is sufficiently small</span>
+    <span class="k">if</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">maps</span><span class="p">):</span>
+        <span class="k">while</span> <span class="n">rms</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
+            <span class="n">AllChem</span><span class="o">.</span><span class="n">EmbedMolecule</span><span class="p">(</span><span class="n">rdmol</span><span class="p">,</span> <span class="n">coordMap</span><span class="o">=</span><span class="n">coordDict</span><span class="p">,</span> <span class="n">randomSeed</span><span class="o">=</span><span class="n">rs</span><span class="p">,</span>
+                                  <span class="n">useBasicKnowledge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># align new molecule to original coordinates</span>
+            <span class="n">rms</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">AlignMol</span><span class="p">(</span><span class="n">rdmol</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">atomMap</span><span class="o">=</span><span class="n">maps</span><span class="p">)</span>
+            <span class="n">rs</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">unchanged</span>
+
+
+<span class="k">def</span> <span class="nf">optimize_coordinates</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">,</span> <span class="n">forcefield</span><span class="p">,</span> <span class="n">fixed</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="k">def</span> <span class="nf">MMFFminimize</span><span class="p">():</span>
+        <span class="n">ff</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">MMFFGetMoleculeForceField</span><span class="p">(</span>
+            <span class="n">rdkit_mol</span><span class="p">,</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">MMFFGetMoleculeProperties</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fixed</span><span class="p">:</span>
+            <span class="n">ff</span><span class="o">.</span><span class="n">AddFixedPoint</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ff</span><span class="o">.</span><span class="n">Minimize</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;MMFF geometry optimization failed for molecule: &quot;</span> <span class="o">+</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">UFFminimize</span><span class="p">():</span>
+        <span class="n">ff</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">UFFGetMoleculeForceField</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">,</span> <span class="n">ignoreInterfragInteractions</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fixed</span><span class="p">:</span>
+            <span class="n">ff</span><span class="o">.</span><span class="n">AddFixedPoint</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ff</span><span class="o">.</span><span class="n">Minimize</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;UFF geometry optimization failed for molecule: &quot;</span> <span class="o">+</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">))</span>
+    <span class="n">optimize_molecule</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;uff&#39;</span><span class="p">:</span> <span class="n">UFFminimize</span><span class="p">,</span>
+        <span class="s1">&#39;mmff&#39;</span><span class="p">:</span> <span class="n">MMFFminimize</span><span class="p">}[</span><span class="n">forcefield</span><span class="p">]</span>
+    <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">rdkit_mol</span><span class="p">)</span>
+    <span class="n">optimize_molecule</span><span class="p">()</span>
+    <span class="k">return</span>
+
+
+<span class="k">def</span> <span class="nf">write_molblock</span><span class="p">(</span><span class="n">plams_mol</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">):</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToMolBlock</span><span class="p">(</span><span class="n">to_rdmol</span><span class="p">(</span><span class="n">plams_mol</span><span class="p">)))</span>
+
+
+<div class="viewcode-block" id="readpdb"><a class="viewcode-back" href="../../molkit.html#qmflows.molkit.readpdb">[docs]</a><span class="k">def</span> <span class="nf">readpdb</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">,</span> <span class="n">removeHs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_rdmol</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a molecule from a PDB file</span>
+
+<span class="sd">    :param pdb_file: The PDB file to read</span>
+<span class="sd">    :type pdb_file: str or file</span>
+<span class="sd">    :param bool removeHs: Hydrogens are removed if Trur</span>
+<span class="sd">    :param bool return_rdmol: return a RDKit molecule if true, otherwise a PLAMS molecule</span>
+<span class="sd">    :return: The molecule</span>
+<span class="sd">    :rtype: plams.Molecule or rdkit.Chem.Mol</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">pdb_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">pdb_mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromPDBBlock</span><span class="p">(</span><span class="n">pdb_file</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">removeHs</span><span class="o">=</span><span class="n">removeHs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pdb_mol</span> <span class="k">if</span> <span class="n">return_rdmol</span> <span class="k">else</span> <span class="n">from_rdmol</span><span class="p">(</span><span class="n">pdb_mol</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="writepdb"><a class="viewcode-back" href="../../molkit.html#qmflows.molkit.writepdb">[docs]</a><span class="k">def</span> <span class="nf">writepdb</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">pdb_file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write a PDB file from a molecule</span>
+
+<span class="sd">    :parameter mol: molecule to be exported to PDB</span>
+<span class="sd">    :type mol: plams.Molecule or rdkit.Chem.Mol</span>
+<span class="sd">    :param pdb_file: The PDB file to write to, or a filename</span>
+<span class="sd">    :type pdb_file: str or file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">to_rdmol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">pdb_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">pdb_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToPDBBlock</span><span class="p">(</span><span class="n">mol</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="add_Hs"><a class="viewcode-back" href="../../molkit.html#qmflows.molkit.add_Hs">[docs]</a><span class="k">def</span> <span class="nf">add_Hs</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">forcefield</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_rdmol</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add hydrogens to protein molecules read from PDB.</span>
+<span class="sd">    Makes sure that the hydrogens get the correct PDBResidue info.</span>
+
+<span class="sd">    :param mol: Molecule to be protonated</span>
+<span class="sd">    :type mol: plams.Molecule or rdkit.Chem.Mol</span>
+<span class="sd">    :param str forcefield: Specify &#39;uff&#39; or &#39;mmff&#39; to apply forcefield based</span>
+<span class="sd">    geometry optimization on new atoms.</span>
+<span class="sd">    :param bool return_rdmol: return a RDKit molecule if true, otherwise a PLAMS molecule</span>
+<span class="sd">    :return: A molecule with explicit hydrogens added</span>
+<span class="sd">    :rtype: plams.Molecule or rdkit.Chem.Mol</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">to_rdmol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="n">retmol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">AddHs</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">retmol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetPDBResidueInfo</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span>
+            <span class="n">bond</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetBonds</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtom</span><span class="p">()</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">()</span> <span class="o">==</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">:</span>
+                <span class="n">connected_atom</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtom</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">connected_atom</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtom</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ResInfo</span> <span class="o">=</span> <span class="n">connected_atom</span><span class="o">.</span><span class="n">GetPDBResidueInfo</span><span class="p">()</span>
+                <span class="n">atom</span><span class="o">.</span><span class="n">SetMonomerInfo</span><span class="p">(</span><span class="n">ResInfo</span><span class="p">)</span>
+                <span class="n">atomname</span> <span class="o">=</span> <span class="s1">&#39;H&#39;</span> <span class="o">+</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetPDBResidueInfo</span><span class="p">()</span><span class="o">.</span><span class="n">GetName</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="n">atom</span><span class="o">.</span><span class="n">GetPDBResidueInfo</span><span class="p">()</span><span class="o">.</span><span class="n">SetName</span><span class="p">(</span><span class="n">atomname</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
+    <span class="n">unchanged</span> <span class="o">=</span> <span class="n">gen_coords_rdmol</span><span class="p">(</span><span class="n">retmol</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">forcefield</span><span class="p">:</span>
+        <span class="n">optimize_coordinates</span><span class="p">(</span><span class="n">retmol</span><span class="p">,</span> <span class="n">forcefield</span><span class="p">,</span> <span class="n">fixed</span><span class="o">=</span><span class="n">unchanged</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">retmol</span> <span class="k">if</span> <span class="n">return_rdmol</span> <span class="k">else</span> <span class="n">from_rdmol</span><span class="p">(</span><span class="n">retmol</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">add_fragment</span><span class="p">(</span><span class="n">rwmol</span><span class="p">,</span> <span class="n">frag</span><span class="p">,</span> <span class="n">rwmol_atom_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frag_atom_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">bond_order</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">molconf</span> <span class="o">=</span> <span class="n">rwmol</span><span class="o">.</span><span class="n">GetConformer</span><span class="p">()</span>
+    <span class="n">fragconf</span> <span class="o">=</span> <span class="n">frag</span><span class="o">.</span><span class="n">GetConformer</span><span class="p">()</span>
+    <span class="n">new_indices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">frag</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+        <span class="n">new_index</span> <span class="o">=</span> <span class="n">rwmol</span><span class="o">.</span><span class="n">AddAtom</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="n">new_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_index</span><span class="p">)</span>
+        <span class="n">molconf</span><span class="o">.</span><span class="n">SetAtomPosition</span><span class="p">(</span><span class="n">new_index</span><span class="p">,</span> <span class="n">fragconf</span><span class="o">.</span><span class="n">GetAtomPosition</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">()))</span>
+    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">frag</span><span class="o">.</span><span class="n">GetBonds</span><span class="p">():</span>
+        <span class="n">ba</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">()</span>
+        <span class="n">ea</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">()</span>
+        <span class="n">rwmol</span><span class="o">.</span><span class="n">AddBond</span><span class="p">(</span><span class="n">new_indices</span><span class="p">[</span><span class="n">ba</span><span class="p">],</span> <span class="n">new_indices</span><span class="p">[</span><span class="n">ea</span><span class="p">],</span> <span class="n">b</span><span class="o">.</span><span class="n">GetBondType</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">bond_order</span><span class="p">:</span>
+        <span class="n">rwmol</span><span class="o">.</span><span class="n">AddBond</span><span class="p">(</span><span class="n">rwmol_atom_idx</span><span class="p">,</span> <span class="n">new_indices</span><span class="p">[</span><span class="n">frag_atom_idx</span><span class="p">],</span>
+                      <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">bond_order</span><span class="p">])</span>
+        <span class="n">rwmol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">new_indices</span><span class="p">[</span><span class="n">frag_atom_idx</span><span class="p">])</span><span class="o">.</span><span class="n">SetNumRadicalElectrons</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">get_fragment</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">incl_expl_Hs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">neutralize</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">molconf</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetConformer</span><span class="p">()</span>
+    <span class="n">fragment</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">RWMol</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">())</span>
+    <span class="n">fragconf</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Conformer</span><span class="p">()</span>
+    <span class="c1"># Put atoms in fragment</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+        <span class="n">atom</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">new_index</span> <span class="o">=</span> <span class="n">fragment</span><span class="o">.</span><span class="n">AddAtom</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">molconf</span><span class="o">.</span><span class="n">GetAtomPosition</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">fragconf</span><span class="o">.</span><span class="n">SetAtomPosition</span><span class="p">(</span><span class="n">new_index</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+    <span class="c1"># Put bonds in fragment</span>
+    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetBonds</span><span class="p">():</span>
+        <span class="n">ba</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">()</span>
+        <span class="n">ea</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ba</span> <span class="ow">in</span> <span class="n">indices</span> <span class="ow">and</span> <span class="n">ea</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+            <span class="n">fragment</span><span class="o">.</span><span class="n">AddBond</span><span class="p">(</span><span class="n">indices</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ba</span><span class="p">),</span> <span class="n">indices</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ea</span><span class="p">),</span>
+                             <span class="n">b</span><span class="o">.</span><span class="n">GetBondType</span><span class="p">())</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">incl_expl_Hs</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">ba</span> <span class="ow">in</span> <span class="n">indices</span> <span class="ow">and</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">ea</span><span class="p">)</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span>
+            <span class="n">hi</span> <span class="o">=</span> <span class="n">fragment</span><span class="o">.</span><span class="n">AddAtom</span><span class="p">(</span><span class="n">mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">ea</span><span class="p">))</span>
+            <span class="n">fragconf</span><span class="o">.</span><span class="n">SetAtomPosition</span><span class="p">(</span><span class="n">hi</span><span class="p">,</span> <span class="n">molconf</span><span class="o">.</span><span class="n">GetAtomPosition</span><span class="p">(</span><span class="n">ea</span><span class="p">))</span>
+            <span class="n">fragment</span><span class="o">.</span><span class="n">AddBond</span><span class="p">(</span><span class="n">indices</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ba</span><span class="p">),</span> <span class="n">hi</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">ea</span> <span class="ow">in</span> <span class="n">indices</span> <span class="ow">and</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">ba</span><span class="p">)</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span>
+            <span class="n">hi</span> <span class="o">=</span> <span class="n">fragment</span><span class="o">.</span><span class="n">AddAtom</span><span class="p">(</span><span class="n">mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">ba</span><span class="p">))</span>
+            <span class="n">fragconf</span><span class="o">.</span><span class="n">SetAtomPosition</span><span class="p">(</span><span class="n">hi</span><span class="p">,</span> <span class="n">molconf</span><span class="o">.</span><span class="n">GetAtomPosition</span><span class="p">(</span><span class="n">ba</span><span class="p">))</span>
+            <span class="n">fragment</span><span class="o">.</span><span class="n">AddBond</span><span class="p">(</span><span class="n">indices</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ea</span><span class="p">),</span> <span class="n">hi</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">)</span>
+    <span class="n">ret_frag</span> <span class="o">=</span> <span class="n">fragment</span><span class="o">.</span><span class="n">GetMol</span><span class="p">()</span>
+    <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">ret_frag</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">neutralize</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">ret_frag</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+            <span class="n">nrad</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetNumRadicalElectrons</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">nrad</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">atom</span><span class="o">.</span><span class="n">SetNumExplicitHs</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">GetNumExplicitHs</span><span class="p">()</span> <span class="o">+</span> <span class="n">nrad</span><span class="p">)</span>
+                <span class="n">atom</span><span class="o">.</span><span class="n">SetNumRadicalElectrons</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">ret_frag</span><span class="p">)</span>
+    <span class="n">ret_frag</span><span class="o">.</span><span class="n">AddConformer</span><span class="p">(</span><span class="n">fragconf</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ret_frag</span>
+
+
+<div class="viewcode-block" id="partition_protein"><a class="viewcode-back" href="../../molkit.html#qmflows.molkit.partition_protein">[docs]</a><span class="k">def</span> <span class="nf">partition_protein</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">residue_bonds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">split_heteroatoms</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_rdmol</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Splits a protein molecule into capped amino acid fragments and caps.</span>
+
+<span class="sd">    :param mol: A protein molecule</span>
+<span class="sd">    :type mol: plams.Molecule or rdkit.Chem.Mol</span>
+<span class="sd">    :param tuple residue_bonds: a tuple of pairs of residue number indicating which</span>
+<span class="sd">    peptide bonds to split. If none, split all peptide bonds.</span>
+<span class="sd">    :param bool split_heteroatoms: if True, all bonds between a heteroatom and</span>
+<span class="sd">    a non-heteroatom across residues are removed</span>
+<span class="sd">    :return: list of fragments, list of caps</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">to_rdmol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="n">caps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">em</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">RWMol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">split_heteroatoms</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetBonds</span><span class="p">():</span>
+            <span class="n">resinfa</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtom</span><span class="p">()</span><span class="o">.</span><span class="n">GetPDBResidueInfo</span><span class="p">()</span>
+            <span class="n">resinfb</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtom</span><span class="p">()</span><span class="o">.</span><span class="n">GetPDBResidueInfo</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">resinfa</span><span class="o">.</span><span class="n">GetIsHeteroAtom</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">resinfb</span><span class="o">.</span><span class="n">GetIsHeteroAtom</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">resinfa</span><span class="o">.</span><span class="n">GetResidueNumber</span><span class="p">()</span> <span class="o">!=</span> <span class="n">resinfb</span><span class="o">.</span><span class="n">GetResidueNumber</span><span class="p">():</span>
+                    <span class="n">em</span><span class="o">.</span><span class="n">RemoveBond</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">(),</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">())</span>
+    <span class="c1"># Split peptide bonds</span>
+    <span class="n">pept_bond</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="s1">&#39;[C;X4;H1,H2][CX3](=O)[NX3][C;X4;H1,H2][CX3](=O)&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetSubstructMatches</span><span class="p">(</span><span class="n">pept_bond</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">residue_bonds</span><span class="p">:</span>
+            <span class="n">resa</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">GetPDBResidueInfo</span><span class="p">()</span><span class="o">.</span><span class="n">GetResidueNumber</span><span class="p">()</span>
+            <span class="n">resb</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">GetPDBResidueInfo</span><span class="p">()</span><span class="o">.</span><span class="n">GetResidueNumber</span><span class="p">()</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">resa</span><span class="p">,</span> <span class="n">resb</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">residue_bonds</span> <span class="ow">and</span> <span class="p">(</span><span class="n">resb</span><span class="p">,</span> <span class="n">resa</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">residue_bonds</span><span class="p">:</span>
+                <span class="k">continue</span>
+        <span class="n">cap</span> <span class="o">=</span> <span class="n">get_fragment</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
+        <span class="n">cap</span> <span class="o">=</span> <span class="n">add_Hs</span><span class="p">(</span><span class="n">cap</span><span class="p">,</span> <span class="n">return_rdmol</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">caps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cap</span> <span class="k">if</span> <span class="n">return_rdmol</span> <span class="k">else</span> <span class="n">from_rdmol</span><span class="p">(</span><span class="n">cap</span><span class="p">))</span>
+        <span class="n">cap_o_ind</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">GetSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="s1">&#39;[C;X4][CX3]=O&#39;</span><span class="p">))</span>
+        <span class="n">cap_o</span> <span class="o">=</span> <span class="n">get_fragment</span><span class="p">(</span><span class="n">cap</span><span class="p">,</span> <span class="n">cap_o_ind</span><span class="p">,</span> <span class="n">neutralize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">cap_n_ind</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">GetSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="s1">&#39;O=[CX3][NX3][C;X4]&#39;</span><span class="p">))[</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">cap_n</span> <span class="o">=</span> <span class="n">get_fragment</span><span class="p">(</span><span class="n">cap</span><span class="p">,</span> <span class="n">cap_n_ind</span><span class="p">,</span> <span class="n">neutralize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">em</span><span class="o">.</span><span class="n">RemoveBond</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">match</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">add_fragment</span><span class="p">(</span><span class="n">em</span><span class="p">,</span> <span class="n">cap_o</span><span class="p">,</span> <span class="n">match</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">add_fragment</span><span class="p">(</span><span class="n">em</span><span class="p">,</span> <span class="n">cap_n</span><span class="p">,</span> <span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># Split disulfide bonds</span>
+    <span class="n">ss_bond</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="s1">&#39;[C;X4;H1,H2]SS[C;X4;H1,H2]&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetSubstructMatches</span><span class="p">(</span><span class="n">ss_bond</span><span class="p">):</span>
+        <span class="n">cap</span> <span class="o">=</span> <span class="n">get_fragment</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
+        <span class="n">cap</span> <span class="o">=</span> <span class="n">add_Hs</span><span class="p">(</span><span class="n">cap</span><span class="p">,</span> <span class="n">return_rdmol</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">caps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cap</span> <span class="k">if</span> <span class="n">return_rdmol</span> <span class="k">else</span> <span class="n">from_rdmol</span><span class="p">(</span><span class="n">cap</span><span class="p">))</span>
+        <span class="n">cap_s_ind</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">GetSubstructMatch</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="s1">&#39;[C;X4]SS[C;X4]&#39;</span><span class="p">))</span>
+        <span class="n">cap_s1</span> <span class="o">=</span> <span class="n">get_fragment</span><span class="p">(</span><span class="n">cap</span><span class="p">,</span> <span class="n">cap_s_ind</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">neutralize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">cap_s2</span> <span class="o">=</span> <span class="n">get_fragment</span><span class="p">(</span><span class="n">cap</span><span class="p">,</span> <span class="n">cap_s_ind</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">neutralize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">em</span><span class="o">.</span><span class="n">RemoveBond</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">match</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">add_fragment</span><span class="p">(</span><span class="n">em</span><span class="p">,</span> <span class="n">cap_s1</span><span class="p">,</span> <span class="n">match</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">add_fragment</span><span class="p">(</span><span class="n">em</span><span class="p">,</span> <span class="n">cap_s2</span><span class="p">,</span> <span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">frags</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">GetMolFrags</span><span class="p">(</span><span class="n">em</span><span class="o">.</span><span class="n">GetMol</span><span class="p">(),</span> <span class="n">asMols</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sanitizeFrags</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">return_rdmol</span><span class="p">:</span>
+        <span class="n">frags</span> <span class="o">=</span> <span class="p">[</span><span class="n">from_rdmol</span><span class="p">(</span><span class="n">frag</span><span class="p">)</span> <span class="k">for</span> <span class="n">frag</span> <span class="ow">in</span> <span class="n">frags</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">frags</span><span class="p">,</span> <span class="n">caps</span></div>
+
+
+<span class="k">def</span> <span class="nf">charge_AAs</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">return_rdmol</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">ionizations</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;ARG_NH2&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s1">&#39;LYS_NZ&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s1">&#39;GLU_OE2&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="s1">&#39;ASP_OD2&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">to_rdmol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+        <span class="n">resinfo</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetPDBResidueInfo</span><span class="p">()</span>
+        <span class="n">res_atom</span> <span class="o">=</span> <span class="n">resinfo</span><span class="o">.</span><span class="n">GetResidueName</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">resinfo</span><span class="o">.</span><span class="n">GetName</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">atom</span><span class="o">.</span><span class="n">SetFormalCharge</span><span class="p">(</span><span class="n">ionizations</span><span class="p">[</span><span class="n">res_atom</span><span class="p">])</span>
+            <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mol</span> <span class="k">if</span> <span class="n">return_rdmol</span> <span class="k">else</span> <span class="n">from_rdmol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_backbone_atoms"><a class="viewcode-back" href="../../molkit.html#qmflows.molkit.get_backbone_atoms">[docs]</a><span class="k">def</span> <span class="nf">get_backbone_atoms</span><span class="p">(</span><span class="n">mol</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a list of atom indices corresponding to the backbone atoms in a peptide molecule.</span>
+<span class="sd">    This function assumes PDB information in properties.pdb_info of each atom, which is the case</span>
+<span class="sd">    if the molecule is generated with the &quot;readpdb&quot; or &quot;from_sequence&quot; functions.</span>
+
+<span class="sd">    :parameter mol: a peptide molecule</span>
+<span class="sd">    :type mol: plams.Molecule or rdkit.Chem.Mol</span>
+<span class="sd">    :return: a list of atom indices</span>
+<span class="sd">    :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">from_rdmol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="n">backbone</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">mol</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">pdb_info</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">backbone</span><span class="p">]</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">qmflows</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../includeme.html">QMFlows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interactive_tutorial.html">Basic usage tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../documentation.html">Library Documentation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, F. Zapata, L. Ridder.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

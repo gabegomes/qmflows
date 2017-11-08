@@ -43,14 +43,14 @@
             
   <div class="section" id="running-a-workflow">
 <h1>Running a workflow<a class="headerlink" href="#running-a-workflow" title="Permalink to this headline">¶</a></h1>
-<p>A workflow in <strong>QMWorks</strong> consist of a set of computations and the dependencies between them,
+<p>A workflow in <strong>Qmflows</strong> consist of a set of computations and the dependencies between them,
 explicitly declared by the user in the python script. This dependecies and the relation between
 them form an graph (specifically an acyclic direct graph) that represent these relations.</p>
-<p><strong>QMWorks</strong> Builds the aforemention graph in order to realize the workflow evaluation order. For instance the figure below represent a simulation where firstly a molecular geometry optimization is carried out using the <em>ADF</em> package and some user defined <code class="docutils literal"><span class="pre">Settings</span></code> for the <em>ADF</em> simulation package. Subsequently, using the optimized molecular geometry from the previous step and another <code class="docutils literal"><span class="pre">Settings</span></code> for an orca simulation a job to compute the molecular frequencies is carried out.</p>
+<p><strong>Qmflows</strong> Builds the aforemention graph in order to realize the workflow evaluation order. For instance the figure below represent a simulation where firstly a molecular geometry optimization is carried out using the <em>ADF</em> package and some user defined <code class="docutils literal"><span class="pre">Settings</span></code> for the <em>ADF</em> simulation package. Subsequently, using the optimized molecular geometry from the previous step and another <code class="docutils literal"><span class="pre">Settings</span></code> for an orca simulation a job to compute the molecular frequencies is carried out.</p>
 <img alt="_images/simple_graph.png" src="_images/simple_graph.png" />
 <p>A python script corresponding with this graph can be:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">plams</span> <span class="k">import</span> <span class="n">Molecule</span>
-<span class="kn">from</span> <span class="nn">qmworks</span> <span class="k">import</span> <span class="p">(</span><span class="n">adf</span><span class="p">,</span> <span class="n">orca</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">Settings</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="p">(</span><span class="n">adf</span><span class="p">,</span> <span class="n">orca</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">Settings</span><span class="p">)</span>
 
 <span class="c1"># ADF optimization</span>
 <span class="n">optmized_mol_adf</span> <span class="o">=</span> <span class="n">adf</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">acetonitrile</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="s1">&#39;acetonitrile_opt&#39;</span><span class="p">)</span>
@@ -74,7 +74,7 @@ them form an graph (specifically an acyclic direct graph) that represent these r
 </pre></div>
 </div>
 <p>Up to the invocation of the <code class="docutils literal"><span class="pre">run</span></code> function none of the computations have been executed,
-it is the <code class="docutils literal"><span class="pre">run</span></code> function which builds and executes the dependencies. Since <em>QMWorks</em> needs to figure out
+it is the <code class="docutils literal"><span class="pre">run</span></code> function which builds and executes the dependencies. Since <em>Qmflows</em> needs to figure out
 all the dependecies in the script, the <code class="docutils literal"><span class="pre">run</span></code> function takes as argument last dependency (or inner most dependy),
 which in this case are the frequencies. The reason behind this, is that from the last dependency it is possible to
 retrace all the dependecies.</p>

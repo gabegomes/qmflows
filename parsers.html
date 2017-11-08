@@ -44,23 +44,23 @@
   <div class="section" id="extracting-numerical-properties-from-output-files">
 <h1>Extracting numerical properties from output files<a class="headerlink" href="#extracting-numerical-properties-from-output-files" title="Permalink to this headline">¶</a></h1>
 <p>Quantum packages simulations generate output file in different formats. For examples the <a class="reference external" href="https://www.scm.com/">SCM</a> simulation suite
-(<code class="docutils literal"><span class="pre">ADF</span></code> and <code class="docutils literal"><span class="pre">DFTB</span></code> in <em>QMWorks</em>) generate binary outputs, while other packages like <code class="docutils literal"><span class="pre">CP2K</span></code>, <code class="docutils literal"><span class="pre">Gamess-US</span></code> and <code class="docutils literal"><span class="pre">Orca</span></code>
+(<code class="docutils literal"><span class="pre">ADF</span></code> and <code class="docutils literal"><span class="pre">DFTB</span></code> in <em>Qmflows</em>) generate binary outputs, while other packages like <code class="docutils literal"><span class="pre">CP2K</span></code>, <code class="docutils literal"><span class="pre">Gamess-US</span></code> and <code class="docutils literal"><span class="pre">Orca</span></code>
 generate ascii text files.  Some other packages like <code class="docutils literal"><span class="pre">Dirac</span></code> generate a structure text output like <em>XML</em>.</p>
-<p><em>QMWorks</em> abstract away all the different commmunication protocols with the different output formats, allowing the user to
+<p><em>Qmflows</em> abstract away all the different commmunication protocols with the different output formats, allowing the user to
 extract the desire property by using the convention:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">property</span>
 </pre></div>
 </div>
 <p>where job is the simulation perform with a given package and property is the numerical value of interest (scalar or array).</p>
-<p>The  <em>QMWorks</em> implementation of the aforemention mechanism search in the JSON  files located at <code class="docutils literal"><span class="pre">qmworks/data/dictionaries/</span></code>
+<p>The  <em>Qmflows</em> implementation of the aforemention mechanism search in the JSON  files located at <code class="docutils literal"><span class="pre">qmflows/data/dictionaries/</span></code>
 for instructions about how to read that given property from the output file. Nevertheless, <em>Not all the properties for a given
-pacakge are implemented</em>. <strong>If the property of your interest is not available you can request it in the QMWorks issues page</strong>.</p>
+pacakge are implemented</em>. <strong>If the property of your interest is not available you can request it in the Qmflows issues page</strong>.</p>
 </div>
 <div class="section" id="parsers">
 <h1>Parsers<a class="headerlink" href="#parsers" title="Permalink to this headline">¶</a></h1>
-<p>Internally <em>QMWorks</em> uses different mechanism to extract different properties from the output files. In the case of the <code class="docutils literal"><span class="pre">ADF</span></code> and
-<code class="docutils literal"><span class="pre">DFTB</span></code> packages, <em>QMWorks</em> take advantages of the python interface to <a class="reference external" href="https://www.scm.com/doc/plams/scm.html#kf-files">kftools</a> files developed by the <a class="reference external" href="https://www.scm.com/">SCM</a>. In the case of <em>XML</em> output,
-<em>QMWorks</em> direcltly uses the python built-in <a class="reference external" href="https://docs.python.org/3.5/library/xml.etree.elementtree.html">xml</a> reader. For the output files in text format <em>QMWorks</em> uses a mixuture of <a class="reference external" href="https://www.gnu.org/software/gawk/manual/gawk.html">awk</a> and
+<p>Internally <em>Qmflows</em> uses different mechanism to extract different properties from the output files. In the case of the <code class="docutils literal"><span class="pre">ADF</span></code> and
+<code class="docutils literal"><span class="pre">DFTB</span></code> packages, <em>Qmflows</em> take advantages of the python interface to <a class="reference external" href="https://www.scm.com/doc/plams/scm.html#kf-files">kftools</a> files developed by the <a class="reference external" href="https://www.scm.com/">SCM</a>. In the case of <em>XML</em> output,
+<em>Qmflows</em> direcltly uses the python built-in <a class="reference external" href="https://docs.python.org/3.5/library/xml.etree.elementtree.html">xml</a> reader. For the output files in text format <em>Qmflows</em> uses a mixuture of <a class="reference external" href="https://www.gnu.org/software/gawk/manual/gawk.html">awk</a> and
 <em>parsers</em>.</p>
 <p>Parsers are a robust alternative to regular expressions, parsers are modular and reusable, while
 <a class="reference external" href="https://docs.python.org/2/library/re.html#module-re" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">re</span></code></a> tends to be abstruse and difficult to reuse. A parser is a function that decomposes a string (or binary) into its syntactic components using some predefined rules or grammar.

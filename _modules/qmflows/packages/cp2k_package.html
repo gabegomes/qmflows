@@ -1,0 +1,357 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>qmflows.packages.cp2k_package &#8212; qmflows 1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for qmflows.packages.cp2k_package</h1><div class="highlight"><pre>
+<span></span><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cp2k&#39;</span><span class="p">]</span>
+
+<span class="kn">from</span> <span class="nn">qmflows.data.dictionaries.warningsCP2K</span> <span class="k">import</span> <span class="n">cp2k_warnings</span>
+<span class="kn">from</span> <span class="nn">qmflows.packages.packages</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">Package</span><span class="p">,</span> <span class="n">package_properties</span><span class="p">,</span> <span class="n">parse_output_warnings</span><span class="p">,</span> <span class="n">Result</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">qmflows.parsers.cp2KParser</span> <span class="k">import</span> <span class="n">parse_cp2k_warnings</span>
+<span class="kn">from</span> <span class="nn">qmflows.settings</span> <span class="k">import</span> <span class="n">Settings</span>
+<span class="kn">from</span> <span class="nn">scm</span> <span class="k">import</span> <span class="n">plams</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
+
+
+<span class="c1"># ====================================&lt;&gt;=======================================</span>
+<span class="n">charge_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;He&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Li&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;Be&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="s1">&#39;Ne&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;Na&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;Mg&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;Al&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;Si&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;Cl&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="s1">&#39;Ar&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;Ca&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;Sc&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s1">&#39;Ti&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s1">&#39;Cr&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s1">&#39;Mn&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+    <span class="s1">&#39;Fe&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">&#39;Co&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;Ni&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;Cu&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s1">&#39;Zn&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;Ga&#39;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s1">&#39;Ge&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;As&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s1">&#39;Se&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;Br&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;Kr&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;Rb&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;Sr&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s1">&#39;Zr&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;Nb&#39;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+    <span class="s1">&#39;Mo&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s1">&#39;Tc&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;Ru&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">&#39;Rh&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;Pd&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;Ag&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s1">&#39;Cd&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="s1">&#39;In&#39;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s1">&#39;Sn&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;Sb&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;Te&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;Xe&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;Cs&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;Ba&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s1">&#39;Hf&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;Ta&#39;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s1">&#39;Re&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;Os&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">&#39;Ir&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;Pt&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>
+    <span class="s1">&#39;Au&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s1">&#39;Hg&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;Tl&#39;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s1">&#39;Pb&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;Bi&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;Po&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;At&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;Rn&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">}</span>
+<span class="c1"># ======================================&lt;&gt;====================================</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cp2k&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="CP2K"><a class="viewcode-back" href="../../../packages.html#qmflows.packages.cp2k_package.CP2K">[docs]</a><span class="k">class</span> <span class="nc">CP2K</span><span class="p">(</span><span class="n">Package</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class setup the requirement to run a CP2K Job &lt;https://www.cp2k.org/&gt;.</span>
+<span class="sd">    It uses plams together with the templates to generate the stucture input</span>
+<span class="sd">    and also uses Plams to invoke the binary CP2K code.</span>
+<span class="sd">    This class is not intended to be called directly by the user, instead the</span>
+<span class="sd">    **cp2k** function should be called.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CP2K</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;cp2k&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generic_dict_file</span> <span class="o">=</span> <span class="s1">&#39;generic2CP2K.json&#39;</span>
+
+    <span class="k">def</span> <span class="nf">prerun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="CP2K.run_job"><a class="viewcode-back" href="../../../packages.html#qmflows.packages.cp2k_package.CP2K.run_job">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">run_job</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">mol</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="s1">&#39;cp2k_job&#39;</span><span class="p">,</span>
+                <span class="n">work_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">terminate_job_in_case_of_warnings</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Call the Cp2K binary using plams interface.</span>
+
+<span class="sd">        :param settings: Job Settings.</span>
+<span class="sd">        :type settings: :class:`~qmflows.Settings`</span>
+<span class="sd">        :param mol: molecular Geometry</span>
+<span class="sd">        :type mol: plams Molecule</span>
+<span class="sd">        :param hdf5_file: Path to the HDF5 file that contains the</span>
+<span class="sd">        numerical results.</span>
+<span class="sd">        :type hdf5_file: String</span>
+<span class="sd">        :param input_file_name: Optional name for the input.</span>
+<span class="sd">        :type input_file_name: String</span>
+<span class="sd">        :param out_file_name: Optional name for the output.</span>
+<span class="sd">        :type out_file_name: String</span>
+<span class="sd">        :param store_in_hdf5: wether to store the output arrays in HDF5 format.</span>
+<span class="sd">        :type store_in_hdf5: Bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Yet another work directory</span>
+
+        <span class="c1"># Input modifications</span>
+        <span class="n">cp2k_settings</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+        <span class="n">cp2k_settings</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">cp2k</span>
+
+        <span class="c1"># Add molecular coordinates</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">format_coord_xyz</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">{:&gt;8}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;&amp;END&#39;</span><span class="p">)</span>
+        <span class="n">cp2k_settings</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">force_eval</span><span class="o">.</span><span class="n">subsys</span><span class="p">[</span><span class="s1">&#39;&amp;COORD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span>
+
+        <span class="c1"># Create a Plams job</span>
+        <span class="n">job</span> <span class="o">=</span> <span class="n">plams</span><span class="o">.</span><span class="n">interfaces</span><span class="o">.</span><span class="n">cp2k</span><span class="o">.</span><span class="n">Cp2kJob</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">job_name</span><span class="p">,</span>
+                                            <span class="n">settings</span><span class="o">=</span><span class="n">cp2k_settings</span><span class="p">,</span>
+                                            <span class="n">molecule</span><span class="o">=</span><span class="n">mol</span><span class="p">)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="n">work_dir</span> <span class="o">=</span> <span class="n">work_dir</span> <span class="k">if</span> <span class="n">work_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">job</span><span class="o">.</span><span class="n">path</span>
+
+        <span class="n">warnings</span> <span class="o">=</span> <span class="n">parse_output_warnings</span><span class="p">(</span><span class="n">job_name</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+                                         <span class="n">parse_cp2k_warnings</span><span class="p">,</span> <span class="n">cp2k_warnings</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">CP2K_Result</span><span class="p">(</span><span class="n">cp2k_settings</span><span class="p">,</span> <span class="n">mol</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+                             <span class="n">work_dir</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">warnings</span><span class="o">=</span><span class="n">warnings</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+    <span class="k">def</span> <span class="nf">postrun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="CP2K.handle_special_keywords"><a class="viewcode-back" href="../../../packages.html#qmflows.packages.cp2k_package.CP2K.handle_special_keywords">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">handle_special_keywords</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">mol</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create the settings input for complex cp2k keys</span>
+
+<span class="sd">        :param settings: Job Settings.</span>
+<span class="sd">        :type settings: :class:`~qmflows.Settings`</span>
+<span class="sd">        :param key: Special key declared in ``settings``.</span>
+<span class="sd">        :param value: Value store in ``settings``.</span>
+<span class="sd">        :param mol: molecular Geometry</span>
+<span class="sd">        :type mol: plams Molecule</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">write_cell_angles</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">mol</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            The angles of the cell is a 3-dimensional list ::</span>
+
+<span class="sd">            &amp;SUBSYS</span>
+<span class="sd">              &amp;CELL</span>
+<span class="sd">                ABC [angstrom] 5.958 7.596 15.610</span>
+<span class="sd">                ALPHA_BETA_GAMMA 81.250 86.560 89.800</span>
+<span class="sd">              &amp;END CELL</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">angles</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">cp2k</span><span class="o">.</span><span class="n">force_eval</span><span class="o">.</span><span class="n">subsys</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">alpha_beta_gamma</span> <span class="o">=</span> <span class="n">angles</span>
+
+            <span class="k">return</span> <span class="n">s</span>
+
+        <span class="k">def</span> <span class="nf">write_cell_parameters</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">mol</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            The cell parameter can be a list of lists containing the</span>
+<span class="sd">            ABC parameter like ::</span>
+
+<span class="sd">            &amp;SUBSYS</span>
+<span class="sd">               &amp;CELL</span>
+<span class="sd">               A  16.11886919    0.07814137      -0.697284243</span>
+<span class="sd">               B  -0.215317662   4.389405268     1.408951791</span>
+<span class="sd">               C  -0.216126961   1.732808365     9.748961085</span>
+<span class="sd">               PERIODIC XYZ</span>
+<span class="sd">               &amp;END</span>
+<span class="sd">            .....</span>
+
+<span class="sd">            The cell parameter can also be a scalar for ABC like ::</span>
+
+<span class="sd">            &amp;SUBSYS</span>
+<span class="sd">            &amp;CELL</span>
+<span class="sd">            ABC [angstrom] 12.74 12.74 12.74</span>
+<span class="sd">            PERIODIC NONE</span>
+<span class="sd">            &amp;END CELL</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">abc</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+                <span class="n">abc_cell</span> <span class="o">=</span> <span class="s1">&#39; [angstrom] </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">abc</span><span class="p">)</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">cp2k</span><span class="o">.</span><span class="n">force_eval</span><span class="o">.</span><span class="n">subsys</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">ABC</span> <span class="o">=</span> <span class="n">abc_cell</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">abc</span> <span class="o">=</span> <span class="s1">&#39; [angstrom] </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">cp2k</span><span class="o">.</span><span class="n">force_eval</span><span class="o">.</span><span class="n">subsys</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">ABC</span> <span class="o">=</span> <span class="n">abc</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">value</span>  <span class="c1">#</span>
+                <span class="n">fun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">xs</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">xs</span><span class="p">)</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">cp2k</span><span class="o">.</span><span class="n">force_eval</span><span class="o">.</span><span class="n">subsys</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="n">fun</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">cp2k</span><span class="o">.</span><span class="n">force_eval</span><span class="o">.</span><span class="n">subsys</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="n">fun</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">cp2k</span><span class="o">.</span><span class="n">force_eval</span><span class="o">.</span><span class="n">subsys</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">C</span> <span class="o">=</span> <span class="n">fun</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;cell parameter:</span><span class="si">{}</span><span class="se">\n</span><span class="s2">format not recognized&quot;</span>
+                <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">s</span>
+
+        <span class="k">def</span> <span class="nf">expand_basis_set</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">mol</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            CP2k has a sspecial format for the basis set, For more</span>
+<span class="sd">            information have a look at</span>
+<span class="sd">            `basis &lt;https://www.cp2k.org/basis_sets?s[]=basis&gt;`.</span>
+<span class="sd">            For a Molecule that contains only carbon and oxygen atoms,</span>
+<span class="sd">            the basis set declaration is given by,</span>
+<span class="sd">            &gt;&gt;&gt; &amp;FORCE_EVAL</span>
+<span class="sd">                    .......</span>
+<span class="sd">                    &amp;SUBSYS</span>
+<span class="sd">                        &amp;KIND  C</span>
+<span class="sd">                            BASIS_SET  DZVP-MOLOPT-SR-GTH-q4</span>
+<span class="sd">                            POTENTIAL  GTH-PBE-q4</span>
+<span class="sd">                        &amp;END C</span>
+<span class="sd">                        &amp;KIND  H</span>
+<span class="sd">                            BASIS_SET  DZVP-MOLOPT-SR-GTH-q1</span>
+<span class="sd">                            POTENTIAL  GTH-PBE-q1</span>
+<span class="sd">                        &amp;END H</span>
+<span class="sd">                    &amp;END SUBSYS</span>
+<span class="sd">                &amp; END FORCE_EVALXS</span>
+<span class="sd">            Where DZVP-MOLOPT-SR-GTH is the name of the basis and q4, q1</span>
+<span class="sd">            correspond to the charge associated with that atom</span>
+<span class="sd">            (e.g. 4 for carbon, 1 for hydrogen).</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="k">def</span> <span class="nf">symbols2charge</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+                <span class="n">q</span> <span class="o">=</span> <span class="n">charge_dict</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+                <span class="k">return</span> <span class="s1">&#39;q</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+
+            <span class="n">symbols</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">at</span><span class="o">.</span><span class="n">symbol</span> <span class="k">for</span> <span class="n">at</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">atoms</span><span class="p">])</span>
+            <span class="n">qs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">symbols2charge</span><span class="p">,</span> <span class="n">symbols</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">symb</span><span class="p">,</span> <span class="n">q</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span> <span class="n">qs</span><span class="p">):</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;basis&#39;</span><span class="p">:</span>
+                    <span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">cp2k</span><span class="o">.</span><span class="n">force_eval</span><span class="o">.</span><span class="n">subsys</span><span class="o">.</span><span class="n">kind</span><span class="p">[</span><span class="n">symb</span><span class="p">][</span><span class="s2">&quot;basis_set&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+                <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;potential&#39;</span><span class="p">:</span>
+                    <span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">cp2k</span><span class="o">.</span><span class="n">force_eval</span><span class="o">.</span><span class="n">subsys</span><span class="o">.</span><span class="n">kind</span><span class="p">[</span><span class="n">symb</span><span class="p">][</span><span class="s2">&quot;potential&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+            <span class="k">return</span> <span class="n">s</span>
+
+        <span class="n">funs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;basis&#39;</span><span class="p">:</span> <span class="n">expand_basis_set</span><span class="p">,</span> <span class="s1">&#39;potential&#39;</span><span class="p">:</span> <span class="n">expand_basis_set</span><span class="p">,</span>
+                <span class="s1">&#39;cell_parameters&#39;</span><span class="p">:</span> <span class="n">write_cell_parameters</span><span class="p">,</span>
+                <span class="s1">&#39;cell_angles&#39;</span><span class="p">:</span> <span class="n">write_cell_angles</span><span class="p">}</span>
+
+        <span class="c1"># Function that handles the special keyword</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">funs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">mol</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Keyword &#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39; doesn</span><span class="se">\&#39;</span><span class="s1">t exist&#39;</span>
+            <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="CP2K_Result"><a class="viewcode-back" href="../../../packages.html#qmflows.packages.cp2k_package.CP2K_Result">[docs]</a><span class="k">class</span> <span class="nc">CP2K_Result</span><span class="p">(</span><span class="n">Result</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class providing access to CP2K result.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">plams_dir</span><span class="p">,</span> <span class="n">work_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">properties</span><span class="o">=</span><span class="n">package_properties</span><span class="p">[</span><span class="s1">&#39;cp2k&#39;</span><span class="p">],</span>
+                 <span class="n">status</span><span class="o">=</span><span class="s1">&#39;successful&#39;</span><span class="p">,</span> <span class="n">warnings</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">plams_dir</span><span class="p">,</span>
+                         <span class="n">work_dir</span><span class="o">=</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">,</span>
+                         <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span> <span class="n">warnings</span><span class="o">=</span><span class="n">warnings</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CP2K_Result.from_dict"><a class="viewcode-back" href="../../../packages.html#qmflows.packages.cp2k_package.CP2K_Result.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">archive</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">warnings</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a :class:`~CP2K_Result` instance using the data serialized in</span>
+<span class="sd">        a dictionary.</span>
+
+<span class="sd">        :param cls:</span>
+<span class="sd">        :param settings: Job Settings.</span>
+<span class="sd">        :param molecule: molecular Geometry.</span>
+<span class="sd">        :param job_name: Name of the job.</span>
+<span class="sd">        :param plams_dir: Absolute path to plams output folder</span>
+<span class="sd">        :param archive: dictionary containing the paths to the input/output</span>
+<span class="sd">        folders.</span>
+<span class="sd">        :param path_hdf5: Path to the HDF5 file that contains the numerical</span>
+<span class="sd">        results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plams_dir</span><span class="p">,</span> <span class="n">work_dir</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;plams_dir&quot;</span><span class="p">,</span> <span class="s2">&quot;work_dir&quot;</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">CP2K_Result</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">plams_dir</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+                           <span class="n">work_dir</span><span class="o">=</span><span class="n">work_dir</span><span class="p">,</span>
+                           <span class="n">properties</span><span class="o">=</span><span class="n">package_properties</span><span class="p">[</span><span class="s1">&#39;cp2k&#39;</span><span class="p">],</span>
+                           <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span> <span class="n">warnings</span><span class="o">=</span><span class="n">warnings</span><span class="p">)</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">format_coord_xyz</span><span class="p">(</span><span class="n">mol</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xs</span>  <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">  </span><span class="si">{: 12.8e}</span><span class="s1">  </span><span class="si">{: 12.8e}</span><span class="s1">  </span><span class="si">{: 12.8e}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">at</span><span class="o">.</span><span class="n">symbol</span><span class="p">,</span> <span class="o">*</span><span class="n">at</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+                  <span class="k">for</span> <span class="n">at</span> <span class="ow">in</span> <span class="n">mol</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">xs</span>
+
+<span class="n">cp2k</span> <span class="o">=</span> <span class="n">CP2K</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">qmflows</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../includeme.html">QMFlows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interactive_tutorial.html">Basic usage tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation.html">Library Documentation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, F. Zapata, L. Ridder.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

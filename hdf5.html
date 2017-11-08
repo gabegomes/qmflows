@@ -46,9 +46,84 @@
 <a class="reference external" href="https://www.hdfgroup.org/HDF5/">HDF5</a> is extremely optimized to perform fast I/O operations in large data set and it is
 implemented as a library with APIs to Python, C, C++, etc. The python interface is called
 <a class="reference external" href="http://www.h5py.org/">pyh5</a> and it was designed to run along with Numpy as Scipy.</p>
-<p>To store numerical result in using <a class="reference external" href="http://www.h5py.org/">pyh5</a>, there is a class <code class="xref py py-class docutils literal"><span class="pre">StoreasHDF5</span></code></p>
+<p>To store numerical result in using <a class="reference external" href="http://www.h5py.org/">pyh5</a>, there is a class <a class="reference internal" href="#qmflows.hdf5.quantumHDF5.StoreasHDF5" title="qmflows.hdf5.quantumHDF5.StoreasHDF5"><code class="xref py py-class docutils literal"><span class="pre">StoreasHDF5</span></code></a></p>
 <div class="section" id="api">
 <h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="qmflows.hdf5.quantumHDF5.StoreasHDF5">
+<em class="property">class </em><code class="descclassname">qmflows.hdf5.quantumHDF5.</code><code class="descname">StoreasHDF5</code><span class="sig-paren">(</span><em>file_h5</em>, <em>packageName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/hdf5/quantumHDF5.html#StoreasHDF5"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.hdf5.quantumHDF5.StoreasHDF5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to store inside a HDF5 file numerical array with optional attributes.</p>
+<dl class="method">
+<dt id="qmflows.hdf5.quantumHDF5.StoreasHDF5.funHDF5">
+<code class="descname">funHDF5</code><span class="sig-paren">(</span><em>pathProperty</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/hdf5/quantumHDF5.html#StoreasHDF5.funHDF5"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.hdf5.quantumHDF5.StoreasHDF5.funHDF5" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a data set using <code class="docutils literal"><span class="pre">data</span></code> and saves the data using
+<code class="docutils literal"><span class="pre">pathProperty</span></code> in the HDF5 file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pathProperty</strong> (<em>String</em>) – path to store the property in HDF5.</li>
+<li><strong>data</strong> (<em>Numpy array</em>) – Numeric array containing the property.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>None</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qmflows.hdf5.quantumHDF5.StoreasHDF5.funHDF5_attrs">
+<code class="descname">funHDF5_attrs</code><span class="sig-paren">(</span><em>nameAttr</em>, <em>attr</em>, <em>pathProperty</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/hdf5/quantumHDF5.html#StoreasHDF5.funHDF5_attrs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.hdf5.quantumHDF5.StoreasHDF5.funHDF5_attrs" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a data set using <code class="docutils literal"><span class="pre">data</span></code> and some attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>nameAttr</strong> (<em>String</em>) – Name of the attribute assoaciated with the data.</li>
+<li><strong>attr</strong> (<em>String | Numpy array</em>) – Actual atttribute.</li>
+<li><strong>pathProperty</strong> (<em>String</em>) – path to store the property in HDF5.</li>
+<li><strong>data</strong> (<em>Numpy array</em>) – Numeric array containing the property.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>None</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qmflows.hdf5.quantumHDF5.StoreasHDF5.saveBasis">
+<code class="descname">saveBasis</code><span class="sig-paren">(</span><em>parserFun</em>, <em>pathBasis</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/hdf5/quantumHDF5.html#StoreasHDF5.saveBasis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.hdf5.quantumHDF5.StoreasHDF5.saveBasis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Store the basis set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parserFun</strong> – Function to parse the file containing the
+information about the primitive contracted Gauss
+functions.</li>
+<li><strong>pathBasis</strong> (<em>String.</em>) – Absolute path to the file containing the basis
+sets information.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>None</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 

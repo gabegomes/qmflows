@@ -1,0 +1,312 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>qmflows.packages.gamess &#8212; qmflows 1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for qmflows.packages.gamess</h1><div class="highlight"><pre>
+<span></span><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;gamess&#39;</span><span class="p">]</span>
+
+<span class="kn">from</span> <span class="nn">qmflows.packages.packages</span> <span class="k">import</span> <span class="p">(</span><span class="n">Package</span><span class="p">,</span> <span class="n">package_properties</span><span class="p">,</span> <span class="n">Result</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">qmflows.settings</span> <span class="k">import</span> <span class="n">Settings</span>
+<span class="kn">from</span> <span class="nn">scm</span> <span class="k">import</span> <span class="n">plams</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
+
+
+<div class="viewcode-block" id="GAMESS"><a class="viewcode-back" href="../../../packages.html#qmflows.packages.gamess.GAMESS">[docs]</a><span class="k">class</span> <span class="nc">GAMESS</span><span class="p">(</span><span class="n">Package</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class setup the requirement to run a Gamess-US Job</span>
+<span class="sd">    &lt;http://www.msg.ameslab.gov/gamess/&gt;.</span>
+<span class="sd">    It uses plams together with the templates to generate the stucture input</span>
+<span class="sd">    and also uses Plams to invoke the ``rungms`` script.</span>
+<span class="sd">    This class is not intended to be called directly by the user, instead the</span>
+<span class="sd">    **gamess** function should be called.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GAMESS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;gamess&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generic_dict_file</span> <span class="o">=</span> <span class="s1">&#39;generic2gamess.json&#39;</span>
+
+    <span class="k">def</span> <span class="nf">prerun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="GAMESS.run_job"><a class="viewcode-back" href="../../../packages.html#qmflows.packages.gamess.GAMESS.run_job">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">run_job</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">mol</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="s1">&#39;gamess_job&#39;</span><span class="p">,</span> <span class="n">work_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Call the Cp2K binary using plams interface.</span>
+
+<span class="sd">        :param settings: Job Settings.</span>
+<span class="sd">        :type settings: :class:`~qmflows.Settings`</span>
+<span class="sd">        :param mol: molecular Geometry</span>
+<span class="sd">        :type mol: plams Molecule</span>
+<span class="sd">        :param input_file_name: Optional name for the input.</span>
+<span class="sd">        :type input_file_name: String</span>
+<span class="sd">        :param out_file_name: Optional name for the output.</span>
+<span class="sd">        :type out_file_name: String</span>
+<span class="sd">        :return: Package.Result</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">gamess_settings</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+        <span class="n">gamess_settings</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">gamess</span>
+        <span class="n">job</span> <span class="o">=</span> <span class="n">plams</span><span class="o">.</span><span class="n">interfaces</span><span class="o">.</span><span class="n">gamess</span><span class="o">.</span><span class="n">GamessJob</span><span class="p">(</span><span class="n">molecule</span><span class="o">=</span><span class="n">mol</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">job_name</span><span class="p">,</span>
+                                                <span class="n">settings</span><span class="o">=</span><span class="n">gamess_settings</span><span class="p">)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="c1"># Relative job path</span>
+        <span class="n">relative_plams_path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">Gamess_Result</span><span class="p">(</span><span class="n">gamess_settings</span><span class="p">,</span> <span class="n">mol</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                               <span class="n">plams_dir</span><span class="o">=</span><span class="n">relative_plams_path</span><span class="p">,</span> <span class="n">work_dir</span><span class="o">=</span><span class="n">work_dir</span><span class="p">,</span>
+                               <span class="n">status</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+    <span class="k">def</span> <span class="nf">postrun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="GAMESS.handle_special_keywords"><a class="viewcode-back" href="../../../packages.html#qmflows.packages.gamess.GAMESS.handle_special_keywords">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">handle_special_keywords</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">mol</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create the settings input for complex gamess-us keys.</span>
+<span class="sd">        some keywords provided by the user do not have a straightforward</span>
+<span class="sd">        translation to *GAMESS* input and require some hooks that handle the</span>
+<span class="sd">        special behaviour of the following keywords:</span>
+
+<span class="sd">        * ``freeze``</span>
+<span class="sd">        * ``selected_atoms``</span>
+
+<span class="sd">        :param settings: Job Settings.</span>
+<span class="sd">        :type settings: :class:`~qmflows.Settings`</span>
+<span class="sd">        :param key: Special key declared in ``settings``.</span>
+<span class="sd">        :param value: Value store in ``settings``.</span>
+<span class="sd">        :param mol: molecular Geometry</span>
+<span class="sd">        :type mol: plams Molecule</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">freeze</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;selected_atoms &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; is not a list&#39;</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">sel_coords</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="n">a</span> <span class="o">=</span> <span class="n">v</span> <span class="o">-</span> <span class="mi">1</span>
+                        <span class="n">sel_coords</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">a</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mol</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="n">mol</span><span class="p">[</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">symbol</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="n">sel_coords</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">a</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)]</span>
+            <span class="n">ifreez</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+            <span class="n">ifreez</span><span class="o">.</span><span class="n">statpt</span> <span class="o">=</span> <span class="s2">&quot;IFREEZ(1)=&quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sel_coords</span><span class="p">)</span>
+            <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">gamess</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ifreez</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">selected_atoms</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;selected_atoms &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; is not a list&#39;</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">sel_coords</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mol</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="n">sel_coords</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">a</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mol</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="n">mol</span><span class="p">[</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">symbol</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="n">sel_coords</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">a</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)]</span>
+            <span class="n">ifreez</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+            <span class="n">ifreez</span><span class="o">.</span><span class="n">statpt</span> <span class="o">=</span> <span class="s2">&quot;IFREEZ(1)=&quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sel_coords</span><span class="p">)</span>
+            <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">gamess</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ifreez</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">constraint</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Settings</span><span class="p">):</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">degr</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="c1"># s[&#39;izmat(1)&#39;] = &#39;1,1,2&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">degr</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="o">-</span> <span class="mi">6</span>
+                    <span class="n">s</span><span class="o">.</span><span class="n">auto</span> <span class="o">=</span> <span class="s2">&quot;.TRUE.&quot;</span>
+                    <span class="n">s</span><span class="o">.</span><span class="n">dlc</span> <span class="o">=</span> <span class="s2">&quot;.TRUE.&quot;</span>
+                <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">gamess</span><span class="o">.</span><span class="n">contrl</span><span class="o">.</span><span class="n">nzvar</span> <span class="o">=</span> <span class="n">degr</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">ks</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="c1"># print(&#39;---&gt;&#39;, ks, type(ks[2]), type(value), v)</span>
+                    <span class="k">if</span> <span class="n">ks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;dist&#39;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                        <span class="n">n</span> <span class="o">=</span> <span class="s1">&#39;ifzmat(</span><span class="si">{:d}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                        <span class="n">s</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1,</span><span class="si">{}</span><span class="s2">,</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+                        <span class="n">n</span> <span class="o">=</span> <span class="s1">&#39;fvalue(</span><span class="si">{:d}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                        <span class="n">s</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+                    <span class="k">elif</span> <span class="n">ks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;angle&#39;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                        <span class="n">n</span> <span class="o">=</span> <span class="s1">&#39;ifzmat(</span><span class="si">{:d}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                        <span class="n">s</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;2,</span><span class="si">{}</span><span class="s2">,</span><span class="si">{}</span><span class="s2">,</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                                                   <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                                                   <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+                        <span class="n">n</span> <span class="o">=</span> <span class="s1">&#39;fvalue(</span><span class="si">{:d}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                        <span class="n">s</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+                    <span class="k">elif</span> <span class="n">ks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;dihed&#39;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                        <span class="n">n</span> <span class="o">=</span> <span class="s1">&#39;ifzmat(</span><span class="si">{:d}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                        <span class="n">s</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;3,</span><span class="si">{}</span><span class="s2">,</span><span class="si">{}</span><span class="s2">,</span><span class="si">{}</span><span class="s2">,</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                                                      <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
+                        <span class="n">n</span> <span class="o">=</span> <span class="s1">&#39;fvalue(</span><span class="si">{:d}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                        <span class="n">s</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Invalid constraint key: &#39;</span> <span class="o">+</span> <span class="n">k</span><span class="p">)</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">gamess</span><span class="o">.</span><span class="n">zmat</span> <span class="o">=</span> <span class="n">s</span>
+        <span class="c1"># Available translations</span>
+        <span class="n">functions</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;freeze&#39;</span><span class="p">:</span> <span class="n">freeze</span><span class="p">,</span>
+                     <span class="s1">&#39;selected_atoms&#39;</span><span class="p">:</span> <span class="n">selected_atoms</span><span class="p">,</span>
+                     <span class="s1">&#39;constraint&#39;</span><span class="p">:</span> <span class="n">constraint</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">functions</span><span class="p">:</span>
+            <span class="n">functions</span><span class="p">[</span><span class="n">key</span><span class="p">]()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Generic keyword &quot;&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;&quot; not implemented for package Gamess.&#39;</span>
+            <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Gamess_Result"><a class="viewcode-back" href="../../../packages.html#qmflows.packages.gamess.Gamess_Result">[docs]</a><span class="k">class</span> <span class="nc">Gamess_Result</span><span class="p">(</span><span class="n">Result</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class providing access to CP2K result.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">plams_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">work_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s1">&#39;done&#39;</span><span class="p">,</span> <span class="n">warnings</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">properties</span> <span class="o">=</span> <span class="n">package_properties</span><span class="p">[</span><span class="s1">&#39;gamess&#39;</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">plams_dir</span><span class="p">,</span>
+                         <span class="n">work_dir</span><span class="o">=</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">,</span>
+                         <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span> <span class="n">warnings</span><span class="o">=</span><span class="n">warnings</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Gamess_Result.from_dict"><a class="viewcode-back" href="../../../packages.html#qmflows.packages.gamess.Gamess_Result.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">archive</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">warnings</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a :class:`~CP2K_Result` instance using the data serialized in</span>
+<span class="sd">        a dictionary.</span>
+
+<span class="sd">        :param cls:</span>
+<span class="sd">        :param settings: Job Settings.</span>
+<span class="sd">        :param molecule: molecular Geometry.</span>
+<span class="sd">        :param job_name: Name of the job.</span>
+<span class="sd">        :param plams_dir: Absolute path to plams output folder</span>
+<span class="sd">        :param archive: dictionary containing the paths to the input/output</span>
+<span class="sd">        folders.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plams_dir</span> <span class="o">=</span> <span class="n">archive</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;plams_dir&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">path</span>
+        <span class="n">work_dir</span> <span class="o">=</span> <span class="n">archive</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;work_dir&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Gamess_Result</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span>
+                             <span class="n">plams_dir</span><span class="o">=</span><span class="n">plams_dir</span><span class="p">,</span> <span class="n">work_dir</span><span class="o">=</span><span class="n">work_dir</span><span class="p">,</span>
+                             <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span> <span class="n">warnings</span><span class="o">=</span><span class="n">warnings</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a section of the results.</span>
+<span class="sd">        The property is extracted from a  result file, which is recursively</span>
+<span class="sd">        search for in the GAMESS settings</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">        ..</span>
+<span class="sd">            Hessian_matrix = result.hessian</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">prop</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            Maybe you need to provided to the gamess</span>
+<span class="s2">            function the optional keyword &#39;work_dir&#39; containing the path</span>
+<span class="s2">            to the SCR folder where GAMESS stores the *.dat and other</span>
+<span class="s2">            output files&quot;&quot;&quot;</span>
+            <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<span class="n">gamess</span> <span class="o">=</span> <span class="n">GAMESS</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">qmflows</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../includeme.html">QMFlows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interactive_tutorial.html">Basic usage tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation.html">Library Documentation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, F. Zapata, L. Ridder.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

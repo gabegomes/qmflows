@@ -43,8 +43,8 @@
             
   <div class="section" id="settings">
 <h1>Settings<a class="headerlink" href="#settings" title="Permalink to this headline">¶</a></h1>
-<p><a href="#id1"><span class="problematic" id="id2">|Settings|</span></a> is a <code class="xref py py-mod docutils literal"><span class="pre">dict</span></code> subclass implemented in <a class="reference external" href="https://www.scm.com/doc/plams/settings.html">PLAMS</a> and modified in <em>QMWorks</em>. This class represents the data in a hierarchical tree-like structure. for example</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmworks</span> <span class="k">import</span> <span class="n">Settings</span><span class="p">,</span> <span class="n">templates</span>
+<p><code class="xref py py-class docutils literal"><span class="pre">Settings</span></code> is a <code class="xref py py-mod docutils literal"><span class="pre">dict</span></code> subclass implemented in <a class="reference external" href="https://www.scm.com/doc/plams/settings.html">PLAMS</a> and modified in <em>Qmflows</em>. This class represents the data in a hierarchical tree-like structure. for example</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">Settings</span><span class="p">,</span> <span class="n">templates</span>
 
 <span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>  <span class="c1"># (1)</span>
 <span class="c1"># generic keyword</span>
@@ -55,7 +55,7 @@
 <span class="nb">input</span> <span class="o">=</span> <span class="n">templates</span><span class="o">.</span><span class="n">singlepoint</span><span class="o">.</span><span class="n">overlay</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>  <span class="c1"># (4)</span>
 </pre></div>
 </div>
-<p>The above code snippet shows how to create a <a href="#id3"><span class="problematic" id="id4">|Settings|</span></a> instance object in <strong>(1)</strong>, then in <strong>(2)</strong> the generic keyword <em>basis</em>  declares that the “DZP” should be used together with the <em>large</em> keyword
+<p>The above code snippet shows how to create a <code class="xref py py-class docutils literal"><span class="pre">Settings</span></code> instance object in <strong>(1)</strong>, then in <strong>(2)</strong> the generic keyword <em>basis</em>  declares that the “DZP” should be used together with the <em>large</em> keyword
 of <em>ADF</em> as shown at <strong>(3)</strong>. Finally in line <strong>(4)</strong> the user’s keywords are merged with the defaults resultin in a input like</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Basis</span>
   <span class="n">Core</span> <span class="n">large</span>
@@ -78,6 +78,73 @@ of <em>ADF</em> as shown at <strong>(3)</strong>. Finally in line <strong>(4)</s
 </div>
 <div class="section" id="api">
 <h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="qmflows.Settings">
+<em class="property">class </em><code class="descclassname">qmflows.</code><code class="descname">Settings</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/settings.html#Settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.Settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a subclass of the <code class="xref py py-class docutils literal"><span class="pre">plams.core.settings.Settings</span></code>.
+The difference with respect to plams’ Settings are:
+- settings[‘a.b’] is equivalent to settings[‘a’][‘b’] = settings.a.b
+- in update(): settings.__block_replace = True results in removal of all
+existing key value pairs.</p>
+<blockquote>
+<div>__block_replace can be either in the updated settings or in the updating settings object.</div></blockquote>
+<dl class="method">
+<dt id="qmflows.Settings.__delitem__">
+<code class="descname">__delitem__</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/settings.html#Settings.__delitem__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.Settings.__delitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like plams Settings.__setitem__, but
+“del settings[‘a.b’]” is equivalent to “del settings[‘a’][‘b’] = ‘c’”</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qmflows.Settings.__getitem__">
+<code class="descname">__getitem__</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/settings.html#Settings.__getitem__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.Settings.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like plams Settings.__getitem__, but
+“settings[‘a.b’] == ‘c’” is equivalent to “settings[‘a’][‘b’] == ‘c’”</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qmflows.Settings.__setitem__">
+<code class="descname">__setitem__</code><span class="sig-paren">(</span><em>name</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/settings.html#Settings.__setitem__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.Settings.__setitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like plams Settings.__setitem__, but
+“settings[‘a.b’] = ‘c’” is equivalent to “settings[‘a’][‘b’] = ‘c’”</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qmflows.Settings.overlay">
+<code class="descname">overlay</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/settings.html#Settings.overlay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.Settings.overlay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return new instance of <code class="xref py py-class docutils literal"><span class="pre">Settings</span></code> that is a copy of this instance
+updated with <em>other</em>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qmflows.Settings.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/settings.html#Settings.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.Settings.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like PLAMS update, but:
+__block_replace = True results in removing all existing key value pairs
+in the current node of the settings tree</p>
+<p>For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">Settings</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">=</span><span class="n">Settings</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">xc</span><span class="o">.</span><span class="n">lda</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">xc</span><span class="o">.</span><span class="n">hybrid</span> <span class="o">=</span> <span class="s1">&#39;b3lyp&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">overlay</span><span class="p">(</span><span class="n">u</span><span class="p">))</span>
+<span class="go">input:</span>
+<span class="go">      xc:</span>
+<span class="go">         hybrid:     b3lyp</span>
+<span class="go">         lda:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">xc</span><span class="o">.</span><span class="n">__block_replace</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">overlay</span><span class="p">(</span><span class="n">u</span><span class="p">))</span>
+<span class="go">input:</span>
+<span class="go">      xc:</span>
+<span class="go">         __block_replace:     True</span>
+<span class="go">         hybrid:     b3lyp</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 

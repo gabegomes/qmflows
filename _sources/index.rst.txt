@@ -13,7 +13,6 @@ Contents:
 
    includeme
    interactive_tutorial
-   tutorial
    documentation
 
 

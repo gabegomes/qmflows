@@ -1,0 +1,219 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>qmflows.settings &#8212; qmflows 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for qmflows.settings</h1><div class="highlight"><pre>
+<span></span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Settings&#39;</span><span class="p">]</span>
+
+
+<span class="kn">from</span> <span class="nn">noodles</span> <span class="k">import</span> <span class="n">Storable</span>
+<span class="kn">from</span> <span class="nn">scm</span> <span class="k">import</span> <span class="n">plams</span>
+
+
+<div class="viewcode-block" id="Settings"><a class="viewcode-back" href="../../settings.html#qmflows.Settings">[docs]</a><span class="k">class</span> <span class="nc">Settings</span><span class="p">(</span><span class="n">plams</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">Settings</span><span class="p">,</span> <span class="n">Storable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a subclass of the :class:`plams.core.settings.Settings`.</span>
+<span class="sd">    The difference with respect to plams&#39; Settings are:</span>
+<span class="sd">    - settings[&#39;a.b&#39;] is equivalent to settings[&#39;a&#39;][&#39;b&#39;] = settings.a.b</span>
+<span class="sd">    - in update(): settings.__block_replace = True results in removal of all</span>
+<span class="sd">    existing key value pairs.</span>
+
+<span class="sd">      __block_replace can be either in the updated settings or in the updating settings object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Settings.__getitem__"><a class="viewcode-back" href="../../settings.html#qmflows.Settings.__getitem__">[docs]</a>    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Like plams Settings.__getitem__, but</span>
+<span class="sd">        &quot;settings[&#39;a.b&#39;] == &#39;c&#39;&quot; is equivalent to &quot;settings[&#39;a&#39;][&#39;b&#39;] == &#39;c&#39;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<span class="c1">#         if isinstance(name, string_types) and name.find(&#39;.&#39;) &gt; -1:</span>
+<span class="c1">#             names = name.split(&#39;.&#39;)</span>
+<span class="c1">#             return dict.__getitem__(self, names[0]).__getitem__(&#39;.&#39;.join(names[1:]))</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Settings.__setitem__"><a class="viewcode-back" href="../../settings.html#qmflows.Settings.__setitem__">[docs]</a>    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Like plams Settings.__setitem__, but</span>
+<span class="sd">        &quot;settings[&#39;a.b&#39;] = &#39;c&#39;&quot; is equivalent to &quot;settings[&#39;a&#39;][&#39;b&#39;] = &#39;c&#39;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+<span class="c1">#         if isinstance(name, string_types) and name.find(&#39;.&#39;) &gt; -1:</span>
+<span class="c1">#             names = name.split(&#39;.&#39;)</span>
+<span class="c1">#             dict.__getitem__(self, names[0]).__setitem__(&#39;.&#39;.join(names[1:]), value)</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             dict.__setitem__(self, name, value)</span>
+        <span class="nb">dict</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Settings.__delitem__"><a class="viewcode-back" href="../../settings.html#qmflows.Settings.__delitem__">[docs]</a>    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Like plams Settings.__setitem__, but</span>
+<span class="sd">        &quot;del settings[&#39;a.b&#39;]&quot; is equivalent to &quot;del settings[&#39;a&#39;][&#39;b&#39;] = &#39;c&#39;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<span class="c1">#         if isinstance(name, string_types) and name.find(&#39;.&#39;) &gt; -1:</span>
+<span class="c1">#             names = name.split(&#39;.&#39;)</span>
+<span class="c1">#             dict.__getitem__(self, names[0]).__delitem__(&#39;.&#39;.join(names[1:]))</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             dict.__delitem__(self, name)</span>
+        <span class="nb">dict</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">plams</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">Settings</span><span class="p">):</span>
+                <span class="n">ret</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ret</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Settings.overlay"><a class="viewcode-back" href="../../settings.html#qmflows.Settings.overlay">[docs]</a>    <span class="k">def</span> <span class="nf">overlay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return new instance of |Settings| that is a copy of this instance</span>
+<span class="sd">        updated with *other*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+<div class="viewcode-block" id="Settings.update"><a class="viewcode-back" href="../../settings.html#qmflows.Settings.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Like PLAMS update, but:</span>
+<span class="sd">        __block_replace = True results in removing all existing key value pairs</span>
+<span class="sd">        in the current node of the settings tree</span>
+
+<span class="sd">        For example:</span>
+
+<span class="sd">        &gt;&gt;&gt; from qmflows import Settings</span>
+<span class="sd">        &gt;&gt;&gt; t=Settings()</span>
+<span class="sd">        &gt;&gt;&gt; t.input.xc.lda = &quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; u = Settings()</span>
+<span class="sd">        &gt;&gt;&gt; u.input.xc.hybrid = &#39;b3lyp&#39;</span>
+<span class="sd">        &gt;&gt;&gt; print(t.overlay(u))</span>
+<span class="sd">        input:</span>
+<span class="sd">              xc:</span>
+<span class="sd">                 hybrid:     b3lyp</span>
+<span class="sd">                 lda:</span>
+<span class="sd">        &gt;&gt;&gt; u.input.xc.__block_replace = True</span>
+<span class="sd">        &gt;&gt;&gt; print(t.overlay(u))</span>
+<span class="sd">        input:</span>
+<span class="sd">              xc:</span>
+<span class="sd">                 __block_replace:     True</span>
+<span class="sd">                 hybrid:     b3lyp</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">other</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">Settings</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">Settings</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">other</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># _block_replace can be used to remove all existing key value pairs in an input block</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;__block_replace&#39;</span> <span class="ow">in</span> <span class="n">other</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="ow">and</span> <span class="n">other</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;__block_replace&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">or</span> \
+                        <span class="p">(</span><span class="s1">&#39;__block_replace&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;__block_replace&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">other</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">qmflows</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../includeme.html">QMFlows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interactive_tutorial.html">Basic usage tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../documentation.html">Library Documentation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, F. Zapata, L. Ridder.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,474 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>qmflows.packages.SCM &#8212; qmflows 1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for qmflows.packages.SCM</h1><div class="highlight"><pre>
+<span></span><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;adf&#39;</span><span class="p">,</span> <span class="s1">&#39;dftb&#39;</span><span class="p">]</span>
+
+<span class="c1"># =======&gt;  Standard and third party Python Libraries &lt;======</span>
+
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
+<span class="kn">from</span> <span class="nn">qmflows.settings</span> <span class="k">import</span> <span class="n">Settings</span>
+<span class="kn">from</span> <span class="nn">qmflows.packages.packages</span> <span class="k">import</span> <span class="p">(</span><span class="n">Package</span><span class="p">,</span> <span class="n">package_properties</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">get_tmpfile_name</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">scm</span> <span class="k">import</span> <span class="n">plams</span>
+
+<span class="kn">import</span> <span class="nn">builtins</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+
+<span class="c1"># ========================= ADF ============================</span>
+
+
+<div class="viewcode-block" id="ADF"><a class="viewcode-back" href="../../../packages.html#qmflows.packages.SCM.ADF">[docs]</a><span class="k">class</span> <span class="nc">ADF</span><span class="p">(</span><span class="n">Package</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class takes care of calling the *ADF* quantum package.</span>
+<span class="sd">    it uses both Plams and the Templates module to create the input</span>
+<span class="sd">    files, while Plams takes care of running the Job.</span>
+<span class="sd">    It returns a ``ADF_Result`` object containing the output data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ADF</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;adf&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generic_dict_file</span> <span class="o">=</span> <span class="s1">&#39;generic2ADF.json&#39;</span>
+
+    <span class="k">def</span> <span class="nf">prerun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">run_job</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">mol</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="s1">&#39;ADFjob&#39;</span><span class="p">,</span> <span class="n">nproc</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute ADF job.</span>
+
+<span class="sd">        :param settings: user input settings.</span>
+<span class="sd">        :type settings: |Settings|</span>
+<span class="sd">        :param mol: Molecule to run the simulation</span>
+<span class="sd">        :type mol: Plams Molecule</span>
+<span class="sd">        :parameter input_file_name: The user can provide a name for the</span>
+<span class="sd">                                    job input.</span>
+<span class="sd">        :type input_file_name: String</span>
+<span class="sd">        :parameter out_file_name: The user can provide a name for the</span>
+<span class="sd">                                  job output.</span>
+<span class="sd">        :type out_file_name: String</span>
+<span class="sd">        :returns: :class:`~qmflows.packages.SCM.ADF_Result`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">adf_settings</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">nproc</span><span class="p">:</span>
+            <span class="n">adf_settings</span><span class="o">.</span><span class="n">runscript</span><span class="o">.</span><span class="n">nproc</span> <span class="o">=</span> <span class="n">nproc</span>
+        <span class="n">adf_settings</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span>
+        <span class="n">job</span> <span class="o">=</span> <span class="n">plams</span><span class="o">.</span><span class="n">ADFJob</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">job_name</span><span class="p">,</span> <span class="n">molecule</span><span class="o">=</span><span class="n">mol</span><span class="p">,</span>
+                                               <span class="n">settings</span><span class="o">=</span><span class="n">adf_settings</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="c1"># Path to the tape 21 file</span>
+        <span class="n">path_t21</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">_kf</span><span class="o">.</span><span class="n">path</span>
+
+        <span class="c1"># Relative path to the CWD</span>
+        <span class="n">relative_path_t21</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_t21</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">3</span><span class="p">:])</span>
+
+        <span class="c1"># Relative job path</span>
+        <span class="n">relative_plams_path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
+
+        <span class="n">adf_result</span> <span class="o">=</span> <span class="n">ADF_Result</span><span class="p">(</span>
+            <span class="n">adf_settings</span><span class="p">,</span> <span class="n">mol</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">relative_path_t21</span><span class="p">,</span>
+            <span class="n">plams_dir</span><span class="o">=</span><span class="n">relative_plams_path</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">adf_result</span>
+
+    <span class="k">def</span> <span class="nf">postrun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">handle_special_keywords</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">mol</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        some keywords provided by the user do not have a straightforward</span>
+<span class="sd">        translation to *ADF* input and require some hooks that handles the</span>
+<span class="sd">        special behaviour of the following keywords:</span>
+
+<span class="sd">        * ``freeze``</span>
+<span class="sd">        * ``selected_atoms``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">freeze</span><span class="p">():</span>
+            <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">optim</span> <span class="o">=</span> <span class="s2">&quot;cartesian&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;freeze &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; is not a list&#39;</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">at</span> <span class="o">=</span> <span class="s1">&#39;atom &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+                    <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">at</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mol</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="n">mol</span><span class="p">[</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">symbol</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="n">at</span> <span class="o">=</span> <span class="s1">&#39;atom &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                        <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">at</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">selected_atoms</span><span class="p">():</span>
+            <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">optim</span> <span class="o">=</span> <span class="s2">&quot;cartesian&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;selected_atoms &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; is not a list&#39;</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mol</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="n">at</span> <span class="o">=</span> <span class="s1">&#39;atom &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                        <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">at</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mol</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="n">mol</span><span class="p">[</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">symbol</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="n">at</span> <span class="o">=</span> <span class="s1">&#39;atom &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                        <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">at</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">inithess</span><span class="p">():</span>
+            <span class="n">hess_path</span> <span class="o">=</span> <span class="n">get_tmpfile_name</span><span class="p">()</span>
+            <span class="n">hess_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">hess_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+            <span class="n">hess_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{:.6f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]))</span>
+            <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">inithess</span> <span class="o">=</span> <span class="n">hess_path</span>
+
+        <span class="k">def</span> <span class="nf">constraint</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Settings</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">ks</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="c1"># print(&#39;---&gt;&#39;, ks, type(ks[2]), type(value), v)</span>
+                    <span class="k">if</span> <span class="n">ks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;dist&#39;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;dist </span><span class="si">{:d}</span><span class="s1"> </span><span class="si">{:d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                                                       <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+                        <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+                    <span class="k">elif</span> <span class="n">ks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;angle&#39;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;angle </span><span class="si">{:d}</span><span class="s1"> </span><span class="si">{:d}</span><span class="s1"> </span><span class="si">{:d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                                                             <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                                                             <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+                        <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+                    <span class="k">elif</span> <span class="n">ks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;dihed&#39;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;dihed </span><span class="si">{:d}</span><span class="s1"> </span><span class="si">{:d}</span><span class="s1"> </span><span class="si">{:d}</span><span class="s1"> </span><span class="si">{:d}</span><span class="s1">&#39;</span><span class="o">.</span>\
+                            <span class="nb">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                                   <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
+                        <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Invalid constraint key: &#39;</span> <span class="o">+</span> <span class="n">k</span><span class="p">)</span>
+
+        <span class="c1"># Available translations</span>
+        <span class="n">functions</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;freeze&#39;</span><span class="p">:</span> <span class="n">freeze</span><span class="p">,</span>
+                     <span class="s1">&#39;selected_atoms&#39;</span><span class="p">:</span> <span class="n">selected_atoms</span><span class="p">,</span>
+                     <span class="s1">&#39;inithess&#39;</span><span class="p">:</span> <span class="n">inithess</span><span class="p">,</span>
+                     <span class="s1">&#39;constraint&#39;</span><span class="p">:</span> <span class="n">constraint</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">functions</span><span class="p">:</span>
+            <span class="n">functions</span><span class="p">[</span><span class="n">key</span><span class="p">]()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Generic keyword &quot;&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;&quot; not implemented for package ADF.&#39;</span>
+            <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ADF_Result"><a class="viewcode-back" href="../../../packages.html#qmflows.packages.SCM.ADF_Result">[docs]</a><span class="k">class</span> <span class="nc">ADF_Result</span><span class="p">(</span><span class="n">Result</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class providing access to PLAMS ADFJob result results&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">path_t21</span><span class="p">,</span> <span class="n">plams_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">status</span><span class="o">=</span><span class="s1">&#39;done&#39;</span><span class="p">,</span> <span class="n">warnings</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Load available property parser from Json file.</span>
+        <span class="n">properties</span> <span class="o">=</span> <span class="n">package_properties</span><span class="p">[</span><span class="s1">&#39;adf&#39;</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">plams_dir</span><span class="o">=</span><span class="n">plams_dir</span><span class="p">,</span>
+                         <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span> <span class="n">warnings</span><span class="o">=</span><span class="n">warnings</span><span class="p">)</span>
+        <span class="c1"># Create a KF reader instance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kf</span> <span class="o">=</span> <span class="n">plams</span><span class="o">.</span><span class="n">KFFile</span><span class="p">(</span><span class="n">path_t21</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ADF_Result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">,</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">_molecule</span><span class="p">,</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">job_name</span><span class="p">,</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">kf</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+                          <span class="n">plams_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">archive</span><span class="p">[</span><span class="s1">&#39;plams_dir&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+                          <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+                          <span class="n">warnings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span>
+                          <span class="p">)</span>
+
+<div class="viewcode-block" id="ADF_Result.from_dict"><a class="viewcode-back" href="../../../packages.html#qmflows.packages.SCM.ADF_Result.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">archive</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">warnings</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Methods to deserialize an `ADF_Result` object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plams_dir</span> <span class="o">=</span> <span class="n">archive</span><span class="p">[</span><span class="s2">&quot;plams_dir&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">path</span>
+        <span class="n">path_t21</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">plams_dir</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.t21&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">job_name</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ADF_Result</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">path_t21</span><span class="p">,</span> <span class="n">plams_dir</span><span class="p">,</span>
+                          <span class="n">status</span><span class="p">,</span> <span class="n">warnings</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">get_property_kf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">prop</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">molecule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;bohr&#39;</span><span class="p">,</span> <span class="n">internal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;WARNING: Cheap copy from PLAMS, do not keep this!!!&quot;&quot;&quot;</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_molecule</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">natoms</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+        <span class="c1"># Find out correct location</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;Geometry&#39;</span><span class="p">,</span> <span class="s1">&#39;xyz InputOrder&#39;</span><span class="p">)</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">coords</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">),</span> <span class="mi">3</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">natoms</span><span class="p">:</span>
+            <span class="n">coords</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">natoms</span><span class="p">:</span> <span class="n">n</span> <span class="o">*</span> <span class="n">natoms</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">internal</span><span class="p">:</span>
+            <span class="n">mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_int2inp</span><span class="p">()</span>
+            <span class="n">coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">coords</span><span class="p">[</span><span class="n">mapping</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">))]</span>
+        <span class="k">for</span> <span class="n">at</span><span class="p">,</span> <span class="n">coord</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
+            <span class="n">at</span><span class="o">.</span><span class="n">move_to</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">m</span></div>
+
+
+<div class="viewcode-block" id="DFTB"><a class="viewcode-back" href="../../../packages.html#qmflows.packages.SCM.DFTB">[docs]</a><span class="k">class</span> <span class="nc">DFTB</span><span class="p">(</span><span class="n">Package</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add some documentation to this class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;dftb&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generic_dict_file</span> <span class="o">=</span> <span class="s1">&#39;generic2DFTB.json&#39;</span>
+
+    <span class="k">def</span> <span class="nf">prerun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="DFTB.run_job"><a class="viewcode-back" href="../../../packages.html#qmflows.packages.SCM.DFTB.run_job">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">run_job</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">mol</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="s1">&#39;DFTBjob&#39;</span><span class="p">,</span> <span class="n">nproc</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute an DFTB job with the *ADF* quantum package.</span>
+
+<span class="sd">        :param settings: user input settings.</span>
+<span class="sd">        :type settings: |Settings|</span>
+<span class="sd">        :param mol: Molecule to run the simulation</span>
+<span class="sd">        :type mol: Plams Molecule</span>
+<span class="sd">        :parameter input_file_name: The user can provide a name for the</span>
+<span class="sd">                                   job input.</span>
+<span class="sd">        :type input_file_name: String</span>
+<span class="sd">        :parameter out_file_name: The user can provide a name for the</span>
+<span class="sd">                                 job output.</span>
+<span class="sd">        :type out_file_name: String</span>
+<span class="sd">        :returns: :class:`~qmflows.packages.SCM.DFTB_Result`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dftb_settings</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">nproc</span><span class="p">:</span>
+            <span class="n">dftb_settings</span><span class="o">.</span><span class="n">runscript</span><span class="o">.</span><span class="n">nproc</span> <span class="o">=</span> <span class="n">nproc</span>
+        <span class="n">dftb_settings</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">dftb</span>
+        <span class="n">job</span> <span class="o">=</span> <span class="n">plams</span><span class="o">.</span><span class="n">DFTBJob</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">job_name</span><span class="p">,</span> <span class="n">molecule</span><span class="o">=</span><span class="n">mol</span><span class="p">,</span>
+                                                <span class="n">settings</span><span class="o">=</span><span class="n">dftb_settings</span><span class="p">)</span>
+
+        <span class="c1"># Check RKF status</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">path</span>
+        <span class="k">except</span> <span class="n">struct</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+            <span class="n">job</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;failed&#39;</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">job_name</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;job:</span><span class="si">{}</span><span class="s2"> has failed.</span><span class="se">\n</span><span class="s2">RKF is corrupted&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">job_name</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">job</span><span class="o">.</span><span class="n">status</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;failed&#39;</span><span class="p">,</span> <span class="s1">&#39;crashed&#39;</span><span class="p">]:</span>
+            <span class="n">builtins</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">jm</span><span class="o">.</span><span class="n">remove_job</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">DFTB_Result</span><span class="p">(</span><span class="n">dftb_settings</span><span class="p">,</span> <span class="n">mol</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span>
+                           <span class="n">plams_dir</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">status</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">postrun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="DFTB.handle_special_keywords"><a class="viewcode-back" href="../../../packages.html#qmflows.packages.SCM.DFTB.handle_special_keywords">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">handle_special_keywords</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">mol</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Translate generic keywords to their corresponding Orca keywords.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">freeze</span><span class="p">():</span>
+            <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">dftb</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">optim</span> <span class="o">=</span> <span class="s2">&quot;cartesian&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;freeze &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; is not a list&#39;</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">at</span> <span class="o">=</span> <span class="s1">&#39;atom &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+                    <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">dftb</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">at</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mol</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="n">mol</span><span class="p">[</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">symbol</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="n">at</span> <span class="o">=</span> <span class="s1">&#39;atom &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                        <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">dftb</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">at</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">selected_atoms</span><span class="p">():</span>
+            <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">dftb</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">optim</span> <span class="o">=</span> <span class="s2">&quot;cartesian&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;selected_atoms &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; is not a list&#39;</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mol</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="n">at</span> <span class="o">=</span> <span class="s1">&#39;atom &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                        <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">dftb</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">at</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mol</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="n">mol</span><span class="p">[</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">symbol</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;atom &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                        <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">dftb</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">constraint</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Settings</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">ks</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">ks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;dist&#39;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;dist </span><span class="si">{:d}</span><span class="s1"> </span><span class="si">{:d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                                                       <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+                        <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">dftb</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+                    <span class="k">elif</span> <span class="n">ks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;angle&#39;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;angle </span><span class="si">{:d}</span><span class="s1"> </span><span class="si">{:d}</span><span class="s1"> </span><span class="si">{:d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+                        <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">dftb</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+                    <span class="k">elif</span> <span class="n">ks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;dihed&#39;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;dihed </span><span class="si">{:d}</span><span class="s1"> </span><span class="si">{:d}</span><span class="s1"> </span><span class="si">{:d}</span><span class="s1"> </span><span class="si">{:d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                            <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
+                        <span class="n">settings</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">dftb</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Invalid constraint key: &#39;</span> <span class="o">+</span> <span class="n">k</span><span class="p">)</span>
+
+        <span class="c1"># Available translations</span>
+        <span class="n">functions</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;freeze&#39;</span><span class="p">:</span> <span class="n">freeze</span><span class="p">,</span>
+                     <span class="s1">&#39;selected_atoms&#39;</span><span class="p">:</span> <span class="n">selected_atoms</span><span class="p">,</span>
+                     <span class="s1">&#39;constraint&#39;</span><span class="p">:</span> <span class="n">constraint</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">functions</span><span class="p">:</span>
+            <span class="n">functions</span><span class="p">[</span><span class="n">key</span><span class="p">]()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Generic keyword &quot;&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;&quot; not implemented for package DFTB.&#39;</span>
+            <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="DFTB_Result"><a class="viewcode-back" href="../../../packages.html#qmflows.packages.SCM.DFTB_Result">[docs]</a><span class="k">class</span> <span class="nc">DFTB_Result</span><span class="p">(</span><span class="n">Result</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class providing access to PLAMS DFTBJob result results&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">plams_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">status</span><span class="o">=</span><span class="s1">&#39;done&#39;</span><span class="p">,</span> <span class="n">warnings</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Read available propiety parsers from a JSON file</span>
+        <span class="n">properties</span> <span class="o">=</span> <span class="n">package_properties</span><span class="p">[</span><span class="s1">&#39;dftb&#39;</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">plams_dir</span><span class="o">=</span><span class="n">plams_dir</span><span class="p">,</span>
+                         <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span> <span class="n">warnings</span><span class="o">=</span><span class="n">warnings</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">plams_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kf_filename</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">plams_dir</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.rkf&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">job_name</span><span class="p">))</span>
+            <span class="c1"># create a kf reader instance</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kf</span> <span class="o">=</span> <span class="n">plams</span><span class="o">.</span><span class="n">KFFile</span><span class="p">(</span><span class="n">kf_filename</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kf</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">archive</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">warnings</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">DFTB_Result</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span>
+                           <span class="n">archive</span><span class="p">[</span><span class="s2">&quot;plams_dir&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">warnings</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">molecule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;bohr&#39;</span><span class="p">,</span> <span class="n">internal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;WARNING: Cheap copy from PLAMS, do not keep this!!!&quot;&quot;&quot;</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_molecule</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">natoms</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;Molecule&#39;</span><span class="p">,</span> <span class="s1">&#39;Coords&#39;</span><span class="p">)</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">coords</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">),</span> <span class="mi">3</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">natoms</span><span class="p">:</span>
+            <span class="n">coords</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">natoms</span><span class="p">:</span> <span class="n">n</span> <span class="o">*</span> <span class="n">natoms</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">internal</span><span class="p">:</span>
+            <span class="n">mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_int2inp</span><span class="p">()</span>
+            <span class="n">coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">coords</span><span class="p">[</span><span class="n">mapping</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">))]</span>
+        <span class="k">for</span> <span class="n">at</span><span class="p">,</span> <span class="n">coord</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
+            <span class="n">at</span><span class="o">.</span><span class="n">move_to</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="s1">&#39;bohr&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">m</span></div>
+
+<span class="n">adf</span> <span class="o">=</span> <span class="n">ADF</span><span class="p">()</span>
+<span class="n">dftb</span> <span class="o">=</span> <span class="n">DFTB</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">qmflows</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../includeme.html">QMFlows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interactive_tutorial.html">Basic usage tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../documentation.html">Library Documentation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, F. Zapata, L. Ridder.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
