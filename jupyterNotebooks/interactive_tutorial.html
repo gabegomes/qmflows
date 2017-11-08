@@ -6,11 +6,11 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Basic usage tutorial &#8212; qmflows 1.0 documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
+        URL_ROOT:    '../',
         VERSION:     '1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -18,16 +18,16 @@
         SOURCELINK_SUFFIX: '.txt'
       };
     </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Library Documentation" href="documentation.html" />
-    <link rel="prev" title="QMFlows" href="includeme.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Library Documentation" href="../documentation.html" />
+    <link rel="prev" title="QMFlows" href="../includeme.html" />
    
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
@@ -267,7 +267,7 @@ results to end up in the current work directory, create a new results
 folder.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [26]:
+<span></span>In [3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -316,7 +316,7 @@ the calculation later on.</p>
 <p>First we define a molecule, for example by reading one from an xyz file:</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [27]:
+<span></span>In [2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -331,21 +331,21 @@ the calculation later on.</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-  Atoms:
-    1         C      2.419290      0.606560      0.000000
-    2         C      1.671470      1.829570      0.000000
-    3         N      1.065290      2.809960      0.000000
-    4         H      2.000000      0.000000      1.000000
-    5         H      2.000000      0.000000     -1.000000
-    6         H      3.600000      0.800000      0.000000
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-2-1bb7c53b45bd&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span><span class="ansi-green-fg">from</span> plams <span class="ansi-green-fg">import</span> Molecule
+<span class="ansi-green-intense-fg ansi-bold">      2</span> acetonitrile <span class="ansi-blue-fg">=</span> Molecule<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">&#34;files/acetonitrile.xyz&#34;</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      3</span> print<span class="ansi-blue-fg">(</span>acetonitrile<span class="ansi-blue-fg">)</span>
 
+<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named &#39;plams&#39;
 </pre></div></div>
 </div>
 <p>Then we can perform geometry optimization on the molecule by a call to
 the dftb package object:</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [28]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -355,20 +355,12 @@ the dftb package object:</p>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-&lt;noodles.interface.decorator.PromisedObject object at 0x7f6c8e5a6d30&gt;
-</pre></div></div>
-</div>
 <p>As you can see, “job” is a so-called “promised object”. It means it
 first needs to be “run” by the Noodles scheduler to return a normal
 python object.</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [29]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -377,24 +369,12 @@ python object.</p>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-[09:14:04] PLAMS working folder: /home/lars/workspace/qmflows/jupyterNotebooks/tutorial_results/run_one
-╭─(running jobs)
-│ Running dftb dftb_geometry_optimization...
-╰(<span style="color: rgb(60,180,100)">✔</span>)─(success)
-&lt;qmflows.packages.SCM.DFTB_Result object at 0x7f6c8e30bcf8&gt;
-</pre></div></div>
-</div>
 <p>We can easily retrieve the calculated properties from the DFTB
 calculation such as the dipole or the optimized geometry for use in
 subsequent calculations.</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [30]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -402,22 +382,6 @@ subsequent calculations.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">molecule</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Dipole:  [1.0864213029, -1.9278296041, -0.0]
-  Atoms:
-    1         C      2.366998      0.579794     -0.000000
-    2         C      1.660642      1.834189      0.000000
-    3         N      1.089031      2.847969      0.000000
-    4         H      2.100157      0.010030      0.887206
-    5         H      2.100157      0.010030     -0.887206
-    6         H      3.439065      0.764079     -0.000000
-
-</pre></div></div>
 </div>
 </div>
 </div>
@@ -429,9 +393,9 @@ flexible manner as will be explained in this section. To facilitate
 combining different packages in one script, QMflows defines a set of
 commonly used generic keywords, which can be combined with package
 specific keywords, to provide maximum flexibility.</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [31]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -444,20 +408,6 @@ specific keywords, to provide maximum flexibility.</p>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-basis:  DZP
-freeze:         [1, 2, 3]
-specific:
-         adf:
-             basis:
-                   core:        large
-
-</pre></div></div>
-</div>
 <p>This code snippet illustrates that the <code class="docutils literal"><span class="pre">Settings</span></code> can be specified in
 two ways, using generic or specific keywords. Generic keywords represent
 input properties that are present in most simulation packages like a
@@ -469,9 +419,9 @@ keywords for a package that are not in a generic dictionary.</p>
 to represent herarchical structures, like</p>
 <p>In QMflows/PLAMS multiple settings objects can be combined using the
 <code class="docutils literal"><span class="pre">overlay</span></code> function.</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [32]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -480,90 +430,12 @@ to represent herarchical structures, like</p>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-basis:  DZP
-freeze:         [1, 2, 3]
-specific:
-         adf:
-             basis:
-                   core:        large
-                   type:        SZ
-             geometry:
-                      optim:    delocal
-             integration:
-                         accint:        6.0
-             scf:
-                 converge:      1e-06
-                 iterations:    100
-             xc:
-                __block_replace:        True
-                lda:
-         cp2k:
-              force_eval:
-                         dft:
-                             basis_set_file_name:
-                             mgrid:
-                                   cutoff:      400
-                                   ngrids:      4
-                             potential_file_name:
-                             qs:
-                                method:         gpw
-                             scf:
-                                 OT:
-                                    N_DIIS:     7
-                                    minimizer:  DIIS
-                                    preconditioner:     full_single_inverse
-                                 eps_scf:       1e-06
-                                 max_scf:       200
-                                 scf_guess:     atomic
-                             xc:
-                                xc_functional:  pbe
-                         subsys:
-                                cell:
-                                     periodic:  xyz
-              global:
-                     print_level:       low
-                     project:   qmflows-cp2k
-                     run_type:  geometry_optimization
-              motion:
-                     geo_opt:
-                             max_iter:  500
-                             optimizer:         bfgs
-                             type:      minimization
-         dftb:
-              dftb:
-                   resourcesdir:        DFTB.org/3ob-3-1
-              task:
-                   runtype:     GO
-         dirac:
-         gamess:
-                basis:
-                      gbasis:   n21
-                      ngauss:   3
-                contrl:
-                       dfttyp:  pbe
-                       runtyp:  optimize
-                       scftyp:  rhf
-         orca:
-              basis:
-                    basis:      sto_sz
-              method:
-                     functional:        lda
-                     method:    dft
-                     runtyp:    opt
-
-</pre></div></div>
-</div>
 <p>The <em>overlay</em> method merged the template containing default settings for
 geometry optimizations with different packages with the arguments
 provided by the user</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [4]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -572,34 +444,16 @@ provided by the user</p>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>Out[4]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<img alt="_images/interactive_tutorial_22_0.png" src="_images/interactive_tutorial_22_0.png" />
-</div>
-</div>
 <p><strong>resulting in:</strong></p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [3]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
 
 <span></span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;files/result_merged.png&quot;</span><span class="p">)</span>
 </pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>Out[3]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<img alt="_images/interactive_tutorial_24_0.png" src="_images/interactive_tutorial_24_0.png" />
 </div>
 </div>
 <p>Note that the generic and specific keywords still exist next to each
@@ -611,9 +465,9 @@ keywords. In this step, the settings defined in generic keywords take
 preference. Subsequently, the input file(s) for the given package is/are
 generated, based on the keywords after <strong>specific.[package]</strong> based on
 the <a class="reference external" href="https://www.scm.com/doc/plams/index.html">PLAMS software</a>.</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [33]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -622,93 +476,11 @@ the <a class="reference external" href="https://www.scm.com/doc/plams/index.html
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-basis:  DZP
-freeze:         [1, 2, 3]
-specific:
-         adf:
-             basis:
-                   core:        large
-                   type:        DZP
-             constraints:
-                         atom 2:
-                         atom 3:
-                         atom 4:
-             geometry:
-                      optim:    cartesian
-             integration:
-                         accint:        6.0
-             scf:
-                 converge:      1e-06
-                 iterations:    100
-             xc:
-                __block_replace:        True
-                lda:
-         cp2k:
-              force_eval:
-                         dft:
-                             basis_set_file_name:
-                             mgrid:
-                                   cutoff:      400
-                                   ngrids:      4
-                             potential_file_name:
-                             qs:
-                                method:         gpw
-                             scf:
-                                 OT:
-                                    N_DIIS:     7
-                                    minimizer:  DIIS
-                                    preconditioner:     full_single_inverse
-                                 eps_scf:       1e-06
-                                 max_scf:       200
-                                 scf_guess:     atomic
-                             xc:
-                                xc_functional:  pbe
-                         subsys:
-                                cell:
-                                     periodic:  xyz
-              global:
-                     print_level:       low
-                     project:   qmflows-cp2k
-                     run_type:  geometry_optimization
-              motion:
-                     geo_opt:
-                             max_iter:  500
-                             optimizer:         bfgs
-                             type:      minimization
-         dftb:
-              dftb:
-                   resourcesdir:        DFTB.org/3ob-3-1
-              task:
-                   runtype:     GO
-         dirac:
-         gamess:
-                basis:
-                      gbasis:   n21
-                      ngauss:   3
-                contrl:
-                       dfttyp:  pbe
-                       runtyp:  optimize
-                       scftyp:  rhf
-         orca:
-              basis:
-                    basis:      sto_sz
-              method:
-                     functional:        lda
-                     method:    dft
-                     runtyp:    opt
-
-</pre></div></div>
-</div>
 <p>In the case of adf the above keywords result in the following input file
 for ADF package:</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [34]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -719,64 +491,14 @@ for ADF package:</p>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-[09:14:04] PLAMS working folder: /home/lars/workspace/qmflows/jupyterNotebooks/tutorial_results/run_two
-╭─(running jobs)
-│ Running adf adf_acetonitrile...
-(<span style="color: rgb(60,180,100)">✔</span>)╰─(success)
-atoms
-      1         C      2.419290      0.606560      0.000000
-      2         C      1.671470      1.829570      0.000000
-      3         N      1.065290      2.809960      0.000000
-      4         H      2.000000      0.000000      1.000000
-      5         H      2.000000      0.000000     -1.000000
-      6         H      3.600000      0.800000      0.000000
-end
-
-basis
-  core large
-  type DZP
-end
-
-constraints
-  atom 2
-  atom 3
-  atom 4
-end
-
-geometry
-  optim cartesian
-end
-
-integration
-  accint 6.0
-end
-
-scf
-  converge 1e-06
-  iterations 100
-end
-
-xc
-  lda
-end
-
-end input
-
-</pre></div></div>
-</div>
 </div>
 <div class="section" id="Combining-multiple-jobs">
 <h1>Combining multiple jobs<a class="headerlink" href="#Combining-multiple-jobs" title="Permalink to this headline">¶</a></h1>
 <p>Multiple jobs can be combined, while calling the run function only once.
 The script below combines components outlined above:</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [35]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -798,27 +520,6 @@ The script below combines components outlined above:</p>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-[09:15:08] PLAMS working folder: /home/lars/workspace/qmflows/jupyterNotebooks/tutorial_results/workflow
-╭─(running jobs)
-│ Running dftb dftb_opt...
-(<span style="color: rgb(60,180,100)">✔</span>)│ Running adf adf_single...
-(<span style="color: rgb(60,180,100)">✔</span>)╰─(success)
-  Atoms:
-    1         C      0.000000      0.000000      0.656511
-    2         C      0.000000      0.000000     -0.783088
-    3         N      0.000000      0.000000     -1.946913
-    4         H     -0.512221     -0.887193      1.022016
-    5         H      1.024442      0.000000      1.022016
-    6         H     -0.512221      0.887193      1.022016
-
--1.4094874734528888
-</pre></div></div>
-</div>
 <p>In this case the second task adf_single reads the molecule optimized in
 the first job dftb_opt. Note that dftb_opt as well as
 dftb_opt.molecule are promised objects. When <strong>run</strong> is applied to the
@@ -828,9 +529,9 @@ all the calculations required to obtain <strong>adf_result</strong> are performe
 QMflows and the resulting output files generated by the QM packages are
 stored in folders named after the job_names, residing inside a results
 folder:</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [36]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -838,17 +539,9 @@ folder:</p>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-<span class="ansi-blue-intense-fg ansi-bold">run_one</span>/  <span class="ansi-blue-intense-fg ansi-bold">run_two</span>/  <span class="ansi-blue-intense-fg ansi-bold">workflow</span>/
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [37]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -856,32 +549,15 @@ folder:</p>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-<span class="ansi-blue-intense-fg ansi-bold">adf_single</span>/  <span class="ansi-blue-intense-fg ansi-bold">dftb_opt</span>/  workflow.log
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [38]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
 <span></span><span class="n">ls</span> <span class="n">tutorial_results</span><span class="o">/</span><span class="n">workflow</span><span class="o">/</span><span class="n">adf_single</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-adf_single.dill  adf_single.in   <span class="ansi-green-intense-fg ansi-bold">adf_single.run</span>*  logfile  t21.H
-adf_single.err   adf_single.out  adf_single.t21   t21.C    t21.N
-</pre></div></div>
 </div>
 </div>
 
@@ -891,7 +567,7 @@ adf_single.err   adf_single.out  adf_single.t21   t21.C    t21.N
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">qmflows</a></h1>
+<h1 class="logo"><a href="../index.html">qmflows</a></h1>
 
 
 
@@ -902,7 +578,7 @@ adf_single.err   adf_single.out  adf_single.t21   t21.C    t21.N
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="includeme.html">QMFlows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../includeme.html">QMFlows</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Basic usage tutorial</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Installation-in-Unix">Installation in Unix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Starting-the-environment">Starting the environment</a></li>
@@ -912,21 +588,21 @@ adf_single.err   adf_single.out  adf_single.t21   t21.C    t21.N
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#Settings-and-templates">Settings and templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#Combining-multiple-jobs">Combining multiple jobs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="documentation.html">Library Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../documentation.html">Library Documentation</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="includeme.html" title="previous chapter">QMFlows</a></li>
-      <li>Next: <a href="documentation.html" title="next chapter">Library Documentation</a></li>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../includeme.html" title="previous chapter">QMFlows</a></li>
+      <li>Next: <a href="../documentation.html" title="next chapter">Library Documentation</a></li>
   </ul></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
+    <form class="search" action="../search.html" method="get">
       <div><input type="text" name="q" /></div>
       <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
@@ -946,7 +622,7 @@ adf_single.err   adf_single.out  adf_single.t21   t21.C    t21.N
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="_sources/interactive_tutorial.ipynb.txt"
+      <a href="../_sources/jupyterNotebooks/interactive_tutorial.ipynb.txt"
           rel="nofollow">Page source</a>
     </div>
 
