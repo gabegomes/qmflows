@@ -24,8 +24,6 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Library Documentation" href="documentation.html" />
-    <link rel="prev" title="Basic usage tutorial" href="interactive_tutorial.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -80,7 +78,7 @@
 <li><p class="first">Start environment <code class="docutils literal"><span class="pre">bash</span>&#160;&#160;&#160; <span class="pre">source</span> <span class="pre">activate</span> <span class="pre">qmflows</span></code></p>
 </li>
 <li><p class="first">install <strong>qmflows</strong></p>
-<div class="code bash highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">qmflows</span> <span class="o">--</span><span class="n">upgrade</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pip install qmflows --upgrade
 </pre></div>
 </div>
 <p>** You are ready to start! **</p>
@@ -91,18 +89,18 @@
 <hr class="docutils" />
 <p>Once <em>QMFLOWS</em> has been installed the user should run the following
 command to initialize the environment:</p>
-<div class="code bash highlight-default"><div class="highlight"><pre><span></span>[user@int1 ~]$ source activate qmflows
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="o">[</span>user@int1 ~<span class="o">]</span>$ <span class="nb">source</span> activate qmflows
 discarding /home/user/anaconda3/bin from PATH
 prepending /home/user/anaconda3/envs/qmflows/bin to PATH
-(qmflows)[user@int1 ~]$ python --version
-Python 3.5.2 :: Anaconda custom (64-bit)
+<span class="o">(</span>qmflows<span class="o">)[</span>user@int1 ~<span class="o">]</span>$ python --version
+Python <span class="m">3</span>.5.2 :: Anaconda custom <span class="o">(</span><span class="m">64</span>-bit<span class="o">)</span>
 </pre></div>
 </div>
 <p>To leave the environment the following command is used</p>
-<div class="code bash highlight-default"><div class="highlight"><pre><span></span>   (qmflows)[user@int1 ~]$ source deactivate
+<div class="highlight-bash"><div class="highlight"><pre><span></span>   <span class="o">(</span>qmflows<span class="o">)[</span>user@int1 ~<span class="o">]</span>$ <span class="nb">source</span> deactivate
    discarding /home/user/anaconda3/envs/qmflows/bin from PATH
 
-2. What is QMflows?
+<span class="m">2</span>. What is QMflows?
 </pre></div>
 </div>
 <hr class="docutils" />
@@ -137,7 +135,7 @@ you to find back the “raw” data of the calculation later on.</p>
 <div>Technical note:</div></blockquote>
 <hr class="docutils" />
 <p><code class="docutils literal"><span class="pre">It</span> <span class="pre">is</span> <span class="pre">the</span> <span class="pre">user</span> <span class="pre">responsability</span> <span class="pre">to</span> <span class="pre">install</span> <span class="pre">or</span> <span class="pre">load</span> <span class="pre">the</span> <span class="pre">simulation</span> <span class="pre">packages</span> <span class="pre">that</span> <span class="pre">he/she</span> <span class="pre">wants</span> <span class="pre">to</span> <span class="pre">use.</span> <span class="pre">In</span> <span class="pre">most</span> <span class="pre">supercomputers</span> <span class="pre">these</span> <span class="pre">simulation</span> <span class="pre">packages</span> <span class="pre">are</span> <span class="pre">available</span> <span class="pre">using</span> <span class="pre">a</span> <span class="pre">command</span> <span class="pre">like</span> <span class="pre">(consult</span> <span class="pre">your</span> <span class="pre">system</span> <span class="pre">administrator):</span></code></p>
-<div class="code bash highlight-default"><div class="highlight"><pre><span></span><span class="n">load</span> <span class="n">module</span> <span class="n">superAwesomeQuantumPackage</span><span class="o">/</span><span class="mf">3.141592</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>load module superAwesomeQuantumPackage/3.141592
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">Also</span> <span class="pre">some</span> <span class="pre">simulation</span> <span class="pre">packages</span> <span class="pre">required</span> <span class="pre">that</span> <span class="pre">you</span> <span class="pre">configure</span> <span class="pre">a</span> <span class="pre">``scratch</span></code> folder. For instance <em>Orca</em> requires a <code class="docutils literal"><span class="pre">SCR</span></code> folder to be defined while <em>ADF</em>  called it <code class="docutils literal"><span class="pre">SCM_TMPDIR</span></code>.``</p>
@@ -150,7 +148,7 @@ you to find back the “raw” data of the calculation later on.</p>
 <p><em>Settings</em> are a subclass of python
 <a class="reference external" href="https://docs.python.org/3.5/tutorial/datastructures.html#dictionaries">dictionaries</a>
 to represent hierarchical structures, like</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">Settings</span>
+<div class="highlight-ipython3"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">Settings</span>
 
 <span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
 <span class="n">s</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">z</span>
@@ -168,7 +166,7 @@ by something like:</p>
 </pre></div>
 </div>
 <p>We can resemble this structure using <strong>Settings</strong>,</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+<div class="highlight-ipython3"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
 <span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s2">&quot;DZP&quot;</span>
 <span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">core</span> <span class="o">=</span> <span class="s2">&quot;Large&quot;</span>
 </pre></div>
@@ -205,7 +203,7 @@ will see in the next section.</p>
 </pre></div>
 </div>
 <p>Represented by the following code</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+<div class="highlight-ipython3"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
 
 <span class="c1"># Basis</span>
 <span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s2">&quot;DZP&quot;</span>
@@ -259,7 +257,7 @@ standards for the basis set and it will be really handy if we can
 defined a “generic” keyword for basis sets. Fortunately <code class="docutils literal"><span class="pre">qmflows</span></code>
 already offers such keyword that can be used among the packages that use
 the same basis standard,</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+<div class="highlight-ipython3"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
 <span class="n">s</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s2">&quot;DZP&quot;</span>
 </pre></div>
 </div>
@@ -409,7 +407,7 @@ modify for her/his own purpose. <code class="docutils literal"><span class="pre"
 is basically a nested dictionary that is translated to a <code class="docutils literal"><span class="pre">Settings</span></code>
 object by <em>qmflows</em>.</p>
 <p>Below it is shown the defaults for single point calculation</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">templates</span>
+<div class="highlight-ipython3"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">templates</span>
 <span class="n">templates</span><span class="o">.</span><span class="n">singlepoint</span>
 </pre></div>
 </div>
@@ -487,7 +485,7 @@ object by <em>qmflows</em>.</p>
 <p>The question is then, <em>how I can modify a template with my own changes?</em></p>
 <p>Suppose you are perfoming a bunch of constrained <em>DFT</em> optimizations
 using <code class="docutils literal"><span class="pre">ADF</span></code> . You need first to define a basis set and the constrains.</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+<div class="highlight-ipython3"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
 <span class="c1"># Basis</span>
 <span class="n">s</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s2">&quot;DZP&quot;</span>
 <span class="n">s</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">adf</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">core</span> <span class="o">=</span> <span class="s2">&quot;Large&quot;</span>
@@ -501,7 +499,7 @@ using <code class="docutils literal"><span class="pre">ADF</span></code> . You n
 <code class="docutils literal"><span class="pre">ADF</span></code> keywords <code class="docutils literal"><span class="pre">core</span> <span class="pre">=</span> <span class="pre">Large</span></code>. Now you merge your <strong>Settings</strong> with
 the correspoding template to carry out molecular geometry optimizations,
 using a method called <code class="docutils literal"><span class="pre">overlay</span></code>.</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">templates</span>
+<div class="highlight-ipython3"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">templates</span>
 <span class="n">inp</span> <span class="o">=</span> <span class="n">templates</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">overlay</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -513,7 +511,7 @@ in this case) with the input supplied by the user, always given
 preference to the user input</p>
 <p>Below it is shown a combination of templates, generic and specific
 keywords to generate the input for a <code class="docutils literal"><span class="pre">CP2K</span></code> job</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">templates</span>
+<div class="highlight-ipython3"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">templates</span>
 
 <span class="c1"># Template</span>
 <span class="n">s</span> <span class="o">=</span> <span class="n">templates</span><span class="o">.</span><span class="n">singlepoint</span>
@@ -615,13 +613,13 @@ keywords to generate the input for a <code class="docutils literal"><span class=
 <em>qmflows</em> offers a convinient way to read Molecular geometries using the
 <a class="reference external" href="https://www.scm.com/doc/plams/molecule.html">Plams</a> library in
 several formats like: <em>xyz</em> , <em>pdb</em>, <em>mol</em>, etc.</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">plams</span> <span class="k">import</span> <span class="n">Molecule</span>
+<div class="highlight-ipython3"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">plams</span> <span class="k">import</span> <span class="n">Molecule</span>
 <span class="n">acetonitrile</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">(</span><span class="s2">&quot;files/acetonitrile.xyz&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">acetonitrile</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>You can also create the molecule one atom at a time</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">plams</span> <span class="k">import</span> <span class="p">(</span><span class="n">Atom</span><span class="p">,</span> <span class="n">Molecule</span><span class="p">)</span>
+<div class="highlight-ipython3"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">plams</span> <span class="k">import</span> <span class="p">(</span><span class="n">Atom</span><span class="p">,</span> <span class="n">Molecule</span><span class="p">)</span>
 <span class="n">m</span>  <span class="o">=</span> <span class="n">Molecule</span><span class="p">()</span>
 <span class="n">m</span><span class="o">.</span><span class="n">add_atom</span><span class="p">(</span><span class="n">Atom</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="p">(</span><span class="mf">2.41929</span><span class="p">,</span> <span class="mf">0.60656</span> <span class="p">,</span> <span class="mf">0.0</span><span class="p">)))</span>
 <span class="n">m</span><span class="o">.</span><span class="n">add_atom</span><span class="p">(</span><span class="n">Atom</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="p">(</span><span class="mf">1.67147</span><span class="p">,</span>  <span class="mf">1.82957</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)))</span>
@@ -633,7 +631,7 @@ several formats like: <em>xyz</em> , <em>pdb</em>, <em>mol</em>, etc.</p>
 </pre></div>
 </div>
 <p><strong>QMflows</strong> Can also handle smiles as shown below</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows.molkit</span> <span class="k">import</span> <span class="n">from_smiles</span>
+<div class="highlight-ipython3"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows.molkit</span> <span class="k">import</span> <span class="n">from_smiles</span>
 
 <span class="c1"># String representing the smile</span>
 <span class="n">smile</span> <span class="o">=</span> <span class="s1">&#39;C1CC2(CCCCC2)C=C1&#39;</span>
@@ -715,15 +713,15 @@ transformation over a molecule using the
 <p>We now have our components to perform a calculation: <strong>Settings</strong> and
 <strong>Molecule</strong>. We can now invoke a quantum chemistry package to perform
 the computation,</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">adf</span>
+<div class="highlight-ipython3"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">adf</span>
 <span class="n">optmized_mol_adf</span> <span class="o">=</span> <span class="n">adf</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">acetonitrile</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="s1">&#39;acetonitrile_opt&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>the previous code snippet <em>does not execute the code immediatly</em>,
 instead the simulation is started when the user invokes the run
 function, as shown below</p>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">plams</span> <span class="k">import</span> <span class="n">Molecule</span>
-<span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="p">(</span><span class="n">adf</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">Settings</span><span class="p">,</span> <span class="n">templates</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">plams</span> <span class="kn">import</span> <span class="n">Molecule</span>
+<span class="kn">from</span> <span class="nn">qmflows</span> <span class="kn">import</span> <span class="p">(</span><span class="n">adf</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">Settings</span><span class="p">,</span> <span class="n">templates</span><span class="p">)</span>
 
 <span class="c1"># Settings</span>
 <span class="n">s</span> <span class="o">=</span> <span class="n">templates</span><span class="o">.</span><span class="n">geometry</span>
@@ -732,7 +730,7 @@ function, as shown below</p>
 <span class="n">s</span><span class="o">.</span><span class="n">freeze</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
 
 <span class="c1"># molecule</span>
-<span class="kn">from</span> <span class="nn">plams</span> <span class="k">import</span> <span class="n">Molecule</span>
+<span class="kn">from</span> <span class="nn">plams</span> <span class="kn">import</span> <span class="n">Molecule</span>
 <span class="n">acetonitrile</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">(</span><span class="s2">&quot;acetonitrile.xyz&quot;</span><span class="p">)</span>
 
 <span class="c1"># Job</span>
@@ -745,12 +743,12 @@ function, as shown below</p>
 <p>you can run the previous script by saving it in a file called
 <code class="docutils literal"><span class="pre">acetonitrile_opt.py</span></code> and typing the following command in your
 console:</p>
-<div class="code bash highlight-default"><div class="highlight"><pre><span></span>(qmflows)[user@int1 ~]$ python acetonitrile_opt.py
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="o">(</span>qmflows<span class="o">)[</span>user@int1 ~<span class="o">]</span>$ python acetonitrile_opt.py
 </pre></div>
 </div>
 <p>you will then see in your <code class="docutils literal"><span class="pre">current</span> <span class="pre">work</span> <span class="pre">directory</span></code> something similar
 to the following</p>
-<div class="code bash highlight-default"><div class="highlight"><pre><span></span>   (qmflows)[user@int1 ~]$ ls
+<div class="highlight-bash"><div class="highlight"><pre><span></span>   <span class="o">(</span>qmflows<span class="o">)[</span>user@int1 ~<span class="o">]</span>$ ls
    acetonitrile      acetonitrile_opt.py   cache.json   acetonitrile.xyz
 
 acetonitrile is the folder containing the output from the quantum
@@ -767,7 +765,7 @@ resulting from the simulation</p>
 <hr class="docutils" />
 <p>In general, properties are extracted using the standard
 <code class="docutils literal"><span class="pre">Object.attribute</span></code> notation in python, as shown below.</p>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">optmized_mol_adf</span><span class="o">.</span><span class="n">molecule</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">optmized_mol_adf</span><span class="o">.</span><span class="n">molecule</span>
 </pre></div>
 </div>
 <p>Some of the available properties are shown in the following table,</p>
@@ -822,7 +820,7 @@ the output files and make them available inside Python.</p>
 <p>We can use the previous optimized geometry for further calculations
 using for instance another package like <em>Orca</em> to run a frequencies
 calculation,</p>
-<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">orca</span>
+<div class="highlight-ipython3"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">orca</span>
 <span class="n">s2</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
 <span class="n">s2</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">orca</span><span class="o">.</span><span class="n">main</span> <span class="o">=</span> <span class="s2">&quot;freq&quot;</span>
 <span class="n">s2</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">orca</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s1">&#39;sto_sz&#39;</span>
@@ -835,8 +833,8 @@ calculation,</p>
 </pre></div>
 </div>
 <p>The whole script is</p>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="p">(</span><span class="n">adf</span><span class="p">,</span> <span class="n">orca</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">templates</span><span class="p">,</span> <span class="n">Settings</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">plams</span> <span class="k">import</span> <span class="n">Molecule</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="kn">import</span> <span class="p">(</span><span class="n">adf</span><span class="p">,</span> <span class="n">orca</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">templates</span><span class="p">,</span> <span class="n">Settings</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">plams</span> <span class="kn">import</span> <span class="n">Molecule</span>
 <span class="kn">import</span> <span class="nn">plams</span>
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -857,7 +855,7 @@ calculation,</p>
     <span class="n">job_freq</span> <span class="o">=</span> <span class="n">orca</span><span class="p">(</span><span class="n">s2</span><span class="p">,</span> <span class="n">optmized_mol_adf</span><span class="p">)</span>
     <span class="n">frequencies</span> <span class="o">=</span> <span class="n">job_freq</span><span class="o">.</span><span class="n">frequencies</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">frequencies</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">frequencies</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>Once you run the script an input file for the <em>ADF</em> and <em>Orca</em> jobs are
@@ -900,16 +898,16 @@ created. The <em>ADF</em> input looks like</p>
 <hr class="docutils" />
 <p>Running in <strong>Cartesius</strong> or <strong>Bazis</strong> through the <em>Slurm</em> resource
 manager can be done using and script like</p>
-<div class="code bash highlight-default"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
 <span class="c1">#SBATCH -t 00:10:00</span>
 <span class="c1">#SBATCH -N 1</span>
 <span class="c1">#SBATCH -n 8</span>
 
-<span class="n">module</span> <span class="n">load</span> <span class="n">orca</span>
-<span class="n">module</span> <span class="n">load</span> <span class="n">adf</span><span class="o">/</span><span class="mf">2016.102</span>
+module load orca
+module load adf/2016.102
 
-<span class="n">source</span> <span class="n">activate</span> <span class="n">qmflows</span>
-<span class="n">python</span> <span class="n">optimization_ADF_freq_ORCA</span><span class="o">.</span><span class="n">py</span>
+<span class="nb">source</span> activate qmflows
+python optimization_ADF_freq_ORCA.py
 </pre></div>
 </div>
 <p>The Slurm output looks like:</p>
@@ -965,8 +963,8 @@ need to relaunch it</strong>, that’s it!</p>
 <blockquote>
 <div>Conditional Workflows</div></blockquote>
 <hr class="docutils" />
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">noodles</span> <span class="k">import</span> <span class="n">gather</span>
-<span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">dftb</span><span class="p">,</span> <span class="n">adf</span><span class="p">,</span> <span class="n">orca</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">Settings</span><span class="p">,</span> <span class="n">templates</span><span class="p">,</span> <span class="n">molkit</span><span class="p">,</span> <span class="n">find_first_job</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">noodles</span> <span class="kn">import</span> <span class="n">gather</span>
+<span class="kn">from</span> <span class="nn">qmflows</span> <span class="kn">import</span> <span class="n">dftb</span><span class="p">,</span> <span class="n">adf</span><span class="p">,</span> <span class="n">orca</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">Settings</span><span class="p">,</span> <span class="n">templates</span><span class="p">,</span> <span class="n">molkit</span><span class="p">,</span> <span class="n">find_first_job</span>
 
 <span class="c1"># This examples illustrates the possibility to use different packages interchangeably.</span>
 <span class="c1"># Analytical frequencies are not available for B3LYP in ADF</span>
@@ -1047,7 +1045,9 @@ quantum calculation then the computation will crash.</p>
 <h3>Navigation</h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="includeme.html">QMFlows</a></li>
-<li class="toctree-l1"><a class="reference internal" href="interactive_tutorial.html">Basic usage tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="includeme.html#Motivation">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="includeme.html#Description">Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="includeme.html#Installation">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="documentation.html">Library Documentation</a></li>
 </ul>
 
@@ -1055,8 +1055,6 @@ quantum calculation then the computation will crash.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="interactive_tutorial.html" title="previous chapter">Basic usage tutorial</a></li>
-      <li>Next: <a href="documentation.html" title="next chapter">Library Documentation</a></li>
   </ul></li>
 </ul>
 </div>

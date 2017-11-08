@@ -41,14 +41,14 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="templates">
-<h1>Templates<a class="headerlink" href="#templates" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="Templates">
+<h1>Templates<a class="headerlink" href="#Templates" title="Permalink to this headline">¶</a></h1>
 <p>The input generations consist of two parts: chosing a template (see <a class="reference internal" href="#id1">templates</a>)
 for the kind of calculation to perform and adding some settings to that template. Notice
 that the user can either pick a specific package template or provides only generic
 keywords.</p>
-<div class="section" id="json-format">
-<span id="id1"></span><h2>JSON format<a class="headerlink" href="#json-format" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="JSON-format">
+<span id="id1"></span><h2>JSON format<a class="headerlink" href="#JSON-format" title="Permalink to this headline">¶</a></h2>
 <p>The Java script object notation <strong>JSON</strong> is a widely used data format. This format is used together with the <a class="reference external" href="https://docs.python.org/2/library/json.html#module-json" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">json</span></code></a> module to implement the mechanism to load/unload the templates using the function <a class="reference internal" href="#qmflows.templates.templates.get_template" title="qmflows.templates.templates.get_template"><code class="xref py py-func docutils literal"><span class="pre">get_template()</span></code></a>.</p>
 <p>For Example, the default parameter for a geometry optimization using ADF are given by:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -91,16 +91,6 @@ keywords.</p>
 <p>The templates in <cite>JSON</cite> format are translated to python dictionaries using the <a class="reference internal" href="#qmflows.templates.templates.get_template" title="qmflows.templates.templates.get_template"><code class="xref py py-func docutils literal"><span class="pre">get_template()</span></code></a>. This templates can be used by themselves in the calculations
 or more keywords can be attached to them modifying the default values. For example the default values to carry a single point calculation using the <strong>ORCA</strong> quantum
 package are:</p>
-<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmflows.templates</span> <span class="k">import</span> <span class="n">singlepoint</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">singlepoint</span><span class="o">.</span><span class="n">specific</span><span class="o">.</span><span class="n">orca</span><span class="p">)</span>
-
-<span class="n">basis</span><span class="p">:</span>
-      <span class="n">basis</span><span class="p">:</span>         <span class="n">sto_sz</span>
-<span class="n">method</span><span class="p">:</span>
-      <span class="n">functional</span><span class="p">:</span>    <span class="n">lda</span>
-       <span class="n">method</span><span class="p">:</span>       <span class="n">dft</span>
-</pre></div>
-</div>
 <p>We can easily replace the basis set just by updating the value in the <code class="xref py py-class docutils literal"><span class="pre">Settings</span></code> object that represent the single point calculation:</p>
 <dl class="function">
 <dt id="qmflows.templates.templates.get_template">
@@ -150,7 +140,7 @@ following common calculations:</p>
 <li class="toctree-l2"><a class="reference internal" href="molkit.html">Molkit</a></li>
 <li class="toctree-l2"><a class="reference internal" href="promise.html">Running a workflow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parsers.html">Extracting numerical properties from output files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="parsers.html#parsers">Parsers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parsers.html#Parsers">Parsers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hdf5.html">HDF5</a></li>
 </ul>
 </li>
@@ -185,7 +175,7 @@ following common calculations:</p>
       &copy;2017, F. Zapata, L. Ridder.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

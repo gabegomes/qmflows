@@ -41,8 +41,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="extracting-numerical-properties-from-output-files">
-<h1>Extracting numerical properties from output files<a class="headerlink" href="#extracting-numerical-properties-from-output-files" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="Extracting-numerical-properties-from-output-files">
+<h1>Extracting numerical properties from output files<a class="headerlink" href="#Extracting-numerical-properties-from-output-files" title="Permalink to this headline">¶</a></h1>
 <p>Quantum packages simulations generate output file in different formats. For examples the <a class="reference external" href="https://www.scm.com/">SCM</a> simulation suite
 (<code class="docutils literal"><span class="pre">ADF</span></code> and <code class="docutils literal"><span class="pre">DFTB</span></code> in <em>Qmflows</em>) generate binary outputs, while other packages like <code class="docutils literal"><span class="pre">CP2K</span></code>, <code class="docutils literal"><span class="pre">Gamess-US</span></code> and <code class="docutils literal"><span class="pre">Orca</span></code>
 generate ascii text files.  Some other packages like <code class="docutils literal"><span class="pre">Dirac</span></code> generate a structure text output like <em>XML</em>.</p>
@@ -56,8 +56,8 @@ extract the desire property by using the convention:</p>
 for instructions about how to read that given property from the output file. Nevertheless, <em>Not all the properties for a given
 pacakge are implemented</em>. <strong>If the property of your interest is not available you can request it in the Qmflows issues page</strong>.</p>
 </div>
-<div class="section" id="parsers">
-<h1>Parsers<a class="headerlink" href="#parsers" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Parsers">
+<h1>Parsers<a class="headerlink" href="#Parsers" title="Permalink to this headline">¶</a></h1>
 <p>Internally <em>Qmflows</em> uses different mechanism to extract different properties from the output files. In the case of the <code class="docutils literal"><span class="pre">ADF</span></code> and
 <code class="docutils literal"><span class="pre">DFTB</span></code> packages, <em>Qmflows</em> take advantages of the python interface to <a class="reference external" href="https://www.scm.com/doc/plams/scm.html#kf-files">kftools</a> files developed by the <a class="reference external" href="https://www.scm.com/">SCM</a>. In the case of <em>XML</em> output,
 <em>Qmflows</em> direcltly uses the python built-in <a class="reference external" href="https://docs.python.org/3.5/library/xml.etree.elementtree.html">xml</a> reader. For the output files in text format <em>Qmflows</em> uses a mixuture of <a class="reference external" href="https://www.gnu.org/software/gawk/manual/gawk.html">awk</a> and
@@ -94,7 +94,7 @@ The library  <a class="reference external" href="https://pyparsing.wikispaces.co
 <li class="toctree-l2"><a class="reference internal" href="molkit.html">Molkit</a></li>
 <li class="toctree-l2"><a class="reference internal" href="promise.html">Running a workflow</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Extracting numerical properties from output files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#parsers">Parsers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Parsers">Parsers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hdf5.html">HDF5</a></li>
 </ul>
 </li>
@@ -129,7 +129,7 @@ The library  <a class="reference external" href="https://pyparsing.wikispaces.co
       &copy;2017, F. Zapata, L. Ridder.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

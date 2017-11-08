@@ -41,8 +41,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="packages">
-<h1>Packages<a class="headerlink" href="#packages" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="Packages">
+<h1>Packages<a class="headerlink" href="#Packages" title="Permalink to this headline">¶</a></h1>
 <p>The base class <code class="xref py py-class docutils literal"><span class="pre">Package</span></code> is the library core, it provides the general scaffold to call a quantum code. On top of this infrastructure it has been created several subclasses that contain the specific details for each quantum code. The available interfaces to quantum codes are:</p>
 <ul class="simple">
 <li><a class="reference internal" href="#qmflows.packages.SCM.ADF" title="qmflows.packages.SCM.ADF"><code class="xref py py-class docutils literal"><span class="pre">ADF</span></code></a></li>
@@ -62,8 +62,8 @@
 </pre></div>
 </div>
 <p>See :ref: running for more details about job execution.</p>
-<div class="section" id="api">
-<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="API">
+<h2>API<a class="headerlink" href="#API" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="qmflows.packages.Package">
 <em class="property">class </em><code class="descclassname">qmflows.packages.</code><code class="descname">Package</code><span class="sig-paren">(</span><em>pkg_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/packages.html#Package"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.Package" title="Permalink to this definition">¶</a></dt>
@@ -106,7 +106,7 @@ specific settings.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>settings</strong> (<em>Settings</em>) – Settings provided by the user.</li>
+<li><strong>settings</strong> (<a class="reference internal" href="settings.html#qmflows.Settings" title="qmflows.Settings"><em>Settings</em></a>) – Settings provided by the user.</li>
 <li><strong>mol</strong> (<em>plams Molecule</em>) – Molecule to run the calculation.</li>
 </ul>
 </td>
@@ -137,8 +137,8 @@ the specific keywords of <code class="docutils literal"><span class="pre">self.p
 </dd></dl>
 
 </div>
-<div class="section" id="scm">
-<h2>SCM<a class="headerlink" href="#scm" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="SCM">
+<h2>SCM<a class="headerlink" href="#SCM" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="qmflows.packages.SCM.ADF">
 <em class="property">class </em><code class="descclassname">qmflows.packages.SCM.</code><code class="descname">ADF</code><a class="reference internal" href="_modules/qmflows/packages/SCM.html#ADF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.SCM.ADF" title="Permalink to this definition">¶</a></dt>
@@ -216,8 +216,8 @@ job output.</li>
 </dd></dl>
 
 </div>
-<div class="section" id="cp2k">
-<h2>CP2k<a class="headerlink" href="#cp2k" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="CP2k">
+<h2>CP2k<a class="headerlink" href="#CP2k" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="qmflows.packages.cp2k_package.CP2K">
 <em class="property">class </em><code class="descclassname">qmflows.packages.cp2k_package.</code><code class="descname">CP2K</code><a class="reference internal" href="_modules/qmflows/packages/cp2k_package.html#CP2K"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.cp2k_package.CP2K" title="Permalink to this definition">¶</a></dt>
@@ -235,7 +235,7 @@ This class is not intended to be called directly by the user, instead the
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>settings</strong> (<code class="xref py py-class docutils literal"><span class="pre">Settings</span></code>) – Job Settings.</li>
+<li><strong>settings</strong> (<a class="reference internal" href="settings.html#qmflows.Settings" title="qmflows.Settings"><code class="xref py py-class docutils literal"><span class="pre">Settings</span></code></a>) – Job Settings.</li>
 <li><strong>key</strong> – Special key declared in <code class="docutils literal"><span class="pre">settings</span></code>.</li>
 <li><strong>value</strong> – Value store in <code class="docutils literal"><span class="pre">settings</span></code>.</li>
 <li><strong>mol</strong> (<em>plams Molecule</em>) – molecular Geometry</li>
@@ -255,7 +255,7 @@ This class is not intended to be called directly by the user, instead the
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>settings</strong> (<code class="xref py py-class docutils literal"><span class="pre">Settings</span></code>) – Job Settings.</li>
+<li><strong>settings</strong> (<a class="reference internal" href="settings.html#qmflows.Settings" title="qmflows.Settings"><code class="xref py py-class docutils literal"><span class="pre">Settings</span></code></a>) – Job Settings.</li>
 <li><strong>mol</strong> (<em>plams Molecule</em>) – molecular Geometry</li>
 <li><strong>hdf5_file</strong> – Path to the HDF5 file that contains the</li>
 </ul>
@@ -308,8 +308,8 @@ results.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="dirac">
-<h2>DIRAC<a class="headerlink" href="#dirac" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="DIRAC">
+<h2>DIRAC<a class="headerlink" href="#DIRAC" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="qmflows.packages.dirac.DIRAC">
 <em class="property">class </em><code class="descclassname">qmflows.packages.dirac.</code><code class="descname">DIRAC</code><a class="reference internal" href="_modules/qmflows/packages/dirac.html#DIRAC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.dirac.DIRAC" title="Permalink to this definition">¶</a></dt>
@@ -328,8 +328,8 @@ results.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="gamess-us">
-<h2>GAMESS-US<a class="headerlink" href="#gamess-us" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="GAMESS-US">
+<h2>GAMESS-US<a class="headerlink" href="#GAMESS-US" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="qmflows.packages.gamess.GAMESS">
 <em class="property">class </em><code class="descclassname">qmflows.packages.gamess.</code><code class="descname">GAMESS</code><a class="reference internal" href="_modules/qmflows/packages/gamess.html#GAMESS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.gamess.GAMESS" title="Permalink to this definition">¶</a></dt>
@@ -355,7 +355,7 @@ special behaviour of the following keywords:</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>settings</strong> (<code class="xref py py-class docutils literal"><span class="pre">Settings</span></code>) – Job Settings.</li>
+<li><strong>settings</strong> (<a class="reference internal" href="settings.html#qmflows.Settings" title="qmflows.Settings"><code class="xref py py-class docutils literal"><span class="pre">Settings</span></code></a>) – Job Settings.</li>
 <li><strong>key</strong> – Special key declared in <code class="docutils literal"><span class="pre">settings</span></code>.</li>
 <li><strong>value</strong> – Value store in <code class="docutils literal"><span class="pre">settings</span></code>.</li>
 <li><strong>mol</strong> (<em>plams Molecule</em>) – molecular Geometry</li>
@@ -375,7 +375,7 @@ special behaviour of the following keywords:</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>settings</strong> (<code class="xref py py-class docutils literal"><span class="pre">Settings</span></code>) – Job Settings.</li>
+<li><strong>settings</strong> (<a class="reference internal" href="settings.html#qmflows.Settings" title="qmflows.Settings"><code class="xref py py-class docutils literal"><span class="pre">Settings</span></code></a>) – Job Settings.</li>
 <li><strong>mol</strong> (<em>plams Molecule</em>) – molecular Geometry</li>
 <li><strong>input_file_name</strong> (<em>String</em>) – Optional name for the input.</li>
 <li><strong>out_file_name</strong> (<em>String</em>) – Optional name for the output.</li>
@@ -422,8 +422,8 @@ a dictionary.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="orca">
-<h2>ORCA<a class="headerlink" href="#orca" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="ORCA">
+<h2>ORCA<a class="headerlink" href="#ORCA" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="qmflows.packages.orca.ORCA">
 <em class="property">class </em><code class="descclassname">qmflows.packages.orca.</code><code class="descname">ORCA</code><a class="reference internal" href="_modules/qmflows/packages/orca.html#ORCA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.orca.ORCA" title="Permalink to this definition">¶</a></dt>
@@ -469,7 +469,7 @@ and data required to retrieve the output.</p>
 <li class="toctree-l2"><a class="reference internal" href="molkit.html">Molkit</a></li>
 <li class="toctree-l2"><a class="reference internal" href="promise.html">Running a workflow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parsers.html">Extracting numerical properties from output files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="parsers.html#parsers">Parsers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parsers.html#Parsers">Parsers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hdf5.html">HDF5</a></li>
 </ul>
 </li>
@@ -504,7 +504,7 @@ and data required to retrieve the output.</p>
       &copy;2017, F. Zapata, L. Ridder.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
