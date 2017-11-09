@@ -94,8 +94,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="includeme.html">QMFlows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interactive_tutorial.html">Basic usage tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="interactive_tutorial.html#Settings-and-templates">Settings and templates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="interactive_tutorial.html#Combining-multiple-jobs">Combining multiple jobs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Further_reading.html">Further Reading</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="documentation.html">Library Documentation</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="settings.html">Settings</a></li>
 <li class="toctree-l2"><a class="reference internal" href="templates.html">Templates</a></li>
@@ -217,7 +216,7 @@
 </style>
 <div class="section" id="Packages">
 <h1>Packages<a class="headerlink" href="#Packages" title="Permalink to this headline">¶</a></h1>
-<p>The base class <code class="xref py py-class docutils literal"><span class="pre">Package</span></code> is the library core, it provides the general scaffold to call a quantum code. On top of this infrastructure it has been created several subclasses that contain the specific details for each quantum code. The available interfaces to quantum codes are:</p>
+<p>The base class <a class="reference internal" href="#qmflows.packages.Package" title="qmflows.packages.Package"><code class="xref py py-class docutils literal"><span class="pre">Package</span></code></a> is the library core, it provides the general scaffold to call a quantum code. On top of this infrastructure it has been created several subclasses that contain the specific details for each quantum code. The available interfaces to quantum codes are:</p>
 <ul class="simple">
 <li><a class="reference internal" href="#qmflows.packages.SCM.ADF" title="qmflows.packages.SCM.ADF"><code class="xref py py-class docutils literal"><span class="pre">ADF</span></code></a></li>
 <li><a class="reference internal" href="#qmflows.packages.SCM.DFTB" title="qmflows.packages.SCM.DFTB"><code class="xref py py-class docutils literal"><span class="pre">DFTB</span></code></a></li>
@@ -241,7 +240,7 @@
 <dl class="class">
 <dt id="qmflows.packages.Package">
 <em class="property">class </em><code class="descclassname">qmflows.packages.</code><code class="descname">Package</code><span class="sig-paren">(</span><em>pkg_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmflows/packages/packages.html#Package"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qmflows.packages.Package" title="Permalink to this definition">¶</a></dt>
-<dd><p><code class="xref py py-class docutils literal"><span class="pre">Package</span></code> is the base class to handle the invocation to different
+<dd><p><a class="reference internal" href="#qmflows.packages.Package" title="qmflows.packages.Package"><code class="xref py py-class docutils literal"><span class="pre">Package</span></code></a> is the base class to handle the invocation to different
 quantum package.
 The only relevant attribute of this class is <code class="docutils literal"><span class="pre">self.pkg_name</span></code> which is a
 string representing the quantum package name that is going to be used to
