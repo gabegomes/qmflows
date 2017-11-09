@@ -1,45 +1,175 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Basic usage tutorial &#8212; qmflows 1.0 documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '1.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Library Documentation" href="documentation.html" />
-    <link rel="prev" title="QMFlows" href="includeme.html" />
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Basic usage tutorial &mdash; qmflows 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="qmflows 1.0 documentation" href="index.html"/>
+        <link rel="next" title="Library Documentation" href="documentation.html"/>
+        <link rel="prev" title="QMFlows" href="includeme.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
    
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  <div class="wy-grid-for-nav">
 
-  </head>
-  <body>
-  
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+          
+            <a href="index.html" class="icon icon-home"> qmflows
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">QMFlows</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Basic usage tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Installation-in-Unix">Installation in Unix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Starting-the-environment">Starting the environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#What-is-QMflows?">What is QMflows?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#The-basics:-calling-packages">The basics: calling packages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Note:">Note:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Settings-and-templates">Settings and templates</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Expert-info:">Expert info:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Combining-multiple-jobs">Combining multiple jobs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Library Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">qmflows</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Basic usage tutorial</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/interactive_tutorial.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   
 <style>
@@ -206,6 +336,38 @@ div.nboutput div.output_area.stderr {
 
 .ansi-bold { font-weight: bold; }
 .ansi-underline { text-decoration: underline; }
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
 </style>
 <div class="section" id="Basic-usage-tutorial">
 <h1>Basic usage tutorial<a class="headerlink" href="#Basic-usage-tutorial" title="Permalink to this headline">¶</a></h1>
@@ -297,15 +459,18 @@ software:</p>
 <li><strong>GAMESS-US</strong></li>
 <li><strong>DIRAC</strong></li>
 </ul>
-<p><em>Please make sure that the packages you want to use in QMflows are
-installed and active; in most supercomputer the simulation package are
-available using a command like (consult your system administrator):</em></p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>load module superAwesomeQuantumPackage/3.1421
-</pre></div>
-</div>
-<p><em>Also some simulation packages required that you configure a ``scratch``
-folder. For instance *Orca* requires a ``SCR`` folder to be defnied
-while *ADF</em> called it <code class="docutils literal"><span class="pre">SCM_TMPDIR</span></code>.*</p>
+<div class="section" id="Note:">
+<h3>Note:<a class="headerlink" href="#Note:" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Please make sure that the packages you want to use in QMflows are
+installed and active; in most supercomputer the simulation package
+are available using a command like (consult your system
+administrator):</p>
+<p><code class="docutils literal"><span class="pre">load</span> <span class="pre">module</span> <span class="pre">superAwesomeQuantumPackage/3.1421</span></code></p>
+<p>Also some simulation packages required that you configure a
+<em>scratch</em> folder. For instance <em>Orca</em> requires a <em>SCR</em> folder to be
+defnied while <em>ADF</em> called it <em>SCM_TMPDIR</em>.</p>
+</div></blockquote>
 <p>With <code class="docutils literal"><span class="pre">qmflows</span></code> you can write a python script that simply calls one of
 the package objects <code class="docutils literal"><span class="pre">adf,</span> <span class="pre">dftb,</span> <span class="pre">cp2k,</span> <span class="pre">orca,</span> <span class="pre">gamess</span> <span class="pre">or</span> <span class="pre">dirac</span></code>. As
 arguments to the call, you need to provide a <code class="docutils literal"><span class="pre">settings</span></code> objects
@@ -316,11 +481,11 @@ the calculation later on.</p>
 <p>First we define a molecule, for example by reading one from an xyz file:</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [27]:
+<span></span>In [7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">plams</span> <span class="k">import</span> <span class="n">Molecule</span>
+<span></span><span class="kn">from</span> <span class="nn">scm.plams</span> <span class="k">import</span> <span class="n">Molecule</span>
 <span class="n">acetonitrile</span> <span class="o">=</span> <span class="n">Molecule</span><span class="p">(</span><span class="s2">&quot;files/acetonitrile.xyz&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">acetonitrile</span><span class="p">)</span>
 </pre></div>
@@ -345,7 +510,7 @@ the calculation later on.</p>
 the dftb package object:</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [28]:
+<span></span>In [8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -360,7 +525,7 @@ the dftb package object:</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;noodles.interface.decorator.PromisedObject object at 0x7f6c8e5a6d30&gt;
+&lt;noodles.interface.decorator.PromisedObject object at 0x7f3d9b62e358&gt;
 </pre></div></div>
 </div>
 <p>As you can see, “job” is a so-called “promised object”. It means it
@@ -422,7 +587,7 @@ Dipole:  [1.0864213029, -1.9278296041, -0.0]
 </div>
 </div>
 <div class="section" id="Settings-and-templates">
-<h1>Settings and templates<a class="headerlink" href="#Settings-and-templates" title="Permalink to this headline">¶</a></h1>
+<h2>Settings and templates<a class="headerlink" href="#Settings-and-templates" title="Permalink to this headline">¶</a></h2>
 <p>In the above example <code class="docutils literal"><span class="pre">templates.geometry</span></code> was actually a predefined
 Settings object. You can define and manipulate Settings in a completely
 flexible manner as will be explained in this section. To facilitate
@@ -431,7 +596,7 @@ commonly used generic keywords, which can be combined with package
 specific keywords, to provide maximum flexibility.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [31]:
+<span></span>In [10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -463,15 +628,37 @@ two ways, using generic or specific keywords. Generic keywords represent
 input properties that are present in most simulation packages like a
 <em>basis set</em> while <em>specific</em> keywords allow the user to apply specific
 keywords for a package that are not in a generic dictionary.</p>
+<div class="section" id="Expert-info:">
+<h3>Expert info:<a class="headerlink" href="#Expert-info:" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div>Expert info: <em>Settings</em> are a subclass of python</div></blockquote>
-<p><a class="reference external" href="https://docs.python.org/3.5/tutorial/datastructures.html#dictionaries">dictionaries</a>
-to represent herarchical structures, like</p>
-<p>In QMflows/PLAMS multiple settings objects can be combined using the
-<code class="docutils literal"><span class="pre">overlay</span></code> function.</p>
+<div><em>Settings</em> are a subclass of python
+<a class="reference external" href="https://docs.python.org/3.5/tutorial/datastructures.html#dictionaries">dictionaries</a>
+to represent herarchical structures, like</div></blockquote>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [32]:
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">Image</span>
+<span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;files/simpleTree.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="_images/interactive_tutorial_20_0.png" src="_images/interactive_tutorial_20_0.png" />
+<p>In QMflows/PLAMS multiple settings objects can be combined using the
+<code class="docutils literal"><span class="pre">overlay</span></code> function.</p>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -563,22 +750,21 @@ geometry optimizations with different packages with the arguments
 provided by the user</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [4]:
+<span></span>In [2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Image</span>
-<span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;files/merged.png&quot;</span><span class="p">)</span>
+<span></span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;files/merged.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>Out[4]:
+<span></span>Out[2]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
-<img alt="_images/interactive_tutorial_22_0.png" src="_images/interactive_tutorial_22_0.png" />
+<img alt="_images/interactive_tutorial_24_0.png" src="_images/interactive_tutorial_24_0.png" />
 </div>
 </div>
 <p><strong>resulting in:</strong></p>
@@ -599,7 +785,7 @@ provided by the user</p>
 </pre></div>
 </div>
 <div class="output_area docutils container">
-<img alt="_images/interactive_tutorial_24_0.png" src="_images/interactive_tutorial_24_0.png" />
+<img alt="_images/interactive_tutorial_26_0.png" src="_images/interactive_tutorial_26_0.png" />
 </div>
 </div>
 <p>Note that the generic and specific keywords still exist next to each
@@ -770,8 +956,9 @@ end input
 </pre></div></div>
 </div>
 </div>
+</div>
 <div class="section" id="Combining-multiple-jobs">
-<h1>Combining multiple jobs<a class="headerlink" href="#Combining-multiple-jobs" title="Permalink to this headline">¶</a></h1>
+<h2>Combining multiple jobs<a class="headerlink" href="#Combining-multiple-jobs" title="Permalink to this headline">¶</a></h2>
 <p>Multiple jobs can be combined, while calling the run function only once.
 The script below combines components outlined above:</p>
 <div class="nbinput docutils container">
@@ -884,74 +1071,80 @@ adf_single.err   adf_single.out  adf_single.t21   t21.C    t21.N
 </pre></div></div>
 </div>
 </div>
+</div>
 
 
+           </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="documentation.html" class="btn btn-neutral float-right" title="Library Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="includeme.html" class="btn btn-neutral" title="QMFlows" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, F. Zapata, L. Ridder.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">qmflows</a></h1>
+
+    </section>
+
+  </div>
+  
 
 
+  
 
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
+  
 
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
 
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
 
-
-<h3>Navigation</h3>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="includeme.html">QMFlows</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Basic usage tutorial</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#Installation-in-Unix">Installation in Unix</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Starting-the-environment">Starting the environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#What-is-QMflows?">What is QMflows?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#The-basics:-calling-packages">The basics: calling packages</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="#Settings-and-templates">Settings and templates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#Combining-multiple-jobs">Combining multiple jobs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="documentation.html">Library Documentation</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="includeme.html" title="previous chapter">QMFlows</a></li>
-      <li>Next: <a href="documentation.html" title="next chapter">Library Documentation</a></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2017, F. Zapata, L. Ridder.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
-      
-      |
-      <a href="_sources/interactive_tutorial.ipynb.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>
