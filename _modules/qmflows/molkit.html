@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>qmflows.molkit &mdash; qmflows 1.0 documentation</title>
+  <title>qmflows.molkit &mdash; qmflows 0.2.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="qmflows 1.0 documentation" href="../../index.html"/>
+    <link rel="top" title="qmflows 0.2.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.0
+                0.2
               </div>
             
           
@@ -201,7 +201,8 @@
     <span class="k">for</span> <span class="n">rd_atom</span> <span class="ow">in</span> <span class="n">rdkit_mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">GetAtomPosition</span><span class="p">(</span><span class="n">rd_atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">())</span>
         <span class="n">ch</span> <span class="o">=</span> <span class="n">rd_atom</span><span class="o">.</span><span class="n">GetFormalCharge</span><span class="p">()</span>
-        <span class="n">pl_atom</span> <span class="o">=</span> <span class="n">Atom</span><span class="p">(</span><span class="n">rd_atom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">(),</span> <span class="n">coords</span><span class="o">=</span><span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">z</span><span class="p">),</span> <span class="n">charge</span><span class="o">=</span><span class="n">ch</span><span class="p">)</span>
+        <span class="n">pl_atom</span> <span class="o">=</span> <span class="n">Atom</span><span class="p">(</span>
+            <span class="n">rd_atom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">(),</span> <span class="n">coords</span><span class="o">=</span><span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">z</span><span class="p">),</span> <span class="n">charge</span><span class="o">=</span><span class="n">ch</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">rd_atom</span><span class="o">.</span><span class="n">GetPDBResidueInfo</span><span class="p">():</span>
             <span class="n">pl_atom</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">pdb_info</span> <span class="o">=</span> <span class="n">get_PDBResidueInfo</span><span class="p">(</span><span class="n">rd_atom</span><span class="p">)</span>
         <span class="n">plams_mol</span><span class="o">.</span><span class="n">add_atom</span><span class="p">(</span><span class="n">pl_atom</span><span class="p">)</span>
@@ -252,6 +253,7 @@
     <span class="n">rdmol</span><span class="o">.</span><span class="n">AddConformer</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">rdmol</span></div>
 
+
 <span class="n">pdb_residue_info_items</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s1">&#39;AltLoc&#39;</span><span class="p">,</span> <span class="s1">&#39;ChainId&#39;</span><span class="p">,</span> <span class="s1">&#39;InsertionCode&#39;</span><span class="p">,</span> <span class="s1">&#39;IsHeteroAtom&#39;</span><span class="p">,</span> <span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Occupancy&#39;</span><span class="p">,</span>
     <span class="s1">&#39;ResidueName&#39;</span><span class="p">,</span> <span class="s1">&#39;ResidueNumber&#39;</span><span class="p">,</span> <span class="s1">&#39;SecondaryStructure&#39;</span><span class="p">,</span> <span class="s1">&#39;SegmentNumber&#39;</span><span class="p">,</span>
@@ -283,10 +285,10 @@
 <span class="sd">    :parameter int nconfs: Number of conformers to be generated</span>
 <span class="sd">    :parameter str name: A name for the molecule</span>
 <span class="sd">    :parameter str forcefield: Choose &#39;uff&#39; or &#39;mmff&#39; forcefield for geometry optimization</span>
-<span class="sd">    and ranking of comformations. The default value None results in skipping of the</span>
-<span class="sd">    geometry optimization step.</span>
+<span class="sd">        and ranking of comformations. The default value None results in skipping of the</span>
+<span class="sd">        geometry optimization step.</span>
 <span class="sd">    :parameter float rms: Root Mean Square deviation threshold for</span>
-<span class="sd">    removing similar/equivalent conformations</span>
+<span class="sd">        removing similar/equivalent conformations</span>
 <span class="sd">    :return: A molecule with hydrogens and 3D coordinates or a list of molecules if nconfs &gt; 1</span>
 <span class="sd">    :rtype: plams.Molecule or list of plams Molecules</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -306,10 +308,10 @@
 <span class="sd">    :parameter int nconfs: Number of conformers to be generated</span>
 <span class="sd">    :parameter str name: A name for the molecule</span>
 <span class="sd">    :parameter str forcefield: Choose &#39;uff&#39; or &#39;mmff&#39; forcefield for geometry</span>
-<span class="sd">    optimization and ranking of comformations. The default value None results</span>
-<span class="sd">    in skipping of the geometry optimization step.</span>
+<span class="sd">        optimization and ranking of comformations. The default value None results</span>
+<span class="sd">        in skipping of the geometry optimization step.</span>
 <span class="sd">    :parameter float rms: Root Mean Square deviation threshold for removing</span>
-<span class="sd">    similar/equivalent conformations.</span>
+<span class="sd">        similar/equivalent conformations.</span>
 <span class="sd">    :return: A molecule with hydrogens and 3D coordinates or a list of molecules if nconfs &gt; 1</span>
 <span class="sd">    :rtype: plams.Molecule or list of plams Molecules</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -403,12 +405,12 @@
 <span class="sd">    :parameter int nconfs: Number of conformers to be generated</span>
 <span class="sd">    :parameter str name: A name for the molecule</span>
 <span class="sd">    :parameter str forcefield: Choose &#39;uff&#39; or &#39;mmff&#39; forcefield for geometry</span>
-<span class="sd">    optimization and ranking of comformations. The default value None results</span>
-<span class="sd">    in skipping of the geometry optimization step.</span>
+<span class="sd">        optimization and ranking of comformations. The default value None results</span>
+<span class="sd">        in skipping of the geometry optimization step.</span>
 <span class="sd">    :parameter float rms: Root Mean Square deviation threshold for removing</span>
-<span class="sd">    similar/equivalent conformations.</span>
+<span class="sd">        similar/equivalent conformations.</span>
 <span class="sd">    :return: A peptide molecule with hydrogens and 3D coordinates</span>
-<span class="sd">    or a list of molecules if nconfs &gt; 1</span>
+<span class="sd">        or a list of molecules if nconfs &gt; 1</span>
 <span class="sd">    :rtype: plams.Molecule or list of plams Molecules</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">rdkit_mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">AddHs</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">))</span>
@@ -489,10 +491,10 @@
 <span class="sd">    :type mol: plams.Molecule or rdkit.Chem.Mol</span>
 <span class="sd">    :parameter str reactions_smarts: Reactions smarts to be applied to molecule</span>
 <span class="sd">    :parameter complete: Apply reaction until no further changes occur or given</span>
-<span class="sd">    fraction of reaction centers have been modified</span>
+<span class="sd">        fraction of reaction centers have been modified</span>
 <span class="sd">    :type complete: bool or float (value between 0 and 1)</span>
 <span class="sd">    :parameter forcefield: Specify &#39;uff&#39; or &#39;mmff&#39; to apply forcefield based</span>
-<span class="sd">    geometry optimization of product structures.</span>
+<span class="sd">        geometry optimization of product structures.</span>
 <span class="sd">    :type forcefield: str</span>
 <span class="sd">    :param bool return_rdmol: return a RDKit molecule if true, otherwise a PLAMS molecule</span>
 <span class="sd">    :return: (product molecule, list of unchanged atoms)</span>
@@ -660,7 +662,7 @@
 <span class="sd">    :param mol: Molecule to be protonated</span>
 <span class="sd">    :type mol: plams.Molecule or rdkit.Chem.Mol</span>
 <span class="sd">    :param str forcefield: Specify &#39;uff&#39; or &#39;mmff&#39; to apply forcefield based</span>
-<span class="sd">    geometry optimization on new atoms.</span>
+<span class="sd">        geometry optimization on new atoms.</span>
 <span class="sd">    :param bool return_rdmol: return a RDKit molecule if true, otherwise a PLAMS molecule</span>
 <span class="sd">    :return: A molecule with explicit hydrogens added</span>
 <span class="sd">    :rtype: plams.Molecule or rdkit.Chem.Mol</span>
@@ -755,9 +757,9 @@
 <span class="sd">    :param mol: A protein molecule</span>
 <span class="sd">    :type mol: plams.Molecule or rdkit.Chem.Mol</span>
 <span class="sd">    :param tuple residue_bonds: a tuple of pairs of residue number indicating which</span>
-<span class="sd">    peptide bonds to split. If none, split all peptide bonds.</span>
+<span class="sd">        peptide bonds to split. If none, split all peptide bonds.</span>
 <span class="sd">    :param bool split_heteroatoms: if True, all bonds between a heteroatom and</span>
-<span class="sd">    a non-heteroatom across residues are removed</span>
+<span class="sd">        a non-heteroatom across residues are removed</span>
 <span class="sd">    :return: list of fragments, list of caps</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mol</span> <span class="o">=</span> <span class="n">to_rdmol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
@@ -876,7 +878,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'1.0',
+            VERSION:'0.2.0',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

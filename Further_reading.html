@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Further Reading &mdash; qmflows 1.0 documentation</title>
+  <title>Further Reading &mdash; qmflows 0.2.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="qmflows 1.0 documentation" href="index.html"/>
+    <link rel="top" title="qmflows 0.2.0 documentation" href="index.html"/>
         <link rel="next" title="Library Documentation" href="documentation.html"/>
         <link rel="prev" title="Basic usage tutorial" href="interactive_tutorial.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                1.0
+                0.2
               </div>
             
           
@@ -388,11 +388,12 @@ already offers such keyword that can be used among the packages that use
 the same basis standard,</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [ ]:
+<span></span>In [11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+<span></span><span class="kn">from</span> <span class="nn">qmflows</span> <span class="k">import</span> <span class="n">Settings</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
 <span class="n">s</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="s2">&quot;DZP&quot;</span>
 </pre></div>
 </div>
@@ -542,7 +543,7 @@ object by <em>qmflows</em>.</p>
 <p>Below it is shown the defaults for single point calculation</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [3]:
+<span></span>In [12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -553,11 +554,15 @@ object by <em>qmflows</em>.</p>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>Out[3]:
+<span></span>Out[12]:
 </pre></div>
 </div>
 <div class="output_area highlight-none"><div class="highlight"><pre>
 <span></span>_ipython_canary_method_should_not_exist_:
+basis:      DZVP-MOLOPT-SR-GTH
+cell_angles:        [90.0, 90.0, 90.0]
+cell_parameters:    38.0
+potential:  GTH-PBE
 specific:
          adf:
              basis:
@@ -593,13 +598,13 @@ specific:
                              scf:
                                  added_mos:
                                  eps_scf:   1e-06
-                                 max_scf:   200
+                                 max_scf:   100
                                  scf_guess:         restart
                              xc:
                                 xc_functional:      pbe
                          subsys:
                                 cell:
-                                     periodic:      xyz
+                                     periodic:      None
               global:
                      print_level:   low
                      project:       qmflows-cp2k
@@ -635,7 +640,7 @@ specific:
 using <code class="docutils literal"><span class="pre">ADF</span></code> . You need first to define a basis set and the constrains.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [ ]:
+<span></span>In [13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -656,7 +661,7 @@ the correspoding template to carry out molecular geometry optimizations,
 using a method called <code class="docutils literal"><span class="pre">overlay</span></code>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [ ]:
+<span></span>In [14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -675,7 +680,7 @@ preference to the user input</p>
 keywords to generate the input for a <code class="docutils literal"><span class="pre">CP2K</span></code> job</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [7]:
+<span></span>In [15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -788,7 +793,7 @@ specific:
 several formats like: <em>xyz</em> , <em>pdb</em>, <em>mol</em>, etc.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [3]:
+<span></span>In [16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -816,7 +821,7 @@ several formats like: <em>xyz</em> , <em>pdb</em>, <em>mol</em>, etc.</p>
 <p>You can also create the molecule one atom at a time</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [4]:
+<span></span>In [17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -850,7 +855,7 @@ several formats like: <em>xyz</em> , <em>pdb</em>, <em>mol</em>, etc.</p>
 <p><strong>QMflows</strong> Can also handle smiles as shown below</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [5]:
+<span></span>In [18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -942,7 +947,7 @@ transformation over a molecule using the
 the computation,</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [ ]:
+<span></span>In [19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -1062,7 +1067,7 @@ using for instance another package like <em>Orca</em> to run a frequencies
 calculation,</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [ ]:
+<span></span>In [20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -1160,7 +1165,7 @@ python optimization_ADF_freq_ORCA.py
 <p>The Slurm output looks like:</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [2]:
+<span></span>In [21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
@@ -1186,7 +1191,7 @@ python optimization_ADF_freq_ORCA.py
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>Out[2]:
+<span></span>Out[21]:
 </pre></div>
 </div>
 <div class="output_area highlight-none"><div class="highlight"><pre>
@@ -1337,7 +1342,7 @@ quantum calculation then the computation will crash.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0',
+            VERSION:'0.2.0',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Molkit &mdash; qmflows 1.0 documentation</title>
+  <title>Molkit &mdash; qmflows 0.2.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="qmflows 1.0 documentation" href="index.html"/>
+    <link rel="top" title="qmflows 0.2.0 documentation" href="index.html"/>
         <link rel="up" title="Library Documentation" href="documentation.html"/>
         <link rel="next" title="Running a workflow" href="promise.html"/>
         <link rel="prev" title="Packages" href="packages.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.0
+                0.2
               </div>
             
           
@@ -229,18 +229,22 @@ Makes sure that the hydrogens get the correct PDBResidue info.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>mol</strong> (<em>plams.Molecule</em><em> or </em><em>rdkit.Chem.Mol</em>) – Molecule to be protonated</li>
-<li><strong>forcefield</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Specify ‘uff’ or ‘mmff’ to apply forcefield based</li>
+<li><strong>forcefield</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Specify ‘uff’ or ‘mmff’ to apply forcefield based
+geometry optimization on new atoms.</li>
+<li><strong>return_rdmol</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – return a RDKit molecule if true, otherwise a PLAMS molecule</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A molecule with explicit hydrogens added</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">plams.Molecule or rdkit.Chem.Mol</p>
 </td>
 </tr>
 </tbody>
 </table>
-<p>geometry optimization on new atoms.
-:param bool return_rdmol: return a RDKit molecule if true, otherwise a PLAMS molecule
-:return: A molecule with explicit hydrogens added
-:rtype: plams.Molecule or rdkit.Chem.Mol</p>
 </dd></dl>
 
 <dl class="function">
@@ -254,23 +258,25 @@ is a list of indices of atoms that have not been changed
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>mol</strong> (<em>plams.Molecule</em><em> or </em><em>rdkit.Chem.Mol</em>) – molecule to be modified</li>
 <li><strong>reactions_smarts</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Reactions smarts to be applied to molecule</li>
-<li><strong>complete</strong> – Apply reaction until no further changes occur or given</li>
+<li><strong>complete</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> (</em><em>value between 0 and 1</em><em>)</em>) – Apply reaction until no further changes occur or given
+fraction of reaction centers have been modified</li>
+<li><strong>forcefield</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Specify ‘uff’ or ‘mmff’ to apply forcefield based
+geometry optimization of product structures.</li>
+<li><strong>return_rdmol</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – return a RDKit molecule if true, otherwise a PLAMS molecule</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">(product molecule, list of unchanged atoms)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(plams.Molecule, list of int)</p>
 </td>
 </tr>
 </tbody>
 </table>
-<p>fraction of reaction centers have been modified
-:type complete: bool or float (value between 0 and 1)
-:parameter forcefield: Specify ‘uff’ or ‘mmff’ to apply forcefield based
-geometry optimization of product structures.
-:type forcefield: str
-:param bool return_rdmol: return a RDKit molecule if true, otherwise a PLAMS molecule
-:return: (product molecule, list of unchanged atoms)
-:rtype: (plams.Molecule, list of int)</p>
 </dd></dl>
 
 <dl class="function">
@@ -393,23 +399,27 @@ Includes explicit hydrogens and 3D coordinates.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>sequence</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – A peptide sequence, e.g. ‘HAG’</li>
 <li><strong>nconfs</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – Number of conformers to be generated</li>
 <li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – A name for the molecule</li>
-<li><strong>forcefield</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Choose ‘uff’ or ‘mmff’ forcefield for geometry</li>
+<li><strong>forcefield</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Choose ‘uff’ or ‘mmff’ forcefield for geometry
+optimization and ranking of comformations. The default value None results
+in skipping of the geometry optimization step.</li>
+<li><strong>rms</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Root Mean Square deviation threshold for removing
+similar/equivalent conformations.</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A peptide molecule with hydrogens and 3D coordinates
+or a list of molecules if nconfs &gt; 1</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">plams.Molecule or list of plams Molecules</p>
 </td>
 </tr>
 </tbody>
 </table>
-<p>optimization and ranking of comformations. The default value None results
-in skipping of the geometry optimization step.
-:parameter float rms: Root Mean Square deviation threshold for removing
-similar/equivalent conformations.
-:return: A peptide molecule with hydrogens and 3D coordinates
-or a list of molecules if nconfs &gt; 1
-:rtype: plams.Molecule or list of plams Molecules</p>
 </dd></dl>
 
 <dl class="function">
@@ -420,22 +430,26 @@ or a list of molecules if nconfs &gt; 1
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>smiles</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – A smiles string</li>
 <li><strong>nconfs</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – Number of conformers to be generated</li>
 <li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – A name for the molecule</li>
-<li><strong>forcefield</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Choose ‘uff’ or ‘mmff’ forcefield for geometry optimization</li>
+<li><strong>forcefield</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Choose ‘uff’ or ‘mmff’ forcefield for geometry optimization
+and ranking of comformations. The default value None results in skipping of the
+geometry optimization step.</li>
+<li><strong>rms</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Root Mean Square deviation threshold for
+removing similar/equivalent conformations</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A molecule with hydrogens and 3D coordinates or a list of molecules if nconfs &gt; 1</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">plams.Molecule or list of plams Molecules</p>
 </td>
 </tr>
 </tbody>
 </table>
-<p>and ranking of comformations. The default value None results in skipping of the
-geometry optimization step.
-:parameter float rms: Root Mean Square deviation threshold for
-removing similar/equivalent conformations
-:return: A molecule with hydrogens and 3D coordinates or a list of molecules if nconfs &gt; 1
-:rtype: plams.Molecule or list of plams Molecules</p>
 </dd></dl>
 
 <dl class="function">
@@ -448,22 +462,26 @@ However it is less suitable for aromatic molecules (use from_smiles in that case
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>smarts</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – A smarts string</li>
 <li><strong>nconfs</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – Number of conformers to be generated</li>
 <li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – A name for the molecule</li>
-<li><strong>forcefield</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Choose ‘uff’ or ‘mmff’ forcefield for geometry</li>
+<li><strong>forcefield</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Choose ‘uff’ or ‘mmff’ forcefield for geometry
+optimization and ranking of comformations. The default value None results
+in skipping of the geometry optimization step.</li>
+<li><strong>rms</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Root Mean Square deviation threshold for removing
+similar/equivalent conformations.</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A molecule with hydrogens and 3D coordinates or a list of molecules if nconfs &gt; 1</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">plams.Molecule or list of plams Molecules</p>
 </td>
 </tr>
 </tbody>
 </table>
-<p>optimization and ranking of comformations. The default value None results
-in skipping of the geometry optimization step.
-:parameter float rms: Root Mean Square deviation threshold for removing
-similar/equivalent conformations.
-:return: A molecule with hydrogens and 3D coordinates or a list of molecules if nconfs &gt; 1
-:rtype: plams.Molecule or list of plams Molecules</p>
 </dd></dl>
 
 <dl class="function">
@@ -474,18 +492,20 @@ similar/equivalent conformations.
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>mol</strong> (<em>plams.Molecule</em><em> or </em><em>rdkit.Chem.Mol</em>) – A protein molecule</li>
-<li><strong>residue_bonds</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) – a tuple of pairs of residue number indicating which</li>
+<li><strong>residue_bonds</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) – a tuple of pairs of residue number indicating which
+peptide bonds to split. If none, split all peptide bonds.</li>
+<li><strong>split_heteroatoms</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – if True, all bonds between a heteroatom and
+a non-heteroatom across residues are removed</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list of fragments, list of caps</p>
 </td>
 </tr>
 </tbody>
 </table>
-<p>peptide bonds to split. If none, split all peptide bonds.
-:param bool split_heteroatoms: if True, all bonds between a heteroatom and
-a non-heteroatom across residues are removed
-:return: list of fragments, list of caps</p>
 </dd></dl>
 
 <dl class="function">
@@ -578,7 +598,7 @@ a non-heteroatom across residues are removed
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0',
+            VERSION:'0.2.0',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
